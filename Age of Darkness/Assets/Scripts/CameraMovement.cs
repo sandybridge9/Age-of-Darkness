@@ -59,22 +59,22 @@ public class CameraMovement : MonoBehaviour
         //Debug.Log(currentRotation.y + " " +(currentRotation.y - rotationSpeed) +" " +(currentRotation.y + rotationSpeed));
         if (currentRotation.y >= 0)
         {
-            if (Input.GetKey(KeyCode.Q))
+            if (Input.GetKey(KeyCode.E))
             {
                 transform.Rotate(0, currentRotation.y + rotationSpeed, 0, Space.World);
             }
-            if (Input.GetKey(KeyCode.E))
+            if (Input.GetKey(KeyCode.Q))
             {
                 transform.Rotate(0, currentRotation.y - rotationSpeed * 2, 0, Space.World);
             }
         }
         else if (currentRotation.y < 0)
         {
-            if (Input.GetKey(KeyCode.Q))
+            if (Input.GetKey(KeyCode.E))
             {
                 transform.Rotate(0, currentRotation.y + rotationSpeed * 2, 0, Space.World);
             }
-            if (Input.GetKey(KeyCode.E))
+            if (Input.GetKey(KeyCode.Q))
             {
                 transform.Rotate(0, currentRotation.y - rotationSpeed, 0, Space.World);
             }
