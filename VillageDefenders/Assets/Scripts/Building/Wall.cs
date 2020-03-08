@@ -4,15 +4,20 @@ using UnityEngine;
 
 public class Wall : Building
 {
+    #region Constructors
+
     public Wall()
     {
-        health = 100f;
-        cost = 10f;
+        Health = 100f;
+        Cost = 10f;
     }
 
     public Wall(float health, float cost)
     {
-        this.health = health;
-        this.cost = cost;
+        this.Health = health;
+        this.Cost = cost;
     }
+
+    #endregion
+
 }

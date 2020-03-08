@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BuildingPlacement : MonoBehaviour
 {
+    #region Fields
+
     private PlaceableObject currentBuildingProperties; //Used to detect if there is already a building in place
     private Transform currentBuilding;          //Current building that needs to be placed
     private bool hasPlaced;                     //Is set to true when selected building is placed
@@ -11,6 +13,10 @@ public class BuildingPlacement : MonoBehaviour
     private float tileSize = 0.5f;              // Grid snapping step size
     private float rotationDelay = 0.5f;         // Used to delay rotation
     private float timer = 0.5f;                 //Used to delay rotation
+
+    #endregion
+
+    #region Overriden Methods
 
     void Start()
     {
@@ -33,7 +39,7 @@ public class BuildingPlacement : MonoBehaviour
             //Current building placement using mouse button
             if(Input.GetMouseButtonDown(0))
             {
-                if (isPositionEmpty())
+                if (IsPositionEmpty())
                 {
                     hasPlaced = true;
                 }
@@ -59,10 +65,15 @@ public class BuildingPlacement : MonoBehaviour
             }
         }
     }
+
+    #endregion
+
+    #region HelperMethods
+
     //Checks if current building position contains any other buildings
-    bool isPositionEmpty()
+    bool IsPositionEmpty()
     {
-        if(currentBuildingProperties.colliders.Count > 0)
+        if(currentBuildingProperties.Colliders.Count > 0)
         {
             return false;
         }
@@ -71,11 +82,14 @@ public class BuildingPlacement : MonoBehaviour
             return true;
         }
     }
+
     //Sets currently selected building
-    public void SetItem(GameObject b)
+    public void SetItem(Building b)
     {
         hasPlaced = false;
-        currentBuilding = ((GameObject)Instantiate(b)).transform;
+        currentBuilding = ((Building)Instantiate(b)).transform;
         currentBuildingProperties = currentBuilding.GetComponent<PlaceableObject>();
     }
+
+    #endregion
 }
