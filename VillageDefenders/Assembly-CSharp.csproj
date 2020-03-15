@@ -64,6 +64,7 @@
     <Compile Include="Assets\Scripts\Building\BuildingType.cs" />
     <Compile Include="Assets\Scripts\Building\IBuilding.cs" />
     <Compile Include="Assets\Scripts\Building\PlaceableObject.cs" />
+    <Compile Include="Assets\Scripts\Building\Townhall.cs" />
     <Compile Include="Assets\Scripts\Building\Wall.cs" />
     <Compile Include="Assets\Scripts\Building\WizardTower.cs" />
     <Compile Include="Assets\Scripts\Camera\CameraMovement.cs" />

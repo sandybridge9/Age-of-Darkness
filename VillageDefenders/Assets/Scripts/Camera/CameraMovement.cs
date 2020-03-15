@@ -6,9 +6,11 @@ public class CameraMovement : MonoBehaviour
 {
     #region Fields
 
-    float horizontalInput = 0;
-    float verticalInput = 0;
-    float wheelInput = 0;
+    private float horizontalInput;
+    private float verticalInput;
+    private float wheelInput;
+    private bool groundView;
+    private float groundViewCooldown = 60;
 
     #endregion
 
@@ -32,18 +34,41 @@ public class CameraMovement : MonoBehaviour
     //Doesn't depend on the framerate
     void FixedUpdate()
     {
+        //TODO: Add user control customization
+        Debug.Log(verticalInput + " " + horizontalInput);
         //Manages vertical movement of camera
         if (verticalInput != 0)
         {
-            if (verticalInput > 0)
+            //if camera is currently in ground view
+            if (groundView)
             {
-                //Move forward
-                transform.position += new Vector3(transform.forward.x * verticalInput, 0, transform.forward.z) * MoveSpeed * Time.deltaTime;
+                if (verticalInput > 0)
+                {
+                    //Move forward
+                    transform.position += new Vector3(transform.up.x * verticalInput, 0, transform.up.z) * MoveSpeed * Time.deltaTime;
+                    Debug.Log("forward");
+                }
+                else if (verticalInput < 0)
+                {
+                    //Move back
+                    transform.position -= new Vector3(transform.up.x * -verticalInput, 0, transform.up.z) * MoveSpeed * Time.deltaTime;
+                    Debug.Log("backwards");
+                }
             }
-            else if (verticalInput < 0)
+            else
             {
-                //Move back
-                transform.position -= new Vector3(transform.forward.x * -verticalInput, 0, transform.forward.z) * MoveSpeed * Time.deltaTime;
+                if (verticalInput > 0)
+                {
+                    //Move forward
+                    transform.position += new Vector3(transform.forward.x * verticalInput, 0, transform.forward.z) * MoveSpeed * Time.deltaTime;
+                    Debug.Log("forward");
+                }
+                else if (verticalInput < 0)
+                {
+                    //Move back
+                    transform.position -= new Vector3(transform.forward.x * -verticalInput, 0, transform.forward.z) * MoveSpeed * Time.deltaTime;
+                    Debug.Log("backwards");
+                }
             }
         }
         //Manages horizontal movement of camera
@@ -65,31 +90,51 @@ public class CameraMovement : MonoBehaviour
         {
             transform.position += ScrollSpeed * new Vector3(0, -Input.GetAxis("Mouse ScrollWheel"), 0);
         }
+
         //Manages Rotation of the camera (Rotates only around Y axis)
-        Quaternion currentRotation = transform.rotation;
-        //Debug.Log(currentRotation.y + " " +(currentRotation.y - rotationSpeed) +" " +(currentRotation.y + rotationSpeed));
-        if (currentRotation.y >= 0)
+        var currentRotation = transform.rotation.eulerAngles;
+        if (Input.GetKey(KeyCode.E))
         {
-            if (Input.GetKey(KeyCode.E))
+            if (currentRotation.y >= 0)
             {
-                transform.Rotate(0, currentRotation.y + RotationSpeed, 0, Space.World);
+                transform.Rotate(0, RotationSpeed, 0, Space.World);
             }
-            if (Input.GetKey(KeyCode.Q))
+            else if (currentRotation.y < 0)
             {
-                transform.Rotate(0, currentRotation.y - RotationSpeed * 2, 0, Space.World);
+                transform.Rotate(0, RotationSpeed * -1, 0, Space.World);
             }
         }
-        else if (currentRotation.y < 0)
+        if (Input.GetKey(KeyCode.Q))
         {
-            if (Input.GetKey(KeyCode.E))
+            if (currentRotation.y > 0)
             {
-                transform.Rotate(0, currentRotation.y + RotationSpeed * 2, 0, Space.World);
+                transform.Rotate(0, RotationSpeed * -1, 0, Space.World);
             }
-            if (Input.GetKey(KeyCode.Q))
+            else if (currentRotation.y <= 0)
             {
-                transform.Rotate(0, currentRotation.y - RotationSpeed, 0, Space.World);
+                transform.Rotate(0, RotationSpeed, 0, Space.World);
             }
         }
+
+        if (Input.GetKey(KeyCode.Space))
+        {
+            if (groundViewCooldown >= 60)
+            {
+                if (groundView)
+                {
+                    transform.Rotate(-45,0,0);
+                    groundView = false;
+                }
+                else
+                {
+                    transform.Rotate(45, 0, 0);
+                    groundView = true;
+                }
+                groundViewCooldown = 0;
+            }
+        }
+
+        groundViewCooldown++;
     }
 
     #endregion
