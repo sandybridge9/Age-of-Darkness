@@ -19,6 +19,7 @@ public class CameraMovement : MonoBehaviour
     public float MoveSpeed = 40f;
     public float ScrollSpeed = 10f;
     public float RotationSpeed = 1f;
+    public float MinimumZoomY = 20f;
 
     #endregion
 
@@ -34,8 +35,7 @@ public class CameraMovement : MonoBehaviour
     //Doesn't depend on the framerate
     void FixedUpdate()
     {
-        //TODO: Add user control customization
-        Debug.Log(verticalInput + " " + horizontalInput);
+        //TODO: Add user control customization -> Global settings?
         //Manages vertical movement of camera
         if (verticalInput != 0)
         {
@@ -46,13 +46,11 @@ public class CameraMovement : MonoBehaviour
                 {
                     //Move forward
                     transform.position += new Vector3(transform.up.x * verticalInput, 0, transform.up.z) * MoveSpeed * Time.deltaTime;
-                    Debug.Log("forward");
                 }
                 else if (verticalInput < 0)
                 {
                     //Move back
                     transform.position -= new Vector3(transform.up.x * -verticalInput, 0, transform.up.z) * MoveSpeed * Time.deltaTime;
-                    Debug.Log("backwards");
                 }
             }
             else
@@ -61,13 +59,11 @@ public class CameraMovement : MonoBehaviour
                 {
                     //Move forward
                     transform.position += new Vector3(transform.forward.x * verticalInput, 0, transform.forward.z) * MoveSpeed * Time.deltaTime;
-                    Debug.Log("forward");
                 }
                 else if (verticalInput < 0)
                 {
                     //Move back
                     transform.position -= new Vector3(transform.forward.x * -verticalInput, 0, transform.forward.z) * MoveSpeed * Time.deltaTime;
-                    Debug.Log("backwards");
                 }
             }
         }
@@ -86,9 +82,16 @@ public class CameraMovement : MonoBehaviour
             }
         }
         //Manages zooming
-        if (Input.GetAxis("Mouse ScrollWheel") != 0)
+        if (wheelInput != 0)
         {
-            transform.position += ScrollSpeed * new Vector3(0, -Input.GetAxis("Mouse ScrollWheel"), 0);
+            if (wheelInput > 0 && transform.position.y <= MinimumZoomY)
+            {
+                //Do nothing, because minimum Y height is reached
+            }
+            else
+            {
+                transform.position += ScrollSpeed * new Vector3(0, -wheelInput, 0);
+            }
         }
 
         //Manages Rotation of the camera (Rotates only around Y axis)
@@ -133,7 +136,6 @@ public class CameraMovement : MonoBehaviour
                 groundViewCooldown = 0;
             }
         }
-
         groundViewCooldown++;
     }
 
