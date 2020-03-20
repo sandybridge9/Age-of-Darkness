@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// Class that is used for collider detection when placing buildings or other structures
 /// </summary>
-public class PlaceableObject : MonoBehaviour
+public class BuildingCollisionManager : MonoBehaviour
 {
     #region Properties
 

@@ -8,6 +8,7 @@ public class Building : MonoBehaviour, IBuilding
 
     public float Health;
     public float Cost;
+    public BuildingTypes BuildingType;
 
     #endregion
 
@@ -18,10 +19,24 @@ public class Building : MonoBehaviour, IBuilding
         Health = 100f;
         Cost = 0f;
     }
-    public Building(float health, float cost)
+    public Building(BuildingTypes buildingType) : this()
+    {
+        BuildingType = buildingType;
+    }
+    public Building(float health, float cost, BuildingTypes buildingType)
     {
         Health = health;
         Cost = cost;
+        BuildingType = buildingType;
+    }
+
+    #endregion
+
+    #region Methods
+
+    public void Destroy()
+    {
+        Object.Destroy(this.gameObject);
     }
 
     #endregion

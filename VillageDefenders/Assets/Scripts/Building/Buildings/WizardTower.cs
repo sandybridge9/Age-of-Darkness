@@ -19,6 +19,7 @@ public class WizardTower : Building
         Cost = 10f;
         Damage = 25f;
         FireRate = 3f;
+        BuildingType = BuildingTypes.WizardTower;
     }
 
     public WizardTower(float health, float cost, float damage, float fireRate)
@@ -27,6 +28,7 @@ public class WizardTower : Building
         this.Cost = cost;
         this.Damage = damage;
         this.FireRate = fireRate;
+        BuildingType = BuildingTypes.WizardTower;
     }
 
     #endregion

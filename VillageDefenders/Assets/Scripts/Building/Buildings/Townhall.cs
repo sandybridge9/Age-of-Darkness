@@ -6,7 +6,9 @@ public class Townhall : Building
 {
     public Townhall()
     {
-
+        Health = 100f;
+        Cost = 10f;
+        BuildingType = BuildingTypes.Townhall;
     }
 
     public void SpawnBuilder()

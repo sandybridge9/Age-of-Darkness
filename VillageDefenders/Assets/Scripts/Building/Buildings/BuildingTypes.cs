@@ -1,8 +1,8 @@
-﻿public enum BuildingType : short 
+﻿public enum BuildingTypes : short 
 {
     Townhall = 1,
     Barracks = 2,
-    Wall = 3,
+    WoodenWall = 3,
     BasicTower = 4,
     WizardTower = 5
 }
