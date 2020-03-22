@@ -11,6 +11,10 @@ public class BuildingManager : MonoBehaviour
     private BuildingCollisionManager currentBuildingCollisionManager; //Used to detect if there is already a building in place
     private Building currentBuilding; //Current building that needs to be placed
     private HeightChecking currentBuildingHeightChecking; //Responsible for checking height of currently selected building
+    private Renderer currentBuildingRenderer;
+    private Material currentBuildingMaterial;
+    private Material materialCanBuild;
+    private Material materialCantBuild;
 
     private float tileSize = 0.5f; // Grid snapping step size
     private float rotationDelay = 60f; // Used to delay rotation
@@ -35,6 +39,8 @@ public class BuildingManager : MonoBehaviour
     void Start()
     {
         placeableBuildings = SettingsManager.Instance.PlaceableBuildings;
+        materialCanBuild = SettingsManager.Instance.MaterialCanBuild;
+        materialCantBuild = SettingsManager.Instance.MaterialCantBuild;
     }
 
     void Update()
@@ -42,6 +48,7 @@ public class BuildingManager : MonoBehaviour
         if (currentBuilding != null)
         {
             MoveCurrentObjectToMouse();
+            ChangeColor();
             RotateBuilding();
             BuildingPlacement();
         }
@@ -81,7 +88,10 @@ public class BuildingManager : MonoBehaviour
     //Sets currently selected building
     public void SetItem(Building b)
     {
-        currentBuilding = Instantiate<Building>(b);
+        currentBuilding = Instantiate(b);
+        //TODO fix wall transparent state
+        currentBuildingRenderer = currentBuilding.GetComponent<Renderer>();
+        currentBuildingMaterial = currentBuildingRenderer.material;
         currentBuildingCollisionManager = currentBuilding.GetComponent<BuildingCollisionManager>();
         if (currentBuilding.GetComponent<HeightChecking>() != null)
         {
@@ -138,6 +148,22 @@ public class BuildingManager : MonoBehaviour
         }
     }
 
+    private void ChangeColor()
+    {
+        if (IsPositionEmpty() && currentBuildingHeightChecking.CanPlace)
+        {
+            Debug.Log("Can place");
+            currentBuildingRenderer.material = null;
+            currentBuildingRenderer.material = materialCanBuild;
+        }
+        else
+        {
+            Debug.Log("Can't place");
+            currentBuildingRenderer.material = null;
+            currentBuildingRenderer.material = materialCantBuild;
+        }
+    }
+
     private void RotateBuilding()
     {
         if (Input.GetKey(KeyCode.R))
@@ -175,7 +201,6 @@ public class BuildingManager : MonoBehaviour
         {
             PlaceBuilding();
         }
-
         placementDelay++;
     }
 
@@ -241,25 +266,6 @@ public class BuildingManager : MonoBehaviour
 
     #endregion
 
-    //private void PlaceWallBuilding()
-    //{
-    //    if (Input.GetKey(KeyCode.Mouse0))
-    //    {
-    //        if (IsPositionEmpty())
-    //        {
-    //            if (currentBuildingHeightChecking.CanPlace)
-    //            {
-    //                var newCopy = GameObject.Instantiate(currentBuilding, new Vector3(
-    //                            currentBuilding.transform.position.x,
-    //                            currentBuildingHeightChecking.OptimalHeight,
-    //                            currentBuilding.transform.position.z),
-    //                            currentBuilding.transform.rotation);
-    //                    newCopy.IsPlaced = true;
-    //                    newCopy.GetComponent<HeightChecking>().enabled = false;
-    //            }
-    //        }
-    //    }
-    //}
     struct AxisLock
     {
         public char Axis { get; set; }
@@ -314,6 +320,7 @@ public class BuildingManager : MonoBehaviour
                                 currentBuilding.transform.rotation);
                             newCopy.IsPlaced = true;
                             newCopy.GetComponent<HeightChecking>().enabled = false;
+                            newCopy.GetComponent<Renderer>().material = currentBuildingMaterial;
                         }
                         else if(WallBuildingAxisLock.Value.Axis == 'z')
                         {
@@ -324,6 +331,7 @@ public class BuildingManager : MonoBehaviour
                                 currentBuilding.transform.rotation);
                             newCopy.IsPlaced = true;
                             newCopy.GetComponent<HeightChecking>().enabled = false;
+                            newCopy.GetComponent<Renderer>().material = currentBuildingMaterial;
                         }
                     }
                     else
@@ -335,6 +343,7 @@ public class BuildingManager : MonoBehaviour
                             currentBuilding.transform.rotation);
                         newCopy.IsPlaced = true;
                         newCopy.GetComponent<HeightChecking>().enabled = false;
+                        newCopy.GetComponent<Renderer>().material = currentBuildingMaterial;
                     }
                 }
             }
@@ -358,6 +367,7 @@ public class BuildingManager : MonoBehaviour
                                 currentBuilding.transform.rotation);
                         newCopy.IsPlaced = true;
                         newCopy.GetComponent<HeightChecking>().enabled = false;
+                        newCopy.GetComponent<Renderer>().material = currentBuildingMaterial;
                         placementDelay = 0;
                     }
                 }
@@ -376,9 +386,12 @@ public class BuildingManager : MonoBehaviour
                 {
                     Debug.Log(currentBuilding.transform.position);
                     currentBuilding.transform.GetComponent<HeightChecking>().enabled = false;
+                    currentBuilding.GetComponent<Renderer>().material = currentBuildingMaterial;
                     currentBuilding.IsPlaced = true;
                     currentBuildingHeightChecking = null;
                     currentBuildingCollisionManager = null;
+                    currentBuildingRenderer = null;
+                    currentBuildingMaterial = null;
                     currentBuilding = null;
                 }
             }
@@ -395,6 +408,8 @@ public class BuildingManager : MonoBehaviour
                 {
                     currentBuildingHeightChecking = null;
                     currentBuildingCollisionManager = null;
+                    currentBuildingRenderer = null;
+                    currentBuildingMaterial = null;
                     currentBuilding.Destroy();
                     currentBuilding = null;
                     cancelDelay = 0;

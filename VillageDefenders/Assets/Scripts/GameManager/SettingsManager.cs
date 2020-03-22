@@ -24,6 +24,9 @@ public class SettingsManager : MonoBehaviour
     public LayerMask UnitLayerMask;
     public List<Building> PlaceableBuildings;
 
+    public Material MaterialCanBuild;
+    public Material MaterialCantBuild;
+
     //Properties hidden in editor
     [HideInInspector]
     public BuildingManager BuildingManager;

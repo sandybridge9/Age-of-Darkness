@@ -275,6 +275,8 @@ MonoBehaviour:
   - {fileID: 6169576285954527984, guid: d96d0b16ee5c9724e89cc7d9215ad8fc, type: 3}
   - {fileID: 4212061169550847647, guid: 50c99df039ebdc2408c7779330fc5bab, type: 3}
   - {fileID: 508425209793004298, guid: 1ca725ef2d4b5ff4988c6076b58b3421, type: 3}
+  MaterialCanBuild: {fileID: 2100000, guid: 92b82f4761bd7c140803167f9c20837d, type: 2}
+  MaterialCantBuild: {fileID: 2100000, guid: b94782059a0a6004282d8a1a218230ec, type: 2}
   BuildingManager: {fileID: 0}
   SelectionManager: {fileID: 0}
 --- !u!45 &1017745185
@@ -431,7 +433,7 @@ Terrain:
   m_DrawInstanced: 0
   m_DrawTreesAndFoliage: 1
   m_ReflectionProbeUsage: 1
-  m_MaterialTemplate: {fileID: 2100000, guid: 08322733aecc46442b6c012b5d22c7d0, type: 2}
+  m_MaterialTemplate: {fileID: 2100000, guid: c5d97b468baaa2e4bb9d02cf425beba8, type: 2}
   m_BakeLightProbesForTrees: 1
   m_PreserveTreePrototypeLayers: 0
   m_DeringLightProbesForTrees: 1
