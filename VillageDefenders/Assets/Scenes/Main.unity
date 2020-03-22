@@ -132,9 +132,11 @@ GameObject:
   - component: {fileID: 1017745181}
   - component: {fileID: 1017745180}
   - component: {fileID: 1017745179}
-  - component: {fileID: 1017745183}
-  - component: {fileID: 1017745178}
   - component: {fileID: 1017745184}
+  - component: {fileID: 1017745183}
+  - component: {fileID: 1017745182}
+  - component: {fileID: 1017745178}
+  - component: {fileID: 1017745185}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -223,6 +225,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
+--- !u!114 &1017745182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1017745177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc6aa3d71da025642b3c341a11b567e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1017745183
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -250,11 +264,28 @@ MonoBehaviour:
   GroundLayerMask:
     serializedVersion: 2
     m_Bits: 512
+  BuildingLayerMask:
+    serializedVersion: 2
+    m_Bits: 256
+  UnitLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
   PlaceableBuildings:
+  - {fileID: 3625311228872381835, guid: e4fee4d9551855349b5f973c861b40e0, type: 3}
   - {fileID: 6169576285954527984, guid: d96d0b16ee5c9724e89cc7d9215ad8fc, type: 3}
   - {fileID: 4212061169550847647, guid: 50c99df039ebdc2408c7779330fc5bab, type: 3}
-  - {fileID: 3189865946154884408, guid: 1d6ec0d8f35edf74291f277148ff679c, type: 3}
-  - {fileID: 3625311228872381835, guid: e4fee4d9551855349b5f973c861b40e0, type: 3}
+  - {fileID: 508425209793004298, guid: 1ca725ef2d4b5ff4988c6076b58b3421, type: 3}
+  BuildingManager: {fileID: 0}
+  SelectionManager: {fileID: 0}
+--- !u!45 &1017745185
+Skybox:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1017745177}
+  m_Enabled: 1
+  m_CustomSkybox: {fileID: 2100000, guid: 47cd86021c335854592b2fcf105c3e2c, type: 2}
 --- !u!1 &1242721873
 GameObject:
   m_ObjectHideFlags: 0
@@ -400,7 +431,7 @@ Terrain:
   m_DrawInstanced: 0
   m_DrawTreesAndFoliage: 1
   m_ReflectionProbeUsage: 1
-  m_MaterialTemplate: {fileID: 10652, guid: 0000000000000000f000000000000000, type: 0}
+  m_MaterialTemplate: {fileID: 2100000, guid: 08322733aecc46442b6c012b5d22c7d0, type: 2}
   m_BakeLightProbesForTrees: 1
   m_PreserveTreePrototypeLayers: 0
   m_DeringLightProbesForTrees: 1

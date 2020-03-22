@@ -66,6 +66,7 @@
      <Compile Include="Assets\Scripts\Building\Buildings\Wall.cs" />
      <Compile Include="Assets\Scripts\Building\Buildings\WizardTower.cs" />
      <Compile Include="Assets\Scripts\Camera\CameraMovement.cs" />
+     <Compile Include="Assets\Scripts\GameManager\SelectionManager.cs" />
      <Compile Include="Assets\Scripts\GameManager\SettingsManager.cs" />
  <Reference Include="Unity.Timeline.Editor">
  <HintPath>D:/UnityProjects/VillageDefenders/VillageDefenders/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>

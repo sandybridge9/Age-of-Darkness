@@ -5,36 +5,41 @@ using UnityEngine;
 
 public class SettingsManager : MonoBehaviour
 {
-    private static SettingsManager instance = null;
-    public static SettingsManager Instance
-    {
-        get
-        {
-            //if (instance == null)
-            //{
-            //    instance = new SettingsManager();
-            //}
-            return instance;
-        }
-        set
-        {
-            instance = value;
-        }
-    }
+    #region Singleton
 
-    public static BuildingManager BuildingManager;
+    public static SettingsManager Instance { get; set; }
 
-    public LayerMask GroundLayerMask;
-    public List<Building> PlaceableBuildings;
-
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         Instance = this;
-        BuildingManager = GetComponent<BuildingManager>();
     }
 
-    // Update is called once per frame
+    #endregion
+
+    #region Properties
+
+    //Editor properties
+    public LayerMask GroundLayerMask;
+    public LayerMask BuildingLayerMask;
+    public LayerMask UnitLayerMask;
+    public List<Building> PlaceableBuildings;
+
+    //Properties hidden in editor
+    [HideInInspector]
+    public BuildingManager BuildingManager;
+    [HideInInspector]
+    public SelectionManager SelectionManager;
+
+
+
+    #endregion
+
+    void Start()
+    {
+        BuildingManager = GetComponent<BuildingManager>();
+        SelectionManager = GetComponent<SelectionManager>();
+    }
+
     void Update()
     {
         

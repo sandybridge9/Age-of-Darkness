@@ -10,7 +10,8 @@ public class CameraMovement : MonoBehaviour
     private float verticalInput;
     private float wheelInput;
     private bool groundView;
-    private float groundViewCooldown = 60;
+    private float groundViewDelay = 60f;
+    private float rotationDelay = 60f;
 
     #endregion
 
@@ -36,6 +37,18 @@ public class CameraMovement : MonoBehaviour
     void FixedUpdate()
     {
         //TODO: Add user control customization -> Global settings?
+        Movement();
+        Zooming();
+        Rotation();
+        GroundView();
+    }
+
+    #endregion
+
+    #region Actions
+
+    public void Movement()
+    {
         //Manages vertical movement of camera
         if (verticalInput != 0)
         {
@@ -70,73 +83,125 @@ public class CameraMovement : MonoBehaviour
         //Manages horizontal movement of camera
         if (horizontalInput != 0)
         {
-            if(horizontalInput > 0)
+            if (horizontalInput > 0)
             {
                 //Move to the right
                 transform.position += new Vector3(transform.right.x, 0, transform.right.z * horizontalInput) * MoveSpeed * Time.deltaTime;
             }
-            else if(horizontalInput < 0)
+            else if (horizontalInput < 0)
             {
                 //Move to the left
                 transform.position -= new Vector3(transform.right.x, 0, transform.right.z * -horizontalInput) * MoveSpeed * Time.deltaTime;
             }
         }
-        //Manages zooming
+    }
+
+    public void Zooming()
+    {
         if (wheelInput != 0)
         {
-            if (wheelInput > 0 && transform.position.y <= MinimumZoomY)
+            if (groundView == true)
             {
-                //Do nothing, because minimum Y height is reached
+                var cam = transform.GetComponent<Camera>();
+                cam.orthographicSize -= wheelInput;
             }
             else
             {
-                transform.position += ScrollSpeed * new Vector3(0, -wheelInput, 0);
+                if (wheelInput > 0 && transform.position.y <= MinimumZoomY)
+                {
+                    //Do nothing, because minimum Y height is reached
+                }
+                else
+                {
+                    transform.position += ScrollSpeed * new Vector3(0, -wheelInput, 0);
+                }
             }
         }
+    }
 
-        //Manages Rotation of the camera (Rotates only around Y axis)
+    //Manages Rotation of the camera (Rotates only around Y axis)
+    public void Rotation()
+    {
+        //var currentRotation = transform.rotation.eulerAngles;
+        //if (Input.GetKey(KeyCode.E))
+        //{
+        //    if (currentRotation.y >= 0)
+        //    {
+        //        transform.Rotate(0, RotationSpeed, 0, Space.World);
+        //    }
+        //    else if (currentRotation.y < 0)
+        //    {
+        //        transform.Rotate(0, RotationSpeed * -1, 0, Space.World);
+        //    }
+        //}
+        //if (Input.GetKey(KeyCode.Q))
+        //{
+        //    if (currentRotation.y > 0)
+        //    {
+        //        transform.Rotate(0, RotationSpeed * -1, 0, Space.World);
+        //    }
+        //    else if (currentRotation.y <= 0)
+        //    {
+        //        transform.Rotate(0, RotationSpeed, 0, Space.World);
+        //    }
+        //}
         var currentRotation = transform.rotation.eulerAngles;
         if (Input.GetKey(KeyCode.E))
         {
-            if (currentRotation.y >= 0)
+            if (rotationDelay >= 60)
             {
-                transform.Rotate(0, RotationSpeed, 0, Space.World);
-            }
-            else if (currentRotation.y < 0)
-            {
-                transform.Rotate(0, RotationSpeed * -1, 0, Space.World);
+                if (currentRotation.y >= 0)
+                {
+                    transform.Rotate(0, 90, 0, Space.World);
+                }
+                else
+                {
+                    transform.Rotate(0, -90, 0, Space.World);
+                }
+                rotationDelay = 0;
             }
         }
         if (Input.GetKey(KeyCode.Q))
         {
-            if (currentRotation.y > 0)
+            if (rotationDelay >= 60)
             {
-                transform.Rotate(0, RotationSpeed * -1, 0, Space.World);
-            }
-            else if (currentRotation.y <= 0)
-            {
-                transform.Rotate(0, RotationSpeed, 0, Space.World);
+                if (currentRotation.y > 0)
+                {
+                    transform.Rotate(0, -90, 0, Space.World);
+                }
+                else
+                {
+                    transform.Rotate(0, 90, 0, Space.World);
+                }
+                rotationDelay = 0;
             }
         }
+        rotationDelay++;
+    }
 
+    public void GroundView()
+    {
         if (Input.GetKey(KeyCode.Space))
         {
-            if (groundViewCooldown >= 60)
+            if (groundViewDelay >= 60)
             {
+                var thisCamera = GetComponent<Camera>();
                 if (groundView)
                 {
-                    transform.Rotate(-45,0,0);
+                    transform.Rotate(-45, 0, 0);
                     groundView = false;
+                    thisCamera.orthographic = false;
                 }
                 else
                 {
                     transform.Rotate(45, 0, 0);
                     groundView = true;
+                    thisCamera.orthographic = true;
                 }
-                groundViewCooldown = 0;
+                groundViewDelay = 0;
             }
         }
-        groundViewCooldown++;
+        groundViewDelay++;
     }
 
     #endregion

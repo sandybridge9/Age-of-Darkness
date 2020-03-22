@@ -89,7 +89,7 @@ public class HeightChecking : MonoBehaviour
         if (successCount < heightCheckers.transform.childCount)
         {
             //Try to correct the height of currently selected building
-            transform.position += new Vector3(0, 0.05f, 0);
+            transform.position += new Vector3(0, 0.5f, 0);
         }
         //If ground was hit by all height checkers, find optimal height for building placement
         //And set the correct height for currently selected building (to avoid floating).
