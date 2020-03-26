@@ -23,7 +23,6 @@ public class SelectionManager : MonoBehaviour
         {
             if (!SettingsManager.Instance.BuildingManager.HasSelectedBuilding())
             {
-                Debug.Log("Has no selected buildings");
                 DeSelectCurrentGameObject();
                 var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hitInfo;
@@ -31,7 +30,6 @@ public class SelectionManager : MonoBehaviour
                 {
                     if (hitInfo.transform.GetComponent<Building>())
                     {
-                        Debug.Log("Selected a building");
                         SelectGameObject(hitInfo.transform.gameObject);
                     }
                     //TODO: else if check if hitInfo hit an unit
@@ -39,7 +37,6 @@ public class SelectionManager : MonoBehaviour
             }
             else
             {
-                Debug.Log("Deselected");
                 DeSelectCurrentGameObject();
             }
         }

@@ -332,7 +332,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Health: 100
-  Cost: 10
+  Cost: 50
   BuildingType: 5
   Damage: 25
   FireRate: 3

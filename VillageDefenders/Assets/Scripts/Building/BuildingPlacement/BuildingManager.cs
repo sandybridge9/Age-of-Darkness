@@ -74,17 +74,16 @@ public class BuildingManager : MonoBehaviour
 
     #region HelperMethods
 
-    //Checks if current building position contains any other buildings
-    bool IsPositionEmpty()
+    //Checks if current building position contains any other buildings and if building is on terrain that is even enough for placement
+    bool IsPositionViable()
     {
-        Debug.Log("Collider count: " + currentBuildingCollisionManager.Colliders.Count);
-        if (currentBuildingCollisionManager.Colliders.Count > 0)
+        if (!currentBuildingCollisionManager.IsColliding() && currentBuildingHeightChecking.CanPlace)
         {
-            return false;
+            return true;
         }
         else
         {
-            return true;
+            return false;
         }
     }
 
@@ -104,7 +103,6 @@ public class BuildingManager : MonoBehaviour
             currentBuildingHeightChecking = currentBuildingSelection.GetComponent<HeightChecking>();
         }
         GetMeshRenderersOfCurrentBuilding();
-        Debug.Log("Finished Setting item");
     }
 
     private void MoveCurrentObjectToMouse()
@@ -182,7 +180,7 @@ public class BuildingManager : MonoBehaviour
         if (currentBuildingSelection.BuildingType == BuildingTypes.WoodenWall)
         {
             //PlaceSpammableBuilding();
-            PlaceWallBuilding();
+            PlaceWall();
         }
         else if (currentBuildingSelection.BuildingType == BuildingTypes.Townhall)
         {
@@ -195,6 +193,7 @@ public class BuildingManager : MonoBehaviour
         placementDelay++;
     }
 
+    //Axis lock is used for wall building, to make straight line wall buiilding easier.
     struct AxisLock
     {
         public char Axis { get; set; }
@@ -207,14 +206,13 @@ public class BuildingManager : MonoBehaviour
         }
     }
 
-    private void PlaceWallBuilding()
+    private void PlaceWall()
     {
         //If user is holding x key down -> Lock X axis
         if (Input.GetKey(KeyCode.X))
         {
             if (WallBuildingAxisLock == null || WallBuildingAxisLock.Value.Axis == 'z')
             {
-                Debug.Log("New Axis X Lock");
                 WallBuildingAxisLock = new AxisLock('x', currentBuildingSelection.transform.position.x);
             }
         }
@@ -234,46 +232,31 @@ public class BuildingManager : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Mouse0))
         {
-            if (IsPositionEmpty())
+            if (IsPositionViable())
             {
-                if (currentBuildingHeightChecking.CanPlace)
+                if (WallBuildingAxisLock != null)
                 {
-                    if (WallBuildingAxisLock != null)
+                    if (WallBuildingAxisLock.Value.Axis == 'x')
                     {
-                        if (WallBuildingAxisLock.Value.Axis == 'x')
-                        {
-                            var newCopy = GameObject.Instantiate(currentBuilding, new Vector3(
-                                    WallBuildingAxisLock.Value.Value,
-                                    currentBuildingHeightChecking.OptimalHeight,
-                                    currentBuildingSelection.transform.position.z),
-                                currentBuildingSelection.transform.rotation);
-                            newCopy.IsPlaced = true;
-                            newCopy.GetComponent<HeightChecking>().enabled = false;
-                            newCopy.GetComponent<BuildingCollisionManager>().enabled = false;
-                        }
-                        else if(WallBuildingAxisLock.Value.Axis == 'z')
-                        {
-                            var newCopy = GameObject.Instantiate(currentBuilding, new Vector3(
-                                    currentBuildingSelection.transform.position.x,
-                                    currentBuildingHeightChecking.OptimalHeight,
-                                    WallBuildingAxisLock.Value.Value),
-                                currentBuildingSelection.transform.rotation);
-                            newCopy.IsPlaced = true;
-                            newCopy.GetComponent<HeightChecking>().enabled = false;
-                            newCopy.GetComponent<BuildingCollisionManager>().enabled = false;
-                        }
-                    }
-                    else
-                    {
-                        var newCopy = GameObject.Instantiate(currentBuilding, new Vector3(
-                                currentBuildingSelection.transform.position.x,
-                                currentBuildingHeightChecking.OptimalHeight,
-                                currentBuildingSelection.transform.position.z),
+                        BuildBuilding(WallBuildingAxisLock.Value.Value,
+                            currentBuildingHeightChecking.OptimalHeight,
+                            currentBuildingSelection.transform.position.z,
                             currentBuildingSelection.transform.rotation);
-                        newCopy.IsPlaced = true;
-                        newCopy.GetComponent<HeightChecking>().enabled = false;
-                        newCopy.GetComponent<BuildingCollisionManager>().enabled = false;
                     }
+                    else if (WallBuildingAxisLock.Value.Axis == 'z')
+                    {
+                        BuildBuilding(currentBuildingSelection.transform.position.x,
+                            currentBuildingHeightChecking.OptimalHeight,
+                            WallBuildingAxisLock.Value.Value,
+                            currentBuildingSelection.transform.rotation);
+                    }
+                }
+                else
+                {
+                    BuildBuilding(currentBuildingSelection.transform.position.x,
+                        currentBuildingHeightChecking.OptimalHeight,
+                        currentBuildingSelection.transform.position.z,
+                        currentBuildingSelection.transform.rotation);
                 }
             }
         }
@@ -281,16 +264,12 @@ public class BuildingManager : MonoBehaviour
 
     private void PlaceBuilding()
     {
-        if (Input.GetKey(KeyCode.Mouse0) && IsPositionEmpty() && currentBuildingHeightChecking.CanPlace && placementDelay >= 120f)
+        if (Input.GetKey(KeyCode.Mouse0) && IsPositionViable() && placementDelay >= 120f)
         {
-            var newCopy = GameObject.Instantiate(currentBuilding, new Vector3(
-                    currentBuildingSelection.transform.position.x,
-                    currentBuildingHeightChecking.OptimalHeight,
-                    currentBuildingSelection.transform.position.z),
-                    currentBuildingSelection.transform.rotation);
-            newCopy.IsPlaced = true;
-            newCopy.GetComponent<HeightChecking>().enabled = false;
-            newCopy.GetComponent<BuildingCollisionManager>().enabled = false;
+            BuildBuilding(currentBuildingSelection.transform.position.x,
+                currentBuildingHeightChecking.OptimalHeight,
+                currentBuildingSelection.transform.position.z,
+                currentBuildingSelection.transform.rotation);
             placementDelay = 0;
         }
     }
@@ -298,19 +277,30 @@ public class BuildingManager : MonoBehaviour
     //Placement for unique building(Buildings that you can't have several of)
     private void PlaceUniqueBuilding()
     {
-        if (Input.GetKey(KeyCode.Mouse0) && IsPositionEmpty() && currentBuildingHeightChecking.CanPlace)
+        if (Input.GetKey(KeyCode.Mouse0) && IsPositionViable())
         {
-            Debug.Log(currentBuilding.transform.position);
-            var newCopy = GameObject.Instantiate(currentBuilding, new Vector3(
-                    currentBuildingSelection.transform.position.x,
-                    currentBuildingHeightChecking.OptimalHeight,
-                    currentBuildingSelection.transform.position.z),
-                    currentBuildingSelection.transform.rotation);
-            newCopy.IsPlaced = true;
-            newCopy.GetComponent<HeightChecking>().enabled = false;
-            newCopy.GetComponent<BuildingCollisionManager>().enabled = false;
+            BuildBuilding(currentBuildingSelection.transform.position.x,
+                currentBuildingHeightChecking.OptimalHeight,
+                currentBuildingSelection.transform.position.z,
+                currentBuildingSelection.transform.rotation);
             CleanUp();
         }
+    }
+
+    //Method responsible for instantiating a new building and setting up its components
+    private void BuildBuilding(float x, float y, float z, Quaternion rotation)
+    {
+        Debug.Log(x+" "+y+" "+z);
+        BuildBuilding(x, y, z, rotation, currentBuilding);
+    }
+
+    //Method responsible for instantiating a new building and setting up its components
+    private void BuildBuilding(float x, float y, float z, Quaternion rotation, Building building)
+    {
+        var newCopy = GameObject.Instantiate(building, new Vector3(x,y,z), rotation);
+        newCopy.IsPlaced = true;
+        newCopy.GetComponent<HeightChecking>().enabled = false;
+        newCopy.GetComponent<BuildingCollisionManager>().enabled = false;
     }
 
     private void CancelSelection()
@@ -352,7 +342,6 @@ public class BuildingManager : MonoBehaviour
         }
         else
         {
-            Debug.Log(parentRenderer);
             //Add parent object renderer
             currentlySelectedBuildingRenderers.Add(parentRenderer);
         }
@@ -362,7 +351,7 @@ public class BuildingManager : MonoBehaviour
     private void ChangeColor()
     {
         //If position is clear and the height is good - set green color for all materials in all renderers
-        if (IsPositionEmpty() && currentBuildingHeightChecking.CanPlace)
+        if (IsPositionViable())
         {
             foreach(var renderer in currentlySelectedBuildingRenderers)
             {

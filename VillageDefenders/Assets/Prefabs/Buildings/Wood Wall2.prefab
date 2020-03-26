@@ -109,7 +109,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Health: 100
-  Cost: 10
+  Cost: 5
   BuildingType: 3
 --- !u!114 &8805846662568058139
 MonoBehaviour:

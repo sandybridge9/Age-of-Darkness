@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -11,7 +12,7 @@ public class BuildingCollisionManager : MonoBehaviour
 
     [HideInInspector]
     //List used to keep track of all other colliders this building collides with
-    public List<Collider> Colliders = new List<Collider>();
+    private List<Collider> Colliders = new List<Collider>();
     
     #endregion
 
@@ -31,6 +32,11 @@ public class BuildingCollisionManager : MonoBehaviour
         {
             Colliders.Remove(c);
         }
+    }
+
+    public bool IsColliding()
+    {
+        return Colliders.Any();
     }
 
     #endregion
