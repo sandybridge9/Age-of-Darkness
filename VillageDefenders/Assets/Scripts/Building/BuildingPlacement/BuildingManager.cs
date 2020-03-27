@@ -2,8 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using UnityEngine;
 using UnityEngine.Windows.WebCam;
+using Quaternion = UnityEngine.Quaternion;
+using Vector3 = UnityEngine.Vector3;
 
 public class BuildingManager : MonoBehaviour
 {
@@ -24,7 +27,9 @@ public class BuildingManager : MonoBehaviour
     private float placementDelay = 120f;
     private LayerMask groundLayerMask;
 
+    //Fields used in wall placement
     private AxisLock? WallBuildingAxisLock;
+    private BoxCollider wallBoxCollider;
     private bool creatingWall;
     private Building lastWall = null;
 
@@ -93,8 +98,6 @@ public class BuildingManager : MonoBehaviour
         CleanUp();
         currentBuilding = b;
         currentBuildingSelection = Instantiate(b);
-        //TODO fix wall transparent state
-        //currentBuildingRenderer = currentBuilding.GetComponent<Renderer>();
 
         currentBuildingCollisionManager = currentBuildingSelection.GetComponent<BuildingCollisionManager>();
         if (currentBuildingSelection.GetComponent<HeightChecking>() != null)
@@ -103,6 +106,11 @@ public class BuildingManager : MonoBehaviour
             currentBuildingHeightChecking = currentBuildingSelection.GetComponent<HeightChecking>();
         }
         GetMeshRenderersOfCurrentBuilding();
+
+        if (b.BuildingType == BuildingTypes.WoodenWall)
+        {
+            wallBoxCollider = currentBuildingSelection.GetComponentInChildren<BoxCollider>();
+        }
     }
 
     private void MoveCurrentObjectToMouse()
@@ -115,8 +123,15 @@ public class BuildingManager : MonoBehaviour
             //Snapping
             if (currentBuildingSelection.BuildingType == BuildingTypes.WoodenWall)
             {
-                var wallTileSize = currentBuildingSelection.transform.Find("Wood Wall").Find("Wall").Find("Mesh")
-                    .GetComponent<MeshRenderer>().bounds.size.z;
+                //TODO this part is actually pretty bad, use GetComponentInChildren
+                //var wallTileSize = currentBuildingSelection.transform.Find("Wood Wall").Find("Wall").Find("Mesh")
+                //    .GetComponent<MeshRenderer>().bounds.size.z;
+                //float wallTileSize = wallBoxCollider.bounds.size.x > wallBoxCollider.bounds.size.y 
+                //    ? wallBoxCollider.bounds.size.x 
+                //    : wallBoxCollider.bounds.size.y;
+                float wallTileSize = wallBoxCollider.size.x > wallBoxCollider.size.z
+                    ? wallBoxCollider.size.x
+                    : wallBoxCollider.size.z;
 
                 if (WallBuildingAxisLock != null)
                 {
@@ -206,61 +221,157 @@ public class BuildingManager : MonoBehaviour
         }
     }
 
+    private Vector3? startingLocation;
+    private Vector3? endLocation;
+    private Renderer wallRenderer;
+    private Bounds? wallBounds;
+    private List<Building> walls;
+    private float stepSize;
+
     private void PlaceWall()
     {
-        //If user is holding x key down -> Lock X axis
-        if (Input.GetKey(KeyCode.X))
-        {
-            if (WallBuildingAxisLock == null || WallBuildingAxisLock.Value.Axis == 'z')
-            {
-                WallBuildingAxisLock = new AxisLock('x', currentBuildingSelection.transform.position.x);
-            }
-        }
-        //If user is holding z key down -> Lock Z axis
-        else if (Input.GetKey(KeyCode.Z))
-        {
-            if (WallBuildingAxisLock == null || WallBuildingAxisLock.Value.Axis == 'x')
-            {
-                WallBuildingAxisLock = new AxisLock('z', currentBuildingSelection.transform.position.z);
-            }
-        }
-        // User has released x/z buttons, reset lock
-        else
-        {
-            WallBuildingAxisLock = null;
-        }
-
         if (Input.GetKey(KeyCode.Mouse0))
         {
-            if (IsPositionViable())
+            RaycastHit hitInfo;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out hitInfo, 10000f, groundLayerMask))
             {
-                if (WallBuildingAxisLock != null)
+                if (startingLocation == null)
                 {
-                    if (WallBuildingAxisLock.Value.Axis == 'x')
-                    {
-                        BuildBuilding(WallBuildingAxisLock.Value.Value,
-                            currentBuildingHeightChecking.OptimalHeight,
-                            currentBuildingSelection.transform.position.z,
-                            currentBuildingSelection.transform.rotation);
-                    }
-                    else if (WallBuildingAxisLock.Value.Axis == 'z')
-                    {
-                        BuildBuilding(currentBuildingSelection.transform.position.x,
-                            currentBuildingHeightChecking.OptimalHeight,
-                            WallBuildingAxisLock.Value.Value,
-                            currentBuildingSelection.transform.rotation);
-                    }
+                    startingLocation = currentBuildingSelection.transform.position; //hitInfo.point;
                 }
                 else
                 {
-                    BuildBuilding(currentBuildingSelection.transform.position.x,
-                        currentBuildingHeightChecking.OptimalHeight,
-                        currentBuildingSelection.transform.position.z,
-                        currentBuildingSelection.transform.rotation);
+                    foreach (var wall in walls)
+                    {
+                        wall.Destroy();
+                    }
                 }
+                endLocation = hitInfo.point;
+                MakeWallBetweenPoints();
+                Debug.Log("start: " +startingLocation +" end: " +endLocation);
+            }
+        }
+        //Reset locations on release
+        else
+        {
+            if (startingLocation != null || endLocation != null)
+            {
+                foreach (var wall in walls)
+                {
+                    wall.Destroy();
+                }
+                startingLocation = null;
+                endLocation = null;
+                walls = null;
+                wallBounds = null;
+                wallRenderer = null;
             }
         }
     }
+
+    private void MakeWallBetweenPoints()
+    {
+        walls = new List<Building>();
+        Vector3 currentLocation = startingLocation.Value;
+        Vector3 currentLocationFloored;
+        if (wallBounds == null || wallRenderer == null)
+        {
+            wallRenderer = currentBuilding.GetComponentInChildren<Renderer>();
+            wallBounds = wallRenderer.bounds;
+            //stepSize = wallBounds.Value.size.x > wallBounds.Value.size.z
+            //    ? wallBounds.Value.size.x
+            //    : wallBounds.Value.size.z;
+            //stepSize = wallBounds.Value.size.z;
+            stepSize = wallBoxCollider.bounds.size.x > wallBoxCollider.bounds.size.z
+                ? wallBoxCollider.bounds.size.x
+                : wallBoxCollider.bounds.size.z;
+        }
+        endLocation = currentBuildingSelection.transform.position;
+        Vector3 difference = new Vector3(endLocation.Value.x - startingLocation.Value.x,
+                                        endLocation.Value.y - startingLocation.Value.y,
+                                        endLocation.Value.z - startingLocation.Value.z);
+        var firstWall = GameObject.Instantiate(currentBuilding, startingLocation.Value, currentBuildingSelection.transform.rotation);
+        walls.Add(firstWall);
+        Vector3 nextWallLocation = startingLocation.Value;
+        Vector3 wallCount = new Vector3(difference.x / stepSize, difference.y, difference.z / stepSize);
+        int count = 0;
+        while (nextWallLocation != endLocation && count < 100 && wallCount != new Vector3(0, 0, 0))
+        {
+            Debug.Log(wallCount.x +" " +wallCount.z);
+            count++;
+            var nextWall = GameObject.Instantiate(currentBuilding, nextWallLocation, currentBuildingSelection.transform.rotation);
+            walls.Add(nextWall);
+            float wallCountX = Math.Round(wallCount.x) == 0 ? 0 : (float)Math.Round(wallCount.x / Math.Abs(wallCount.x));
+            float wallCountZ = Math.Round(wallCount.z) == 0 ? 0 : (float)Math.Round(wallCount.z / Math.Abs(wallCount.z));
+            nextWallLocation = new Vector3(nextWallLocation.x + wallCountX * stepSize,
+                                            nextWallLocation.y,
+                                            nextWallLocation.z + wallCountZ * stepSize);
+            float newWallCountX = Math.Round(wallCount.x) == 0 ? 0 : (float)Math.Round(wallCount.x - (wallCount.x / Math.Abs(wallCount.x)));
+            float newWallCountZ = Math.Round(wallCount.z) == 0 ? 0 : (float)Math.Round(wallCount.z - (wallCount.z / Math.Abs(wallCount.z)));
+            wallCount = new Vector3(newWallCountX, wallCount.y, newWallCountZ);
+            Debug.Log(wallCount.x + " " + wallCount.z);
+
+            //Debug.Log(count +" CL: " + nextWallLocation + " EL: " +endLocation + " dif: " + wallCount);
+            //Debug.Log("iteration: " +count + " wallcount: " + wallCount);
+        }
+    }
+
+    //private void PlaceWall()
+    //{
+    //    //If user is holding x key down -> Lock X axis
+    //    if (Input.GetKey(KeyCode.X))
+    //    {
+    //        if (WallBuildingAxisLock == null || WallBuildingAxisLock.Value.Axis == 'z')
+    //        {
+    //            WallBuildingAxisLock = new AxisLock('x', currentBuildingSelection.transform.position.x);
+    //        }
+    //    }
+    //    //If user is holding z key down -> Lock Z axis
+    //    else if (Input.GetKey(KeyCode.Z))
+    //    {
+    //        if (WallBuildingAxisLock == null || WallBuildingAxisLock.Value.Axis == 'x')
+    //        {
+    //            WallBuildingAxisLock = new AxisLock('z', currentBuildingSelection.transform.position.z);
+    //        }
+    //    }
+    //    // User has released x/z buttons, reset lock
+    //    else
+    //    {
+    //        WallBuildingAxisLock = null;
+    //    }
+
+    //    if (Input.GetKey(KeyCode.Mouse0))
+    //    {
+    //        if (IsPositionViable())
+    //        {
+    //            if (WallBuildingAxisLock != null)
+    //            {
+    //                if (WallBuildingAxisLock.Value.Axis == 'x')
+    //                {
+    //                    BuildBuilding(WallBuildingAxisLock.Value.Value,
+    //                        currentBuildingHeightChecking.OptimalHeight,
+    //                        currentBuildingSelection.transform.position.z,
+    //                        currentBuildingSelection.transform.rotation);
+    //                }
+    //                else if (WallBuildingAxisLock.Value.Axis == 'z')
+    //                {
+    //                    BuildBuilding(currentBuildingSelection.transform.position.x,
+    //                        currentBuildingHeightChecking.OptimalHeight,
+    //                        WallBuildingAxisLock.Value.Value,
+    //                        currentBuildingSelection.transform.rotation);
+    //                }
+    //            }
+    //            else
+    //            {
+    //                BuildBuilding(currentBuildingSelection.transform.position.x,
+    //                    currentBuildingHeightChecking.OptimalHeight,
+    //                    currentBuildingSelection.transform.position.z,
+    //                    currentBuildingSelection.transform.rotation);
+    //            }
+    //        }
+    //    }
+    //}
 
     private void PlaceBuilding()
     {
@@ -290,7 +401,6 @@ public class BuildingManager : MonoBehaviour
     //Method responsible for instantiating a new building and setting up its components
     private void BuildBuilding(float x, float y, float z, Quaternion rotation)
     {
-        Debug.Log(x+" "+y+" "+z);
         BuildBuilding(x, y, z, rotation, currentBuilding);
     }
 

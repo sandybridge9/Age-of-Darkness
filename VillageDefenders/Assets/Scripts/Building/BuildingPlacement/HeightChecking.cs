@@ -106,7 +106,7 @@ public class HeightChecking : MonoBehaviour
     //Gets the optimal height for building placement
     public void SetOptimalHeightForBuildingPlacement(List<float> heights)
     {
-        //All height checkers have the same Y coordinate
+        //All height checkers have the almost same Y coordinate, so it doesn't matter which one we take
         var heightCheckerHeight = heightCheckers.transform.GetChild(0).gameObject.transform.position.y;
         //Calculate difference according to shortestHeight, to avoid Placed building floating
         var difference = heightCheckerHeight - shortestHeight;
