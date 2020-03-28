@@ -16,16 +16,15 @@ public class HeightChecking : MonoBehaviour
 
     private LayerMask groundLayerMask;
     private GameObject heightCheckers;
+    private float BuildingHeightCheckerSensitivity;
 
     #endregion
 
     #region Properties
 
     public float MaximumHeightDifference = 1f;
-    [HideInInspector]
-    public bool CanPlace = false;
-    [HideInInspector]
-    public float OptimalHeight;
+    [HideInInspector] public bool CanPlace = false;
+    [HideInInspector] public float OptimalHeight;
 
     #endregion
 
@@ -34,6 +33,7 @@ public class HeightChecking : MonoBehaviour
     void Start()
     {
         heightCheckers = transform.Find("HeightCheckers").gameObject ?? null;
+        BuildingHeightCheckerSensitivity = SettingsManager.Instance.BuildingHeightCheckerSensitivity;
     }
 
     void Update()
@@ -42,6 +42,7 @@ public class HeightChecking : MonoBehaviour
         {
             groundLayerMask = SettingsManager.Instance.GroundLayerMask;
         }
+
         if (heightCheckers != null)
         {
             CheckHeights();
@@ -57,7 +58,7 @@ public class HeightChecking : MonoBehaviour
 
     #region Height Checking
 
-    void CheckHeights()
+    public void CheckHeights()
     {
         //Reset values
         tallestHeight = 0;
@@ -79,17 +80,19 @@ public class HeightChecking : MonoBehaviour
                 {
                     tallestHeight = info.point.y;
                 }
+
                 if (info.point.y < shortestHeight || shortestHeight == 0)
                 {
                     shortestHeight = info.point.y;
                 }
             }
         }
+
         //If Ground wasn't hit by some of the height checkers
         if (successCount < heightCheckers.transform.childCount)
         {
             //Try to correct the height of currently selected building
-            transform.position += new Vector3(0, 0.5f, 0);
+            transform.position += new Vector3(0, BuildingHeightCheckerSensitivity, 0);
         }
         //If ground was hit by all height checkers, find optimal height for building placement
         //And set the correct height for currently selected building (to avoid floating).
@@ -125,7 +128,24 @@ public class HeightChecking : MonoBehaviour
                 lowestDifference = difference;
             }
         }
-        transform.position = new Vector3(transform.position.x, transform.position.y - lowestDifference + 0.1f, transform.position.z);
+
+        transform.position = new Vector3(transform.position.x, transform.position.y - lowestDifference + 0.1f,
+            transform.position.z);
+    }
+
+    public static float GetOptimalHeightAtWorldPoint(float x, float z)
+    {
+        RaycastHit info;
+        //If raycast hits the ground
+        if (Physics.Raycast(new Vector3(x, 500, z), Vector3.down, out info, 1000, SettingsManager.Instance.GroundLayerMask))
+        {
+            //Return a slighly bigger height to avoid objects appearing in the ground
+            return info.point.y + 0.1f;
+        }
+        else
+        {
+            return 0;
+        }
     }
 
     #endregion

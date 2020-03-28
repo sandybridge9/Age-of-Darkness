@@ -12,20 +12,22 @@ public class BuildingManager : MonoBehaviour
 {
     #region Fields
 
+    //Current building selection fields
     private BuildingCollisionManager currentBuildingCollisionManager; //Used to detect if there is already a building in place
     private Building currentBuilding; //Current building that needs to be placed -> for instantiating
     private Building currentBuildingSelection; //Current building for checking placement position, changing color etc.
     private HeightChecking currentBuildingHeightChecking; //Responsible for checking height of currently selected building
-
     private List<Renderer> currentlySelectedBuildingRenderers;
-    private Material materialCanBuild;
-    private Material materialCantBuild;
 
-    private float tileSize = 0.5f; // Grid snapping step size
+    //Private settings used in internal logic
+    private List<Building> allBuildings;
+    private const float tileSize = 0.5f; // Grid snapping step size
     private float rotationDelay = 60f; // Used to delay rotation
     private float cancelDelay = 60f; // Used to delay canceling
     private float placementDelay = 120f;
     private LayerMask groundLayerMask;
+    private Material materialCanBuild;
+    private Material materialCantBuild;
 
     //Fields used in wall placement
     private AxisLock? WallBuildingAxisLock;
@@ -49,6 +51,8 @@ public class BuildingManager : MonoBehaviour
         materialCanBuild = SettingsManager.Instance.MaterialCanBuild;
         materialCantBuild = SettingsManager.Instance.MaterialCantBuild;
         currentlySelectedBuildingRenderers = new List<Renderer>();
+        allBuildings = new List<Building>();
+        walls = new List<Building>();
     }
 
     void Update()
@@ -110,6 +114,11 @@ public class BuildingManager : MonoBehaviour
         if (b.BuildingType == BuildingTypes.WoodenWall)
         {
             wallBoxCollider = currentBuildingSelection.GetComponentInChildren<BoxCollider>();
+            wallRenderer = currentBuilding.GetComponentInChildren<Renderer>();
+            wallBounds = wallRenderer.bounds;
+            stepSize = wallBoxCollider.bounds.size.x > wallBoxCollider.bounds.size.z
+                ? wallBoxCollider.bounds.size.x
+                : wallBoxCollider.bounds.size.z;
         }
     }
 
@@ -123,12 +132,6 @@ public class BuildingManager : MonoBehaviour
             //Snapping
             if (currentBuildingSelection.BuildingType == BuildingTypes.WoodenWall)
             {
-                //TODO this part is actually pretty bad, use GetComponentInChildren
-                //var wallTileSize = currentBuildingSelection.transform.Find("Wood Wall").Find("Wall").Find("Mesh")
-                //    .GetComponent<MeshRenderer>().bounds.size.z;
-                //float wallTileSize = wallBoxCollider.bounds.size.x > wallBoxCollider.bounds.size.y 
-                //    ? wallBoxCollider.bounds.size.x 
-                //    : wallBoxCollider.bounds.size.y;
                 float wallTileSize = wallBoxCollider.size.x > wallBoxCollider.size.z
                     ? wallBoxCollider.size.x
                     : wallBoxCollider.size.z;
@@ -208,7 +211,7 @@ public class BuildingManager : MonoBehaviour
         placementDelay++;
     }
 
-    //Axis lock is used for wall building, to make straight line wall buiilding easier.
+    //Axis lock is used for wall building, to make straight line wall building easier.
     struct AxisLock
     {
         public char Axis { get; set; }
@@ -227,40 +230,39 @@ public class BuildingManager : MonoBehaviour
     private Bounds? wallBounds;
     private List<Building> walls;
     private float stepSize;
+    private bool isBuildingWalls;
 
     private void PlaceWall()
     {
         if (Input.GetKey(KeyCode.Mouse0))
         {
-            RaycastHit hitInfo;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out hitInfo, 10000f, groundLayerMask))
+            isBuildingWalls = true;
+            if (startingLocation == null)
             {
-                if (startingLocation == null)
-                {
-                    startingLocation = currentBuildingSelection.transform.position; //hitInfo.point;
-                }
-                else
-                {
-                    foreach (var wall in walls)
-                    {
-                        wall.Destroy();
-                    }
-                }
-                endLocation = hitInfo.point;
+                //position where mouse button was initially clicked
+                startingLocation = currentBuildingSelection.transform.position;
+                endLocation = currentBuildingSelection.transform.position;
+                walls = new List<Building>();
                 MakeWallBetweenPoints();
-                Debug.Log("start: " +startingLocation +" end: " +endLocation);
+            }
+            else if(LocationChanged())
+            {
+                ClearWallList();
+                endLocation = currentBuildingSelection.transform.position;
+                MakeWallBetweenPoints();
             }
         }
-        //Reset locations on release
+        //On release
         else
         {
+            //If walls are currently being placed - build them.
+            if (isBuildingWalls)
+            {
+                BuildWalls();
+            }
             if (startingLocation != null || endLocation != null)
             {
-                foreach (var wall in walls)
-                {
-                    wall.Destroy();
-                }
+                ClearWallList();
                 startingLocation = null;
                 endLocation = null;
                 walls = null;
@@ -270,51 +272,51 @@ public class BuildingManager : MonoBehaviour
         }
     }
 
+    //Makes a wall between initial click point and current mouse position
     private void MakeWallBetweenPoints()
     {
-        walls = new List<Building>();
-        Vector3 currentLocation = startingLocation.Value;
-        Vector3 currentLocationFloored;
-        if (wallBounds == null || wallRenderer == null)
+        //Gets a number of walls needed in both X and Z axis.
+        //Y value is 0 because you can't stack walls on top of each other. You just can't, its hardly possible.
+        Vector3 wallCount = new Vector3((endLocation.Value.x - startingLocation.Value.x) / stepSize, 0,
+                                        (endLocation.Value.z - startingLocation.Value.z) / stepSize);
+        //Setting first wall location
+        Vector3 nextWallLocation =  new Vector3(startingLocation.Value.x,
+            HeightChecking.GetOptimalHeightAtWorldPoint(startingLocation.Value.x, startingLocation.Value.z),
+            startingLocation.Value.z);
+        //Setting maximum iteration count to avoid infinite loop
+        int iterationCount = 0;
+        while (nextWallLocation != endLocation && iterationCount < 500 && wallCount != new Vector3(0, 0, 0))
         {
-            wallRenderer = currentBuilding.GetComponentInChildren<Renderer>();
-            wallBounds = wallRenderer.bounds;
-            //stepSize = wallBounds.Value.size.x > wallBounds.Value.size.z
-            //    ? wallBounds.Value.size.x
-            //    : wallBounds.Value.size.z;
-            //stepSize = wallBounds.Value.size.z;
-            stepSize = wallBoxCollider.bounds.size.x > wallBoxCollider.bounds.size.z
-                ? wallBoxCollider.bounds.size.x
-                : wallBoxCollider.bounds.size.z;
-        }
-        endLocation = currentBuildingSelection.transform.position;
-        Vector3 difference = new Vector3(endLocation.Value.x - startingLocation.Value.x,
-                                        endLocation.Value.y - startingLocation.Value.y,
-                                        endLocation.Value.z - startingLocation.Value.z);
-        var firstWall = GameObject.Instantiate(currentBuilding, startingLocation.Value, currentBuildingSelection.transform.rotation);
-        walls.Add(firstWall);
-        Vector3 nextWallLocation = startingLocation.Value;
-        Vector3 wallCount = new Vector3(difference.x / stepSize, difference.y, difference.z / stepSize);
-        int count = 0;
-        while (nextWallLocation != endLocation && count < 100 && wallCount != new Vector3(0, 0, 0))
-        {
-            Debug.Log(wallCount.x +" " +wallCount.z);
-            count++;
             var nextWall = GameObject.Instantiate(currentBuilding, nextWallLocation, currentBuildingSelection.transform.rotation);
+            ChangeColor(nextWall);
             walls.Add(nextWall);
-            float wallCountX = Math.Round(wallCount.x) == 0 ? 0 : (float)Math.Round(wallCount.x / Math.Abs(wallCount.x));
-            float wallCountZ = Math.Round(wallCount.z) == 0 ? 0 : (float)Math.Round(wallCount.z / Math.Abs(wallCount.z));
-            nextWallLocation = new Vector3(nextWallLocation.x + wallCountX * stepSize,
-                                            nextWallLocation.y,
-                                            nextWallLocation.z + wallCountZ * stepSize);
+            //Get next step for next wall. x / Abs(x) lets us determine where the next wall needs to be placed
+            float nextWallCountX = Math.Round(wallCount.x) == 0 ? 0 : (float)Math.Round(wallCount.x / Math.Abs(wallCount.x));
+            float nextWallCountZ = Math.Round(wallCount.z) == 0 ? 0 : (float)Math.Round(wallCount.z / Math.Abs(wallCount.z));
+            float nextWallOptimalY = HeightChecking.GetOptimalHeightAtWorldPoint(nextWallLocation.x + nextWallCountX * stepSize,
+                nextWallLocation.z + nextWallCountZ * stepSize);
+            nextWallLocation = new Vector3(nextWallLocation.x + nextWallCountX * stepSize, nextWallOptimalY, nextWallLocation.z + nextWallCountZ * stepSize);
+            //Update wall counts
             float newWallCountX = Math.Round(wallCount.x) == 0 ? 0 : (float)Math.Round(wallCount.x - (wallCount.x / Math.Abs(wallCount.x)));
             float newWallCountZ = Math.Round(wallCount.z) == 0 ? 0 : (float)Math.Round(wallCount.z - (wallCount.z / Math.Abs(wallCount.z)));
-            wallCount = new Vector3(newWallCountX, wallCount.y, newWallCountZ);
-            Debug.Log(wallCount.x + " " + wallCount.z);
-
-            //Debug.Log(count +" CL: " + nextWallLocation + " EL: " +endLocation + " dif: " + wallCount);
-            //Debug.Log("iteration: " +count + " wallcount: " + wallCount);
+            wallCount = new Vector3(newWallCountX, 0, newWallCountZ);
+            iterationCount++;
         }
+    }
+
+    //Checks if wall placement end location was changed
+    private bool LocationChanged()
+    {
+        return currentBuildingSelection.transform.position != endLocation;
+    }
+
+    private void ClearWallList()
+    {
+        foreach (var wall in walls)
+        {
+            wall.Destroy();
+        }
+        walls = new List<Building>();
     }
 
     //private void PlaceWall()
@@ -398,6 +400,20 @@ public class BuildingManager : MonoBehaviour
         }
     }
 
+    private void BuildWalls()
+    {
+        foreach (var wall in walls)
+        {
+            wall.IsPlaced = true;
+            wall.GetComponent<HeightChecking>().enabled = false;
+            wall.GetComponent<BuildingCollisionManager>().enabled = false;
+            allBuildings.Add(wall);
+        }
+        //Detach placed walls from the list
+        walls = new List<Building>();
+        isBuildingWalls = false;
+    }
+
     //Method responsible for instantiating a new building and setting up its components
     private void BuildBuilding(float x, float y, float z, Quaternion rotation)
     {
@@ -411,12 +427,17 @@ public class BuildingManager : MonoBehaviour
         newCopy.IsPlaced = true;
         newCopy.GetComponent<HeightChecking>().enabled = false;
         newCopy.GetComponent<BuildingCollisionManager>().enabled = false;
+        allBuildings.Add(newCopy);
     }
 
     private void CancelSelection()
     {
         if (Input.GetKey(KeyCode.C) && cancelDelay >= 60 && currentBuildingSelection != null)
         {
+            if (walls != null)
+            {
+                ClearWallList();
+            }
             CleanUp();
             cancelDelay = 0;
         }
@@ -428,7 +449,9 @@ public class BuildingManager : MonoBehaviour
         currentBuildingHeightChecking = null;
         currentBuildingCollisionManager = null;
         currentlySelectedBuildingRenderers = new List<Renderer>();
-        if(currentBuilding != null)
+        walls = new List<Building>();
+        isBuildingWalls = false;
+        if (currentBuilding != null)
         {
             currentBuildingSelection.Destroy();
             currentBuildingSelection = null;
@@ -455,6 +478,23 @@ public class BuildingManager : MonoBehaviour
             //Add parent object renderer
             currentlySelectedBuildingRenderers.Add(parentRenderer);
         }
+    }
+
+    private List<Renderer> GetRenderers(Building building)
+    {
+        List<Renderer> renderers= new List<Renderer>();
+        Renderer parentRenderer = currentBuildingSelection.GetComponent<Renderer>();
+        if (parentRenderer == null)
+        {
+            renderers = currentBuildingSelection.GetComponentsInChildren<Renderer>().ToList();
+        }
+        else
+        {
+            //Add parent object renderer
+            renderers.Add(parentRenderer);
+        }
+
+        return renderers;
     }
 
     //NOTE TO SELF: Implement differently if performance drops
@@ -487,6 +527,22 @@ public class BuildingManager : MonoBehaviour
                 }
                 renderer.materials = newMaterials;
             }
+        }
+    }
+
+    private void ChangeColor(Building building)
+    {
+        //Debug.Log("changing color");
+        List<Renderer> renderers = GetRenderers(building);
+        foreach (var rend in renderers)
+        {
+            int size = rend.materials.Length;
+            Material[] newMaterials = new Material[size];
+            for (int i = 0; i < size; i++)
+            {
+                newMaterials[i] = materialCanBuild;
+            }
+            rend.materials = newMaterials;
         }
     }
 

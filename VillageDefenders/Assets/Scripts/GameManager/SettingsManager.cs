@@ -19,6 +19,7 @@ public class SettingsManager : MonoBehaviour
     #region Properties
 
     //Editor properties
+    public float BuildingHeightCheckerSensitivity = 0.25f;
     public LayerMask GroundLayerMask;
     public LayerMask BuildingLayerMask;
     public LayerMask UnitLayerMask;
