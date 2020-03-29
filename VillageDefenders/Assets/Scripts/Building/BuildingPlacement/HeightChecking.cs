@@ -98,7 +98,7 @@ public class HeightChecking : MonoBehaviour
         //And set the correct height for currently selected building (to avoid floating).
         else
         {
-            SetOptimalHeightForBuildingPlacement(heights);
+            SetOptimalHeightForBuildingPlacement();
             SetCorrectHeightForCurrentlySelectedBuilding(heights);
         }
 
@@ -107,7 +107,7 @@ public class HeightChecking : MonoBehaviour
     }
 
     //Gets the optimal height for building placement
-    public void SetOptimalHeightForBuildingPlacement(List<float> heights)
+    public void SetOptimalHeightForBuildingPlacement()
     {
         //All height checkers have the almost same Y coordinate, so it doesn't matter which one we take
         var heightCheckerHeight = heightCheckers.transform.GetChild(0).gameObject.transform.position.y;

@@ -3,6 +3,8 @@
     Townhall = 1,
     Barracks = 2,
     WoodenWall = 3,
-    BasicTower = 4,
-    WizardTower = 5
+    StoneWall = 4,
+    BasicTower = 5,
+    WizardTower = 6, 
+
 }
