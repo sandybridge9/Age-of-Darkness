@@ -20,7 +20,8 @@ public class BuildingManager : MonoBehaviour
     private List<Renderer> currentlySelectedBuildingRenderers;
 
     //Private settings used in internal logic
-    private List<Building> allBuildings;
+    private List<Building> allBuildings; 
+    private List<Building> allWalls;
     private const float tileSize = 0.5f; // Grid snapping step size
     private float rotationDelay = 60f; // Used to delay rotation
     private float cancelDelay = 60f; // Used to delay canceling
@@ -30,6 +31,14 @@ public class BuildingManager : MonoBehaviour
     private Material materialCantBuild;
 
     //Fields used in wall placement
+    private Vector3? startingLocation;
+    private Vector3? endLocation;
+    private List<Building> tempWalls;
+    private bool isBuildingWalls;
+
+    //2 separate step sizes in case wall isn't square shaped    
+    private float wallStepSizeX;
+    private float wallStepSizeZ;
     private BoxCollider wallBoxCollider;
 
     #endregion
@@ -49,7 +58,8 @@ public class BuildingManager : MonoBehaviour
         materialCantBuild = SettingsManager.Instance.MaterialCantBuild;
         currentlySelectedBuildingRenderers = new List<Renderer>();
         allBuildings = new List<Building>();
-        walls = new List<Building>();
+        allWalls = new List<Building>();
+        tempWalls = new List<Building>();
     }
 
     void Update()
@@ -108,7 +118,7 @@ public class BuildingManager : MonoBehaviour
         }
         GetMeshRenderersOfCurrentBuilding();
 
-        if (b.BuildingType == BuildingTypes.WoodenWall)
+        if (b.BuildingType == BuildingTypes.WoodenWall || b.BuildingType == BuildingTypes.StoneWall)
         {
             wallBoxCollider = currentBuildingSelection.GetComponentInChildren<BoxCollider>();
             wallStepSizeX = wallBoxCollider.bounds.size.x;
@@ -124,7 +134,7 @@ public class BuildingManager : MonoBehaviour
         if (Physics.Raycast(ray, out hitInfo, 10000f, groundLayerMask))
         {
             //Snapping
-            if (currentBuildingSelection.BuildingType == BuildingTypes.WoodenWall)
+            if (currentBuildingSelection.BuildingType == BuildingTypes.WoodenWall || currentBuildingSelection.BuildingType == BuildingTypes.StoneWall)
             {
                 currentBuildingSelection.transform.position = new Vector3(
                     Mathf.Floor(hitInfo.point.x / wallStepSizeX) * wallStepSizeX,
@@ -144,7 +154,8 @@ public class BuildingManager : MonoBehaviour
 
     private void RotateBuilding()
     {
-        if (Input.GetKey(KeyCode.R) && currentBuilding.BuildingType != BuildingTypes.WoodenWall)
+        //Walls can't be rotated to avoid various issues when wall isn't square
+        if (Input.GetKey(KeyCode.R) && currentBuilding.BuildingType != BuildingTypes.WoodenWall && currentBuilding.BuildingType != BuildingTypes.StoneWall)
         {
             if (rotationDelay >= 60)
             {
@@ -166,31 +177,26 @@ public class BuildingManager : MonoBehaviour
 
     private void BuildingPlacement()
     {
-        if (currentBuildingSelection.BuildingType == BuildingTypes.WoodenWall)
+        if (currentBuildingSelection.BuildingType == BuildingTypes.WoodenWall || currentBuildingSelection.BuildingType == BuildingTypes.StoneWall)
         {
             PlaceWall();
         }
-        else if (currentBuildingSelection.BuildingType == BuildingTypes.Townhall)
+        else if (currentBuildingSelection.BuildingType == BuildingTypes.Townhall || currentBuildingSelection.BuildingType == BuildingTypes.Warehouse)
         {
             PlaceUniqueBuilding();
         }
+        //else if (currentBuildingSelection.BuildingType == BuildingTypes.StoneGatehouse)
+        //{
+        //    PlaceGatehouse();
+        //}
         else
         {
             PlaceBuilding();
         }
         placementDelay++;
     }
-    
-    private Vector3? startingLocation;
-    private Vector3? endLocation;
-    private List<Building> walls;
-    private List<Renderer> allWallRenderers;
-    private bool isBuildingWalls;
 
-    //2 separate step sizes in case wall isn't square shaped
-    private float wallStepSizeX;
-    private float wallStepSizeZ;
-
+    #region WALL PLACEMENT
 
     private void PlaceWall()
     {
@@ -202,7 +208,7 @@ public class BuildingManager : MonoBehaviour
                 //position where mouse button was initially clicked
                 startingLocation = currentBuildingSelection.transform.position;
                 endLocation = startingLocation;
-                walls = new List<Building>();
+                tempWalls = new List<Building>();
                 MakeWallBetweenPoints();
             }
             else if(LocationChanged())
@@ -225,7 +231,7 @@ public class BuildingManager : MonoBehaviour
                 ClearWallList();
                 startingLocation = null;
                 endLocation = null;
-                walls = null;
+                tempWalls = null;
             }
         }
     }
@@ -245,7 +251,7 @@ public class BuildingManager : MonoBehaviour
         if (startingLocation == endLocation)
         {
             var firstWall = GameObject.Instantiate(currentBuilding, nextWallLocation, currentBuildingSelection.transform.rotation);
-            walls.Add(firstWall);
+            tempWalls.Add(firstWall);
         }
         //Setting maximum iteration count to avoid infinite loop
         int iterationCount = 0;
@@ -253,7 +259,7 @@ public class BuildingManager : MonoBehaviour
         {
             var nextWall = GameObject.Instantiate(currentBuilding, nextWallLocation, currentBuildingSelection.transform.rotation);
             //ChangeColor(nextWall);
-            walls.Add(nextWall);
+            tempWalls.Add(nextWall);
             //Get next step for next wall. x / Abs(x) lets us determine where the next wall needs to be placed
             float nextWallStepX = Math.Round(wallCount.x) == 0 
                 ? 0
@@ -274,9 +280,79 @@ public class BuildingManager : MonoBehaviour
         if (startingLocation != endLocation)
         {
             var lastWall = GameObject.Instantiate(currentBuilding, nextWallLocation, currentBuildingSelection.transform.rotation);
-            walls.Add(lastWall);
+            tempWalls.Add(lastWall);
         }
-        //ChangeWallsColor();
+    }
+
+    private void BuildWalls()
+    {
+        foreach (var wall in tempWalls)
+        {
+            //Implement check for dublicate buildings in one location
+            if (!CheckIfLocationIsOccupied(wall.transform.position))
+            {
+                wall.IsPlaced = true;
+                wall.GetComponent<HeightChecking>().enabled = false;
+                wall.GetComponent<BuildingCollisionManager>().enabled = false;
+                allWalls.Add(wall);
+            }
+            else
+            {
+                wall.Destroy();
+            }
+        }
+        //Detach placed walls from the list
+        tempWalls = new List<Building>();
+        isBuildingWalls = false;
+        currentBuildingCollisionManager.ResetCollision();
+    }
+
+    //Location check for walls
+    private bool CheckIfLocationIsOccupied(Vector3 location)
+    {
+        bool occupied = false;
+        foreach (var wall in allWalls)
+        {
+            Vector3 topLeft = new Vector3(wall.Collider.bounds.center.x - wall.Collider.bounds.extents.x,
+                wall.Collider.bounds.center.y,
+                wall.Collider.bounds.center.z + wall.Collider.bounds.extents.z);
+            Vector3 topRight = new Vector3(wall.Collider.bounds.center.x + wall.Collider.bounds.extents.x,
+                wall.Collider.bounds.center.y,
+                wall.Collider.bounds.center.z + wall.Collider.bounds.extents.z);
+            Vector3 bottomLeft = new Vector3(wall.Collider.bounds.center.x - wall.Collider.bounds.extents.x,
+                wall.Collider.bounds.center.y,
+                wall.Collider.bounds.center.z - wall.Collider.bounds.extents.z);
+            Vector3 bottomRight = new Vector3(wall.Collider.bounds.center.x + wall.Collider.bounds.extents.x,
+                wall.Collider.bounds.center.y,
+                wall.Collider.bounds.center.z - wall.Collider.bounds.extents.z);
+            if ((location.x >= topLeft.x && location.x <= topRight.x) && (location.z >= bottomLeft.z && location.z <= topLeft.z))
+            {
+                occupied = true;
+                return occupied;
+            }
+        }
+        foreach (var building in allBuildings)
+        {
+            //List<Vector3> cornerPositions = new List<Vector3>();
+            Vector3 topLeft = new Vector3(building.Collider.bounds.center.x - building.Collider.bounds.extents.x,
+                building.Collider.bounds.center.y,
+                building.Collider.bounds.center.z + building.Collider.bounds.extents.z);
+            Vector3 topRight = new Vector3(building.Collider.bounds.center.x + building.Collider.bounds.extents.x,
+                building.Collider.bounds.center.y,
+                building.Collider.bounds.center.z + building.Collider.bounds.extents.z);
+            Vector3 bottomLeft = new Vector3(building.Collider.bounds.center.x - building.Collider.bounds.extents.x,
+                building.Collider.bounds.center.y,
+                building.Collider.bounds.center.z - building.Collider.bounds.extents.z);
+            Vector3 bottomRight = new Vector3(building.Collider.bounds.center.x + building.Collider.bounds.extents.x,
+                building.Collider.bounds.center.y,
+                building.Collider.bounds.center.z - building.Collider.bounds.extents.z);
+            if ((location.x >= topLeft.x && location.x <= topRight.x) && (location.z >= bottomLeft.z && location.z <= topLeft.z))
+            {
+                occupied = true;
+                return occupied;
+            }
+        }
+        return occupied;
     }
 
     //Checks if wall placement end location was changed
@@ -287,12 +363,19 @@ public class BuildingManager : MonoBehaviour
 
     private void ClearWallList()
     {
-        foreach (var wall in walls)
+        foreach (var wall in tempWalls)
         {
             wall.Destroy();
         }
-        walls = new List<Building>();
+        tempWalls = new List<Building>();
     }
+
+    #endregion
+
+    //public void PlaceGatehouse()
+    //{
+
+    //}
 
     private void PlaceBuilding()
     {
@@ -311,27 +394,16 @@ public class BuildingManager : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Mouse0) && IsPositionViable())
         {
-            BuildBuilding(currentBuildingSelection.transform.position.x,
-                currentBuildingHeightChecking.OptimalHeight,
-                currentBuildingSelection.transform.position.z,
-                currentBuildingSelection.transform.rotation);
-            CleanUp();
+            //Check if current building type isn't already built
+            if (!allBuildings.Where(b => b.BuildingType == currentBuilding.BuildingType).ToList().Any())
+            {
+                BuildBuilding(currentBuildingSelection.transform.position.x,
+                    currentBuildingHeightChecking.OptimalHeight,
+                    currentBuildingSelection.transform.position.z,
+                    currentBuildingSelection.transform.rotation);
+                CleanUp();
+            }
         }
-    }
-
-    private void BuildWalls()
-    {
-        foreach (var wall in walls)
-        {
-            wall.IsPlaced = true;
-            wall.GetComponent<HeightChecking>().enabled = false;
-            wall.GetComponent<BuildingCollisionManager>().enabled = false;
-            allBuildings.Add(wall);
-        }
-        //Detach placed walls from the list
-        walls = new List<Building>();
-        isBuildingWalls = false;
-        currentBuildingCollisionManager.ResetCollision();
     }
 
     //Method responsible for instantiating a new building and setting up its components
@@ -354,7 +426,7 @@ public class BuildingManager : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.C) && cancelDelay >= 60 && currentBuildingSelection != null)
         {
-            if (walls != null)
+            if (tempWalls != null)
             {
                 ClearWallList();
             }
@@ -369,13 +441,30 @@ public class BuildingManager : MonoBehaviour
         currentBuildingHeightChecking = null;
         currentBuildingCollisionManager = null;
         currentlySelectedBuildingRenderers = new List<Renderer>();
-        walls = new List<Building>();
+        tempWalls = null;
         isBuildingWalls = false;
+        startingLocation = null;
+        endLocation = null;
+        wallStepSizeX = 0;
+        wallStepSizeZ = 0;
+        wallBoxCollider = null;
         if (currentBuilding != null)
         {
             currentBuildingSelection.Destroy();
             currentBuildingSelection = null;
             currentBuilding = null;
+        }
+    }
+
+    public void DeleteBuildingFromList(Building building)
+    {
+        if (building.BuildingType == BuildingTypes.WoodenWall || building.BuildingType == BuildingTypes.StoneWall)
+        {
+            allWalls.Remove(building);
+        }
+        else
+        {
+            allBuildings.Remove(building);
         }
     }
 
@@ -400,26 +489,13 @@ public class BuildingManager : MonoBehaviour
         }
     }
 
-    //private List<Renderer> GetRenderers(Building building)
-    //{
-    //    List<Renderer> renderers= new List<Renderer>();
-    //    Renderer parentRenderer = currentBuildingSelection.GetComponent<Renderer>();
-    //    if (parentRenderer == null)
-    //    {
-    //        renderers = currentBuildingSelection.GetComponentsInChildren<Renderer>().ToList();
-    //    }
-    //    else
-    //    {
-    //        //Add parent object renderer
-    //        renderers.Add(parentRenderer);
-    //    }
-
-    //    return renderers;
-    //}
-
-    //NOTE TO SELF: Implement differently if performance drops
     private void ChangeColor()
     {
+        if (currentBuilding.BuildingType == BuildingTypes.WoodenWall ||
+            currentBuilding.BuildingType == BuildingTypes.StoneWall)
+        {
+            return;
+        }
         //If position is clear and the height is good - set green color for all materials in all renderers
         if (IsPositionViable())
         {
@@ -449,81 +525,6 @@ public class BuildingManager : MonoBehaviour
             }
         }
     }
-
-    //private void ChangeColor(Building building)
-    //{
-    //    //Debug.Log("changing color");
-    //    List<Renderer> renderers = GetRenderers(building);
-    //    foreach (var rend in renderers)
-    //    {
-    //        int size = rend.materials.Length;
-    //        Material[] newMaterials = new Material[size];
-    //        for (int i = 0; i < size; i++)
-    //        {
-    //            newMaterials[i] = materialCanBuild;
-    //        }
-    //        rend.materials = newMaterials;
-    //    }
-    //}
-
-    //private void ChangeWallsColor()
-    //{
-    //    //allWallRenderers = new List<Renderer>();
-    //    foreach (var wall in walls)
-    //    {
-    //        var currentWallRenderers = new List<Renderer>();
-    //        var parentRenderer = wall.GetComponent<Renderer>();
-    //        if (parentRenderer == null)
-    //        {
-    //            var renderers = wall.GetComponentsInChildren<Renderer>().ToList();
-    //            currentWallRenderers.AddRange(renderers);
-    //        }
-    //        else
-    //        {
-    //            currentWallRenderers.Add(parentRenderer);
-    //        }
-
-    //        //var heightChecker = wall.GetComponent<HeightChecking>();
-    //        var collisionManager = wall.GetComponent<BuildingCollisionManager>();
-    //        if (!collisionManager.IsOverlapping())
-    //        {
-    //            foreach (var r in currentWallRenderers)
-    //            {
-    //                int size = r.materials.Length;
-    //                Material[] newMaterials = new Material[size];
-    //                for (int i = 0; i < size; i++)
-    //                {
-    //                    newMaterials[i] = materialCanBuild;
-    //                }
-    //                r.materials = newMaterials;
-    //            }
-    //        }
-    //        else
-    //        {
-    //            foreach (var r in currentWallRenderers)
-    //            {
-    //                int size = r.materials.Length;
-    //                Material[] newMaterials = new Material[size];
-    //                for (int i = 0; i < size; i++)
-    //                {
-    //                    newMaterials[i] = materialCantBuild;
-    //                }
-    //                r.materials = newMaterials;
-    //            }
-    //        }
-    //    }
-
-    //    //foreach (var r in allWallRenderers)
-    //    //{
-    //    //    int size = r.materials.Length;
-    //    //    Material[] newMaterials = new Material[size];
-    //    //    for (int i = 0; i < size; i++)
-    //    //    {
-    //    //        newMaterials[i] = materialCanBuild;
-    //    //    }
-    //    //    r.materials = newMaterials;
-    //    //}
-    //}
 
     #endregion
 }

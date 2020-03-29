@@ -332,8 +332,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Health: 100
-  Cost: 50
-  BuildingType: 5
+  Cost: 500
+  BuildingType: 7
+  Collider: {fileID: 0}
   Damage: 25
   FireRate: 3
 --- !u!114 &-5922265323884704810
@@ -348,7 +349,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02ce97187a7da9b4288fb4033f892f02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Colliders: []
 --- !u!114 &6300964220350943579
 MonoBehaviour:
   m_ObjectHideFlags: 0

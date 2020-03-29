@@ -261,6 +261,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae8b44ccc7abea04ca19d554fd15f520, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  BuildingHeightCheckerSensitivity: 0.25
   GroundLayerMask:
     serializedVersion: 2
     m_Bits: 512
@@ -271,10 +272,14 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   PlaceableBuildings:
-  - {fileID: 3625311228872381835, guid: e4fee4d9551855349b5f973c861b40e0, type: 3}
   - {fileID: 6169576285954527984, guid: d96d0b16ee5c9724e89cc7d9215ad8fc, type: 3}
-  - {fileID: 4212061169550847647, guid: 50c99df039ebdc2408c7779330fc5bab, type: 3}
+  - {fileID: 5606232815364281016, guid: 88012513d9690834fbf8716c347c5e97, type: 3}
+  - {fileID: 3625311228872381835, guid: e4fee4d9551855349b5f973c861b40e0, type: 3}
   - {fileID: 508425209793004298, guid: 1ca725ef2d4b5ff4988c6076b58b3421, type: 3}
+  - {fileID: 4061656203244521853, guid: 30c074dee4770984dbc253a676e40e33, type: 3}
+  - {fileID: 4212061169550847647, guid: 50c99df039ebdc2408c7779330fc5bab, type: 3}
+  - {fileID: 6390272583025468082, guid: 3663db1874ebf36409cc1d7507674e14, type: 3}
+  - {fileID: 8602776882364731825, guid: a507f501a5e307946afd56c0c6cf62f0, type: 3}
   MaterialCanBuild: {fileID: 2100000, guid: 92b82f4761bd7c140803167f9c20837d, type: 2}
   MaterialCantBuild: {fileID: 2100000, guid: b94782059a0a6004282d8a1a218230ec, type: 2}
   BuildingManager: {fileID: 0}

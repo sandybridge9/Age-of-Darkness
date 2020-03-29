@@ -63,21 +63,28 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\AssetStoreContent\AurynSky\Gems Ultimate Pack\Scripts\AnimationScript.cs" />
     <Compile Include="Assets\Scripts\Building\BuildingPlacement\BuildingCollisionManager.cs" />
     <Compile Include="Assets\Scripts\Building\BuildingPlacement\BuildingManager.cs" />
     <Compile Include="Assets\Scripts\Building\BuildingPlacement\HeightChecking.cs" />
     <Compile Include="Assets\Scripts\Building\Buildings\Barracks.cs" />
+    <Compile Include="Assets\Scripts\Building\Buildings\BasicTower.cs" />
     <Compile Include="Assets\Scripts\Building\Buildings\Building.cs" />
     <Compile Include="Assets\Scripts\Building\Buildings\BuildingTypes.cs" />
+    <Compile Include="Assets\Scripts\Building\Buildings\Gatehouse.cs" />
     <Compile Include="Assets\Scripts\Building\Buildings\IBuilding.cs" />
     <Compile Include="Assets\Scripts\Building\Buildings\Townhall.cs" />
     <Compile Include="Assets\Scripts\Building\Buildings\Wall.cs" />
+    <Compile Include="Assets\Scripts\Building\Buildings\Warehouse.cs" />
     <Compile Include="Assets\Scripts\Building\Buildings\WizardTower.cs" />
     <Compile Include="Assets\Scripts\Camera\CameraMovement.cs" />
     <Compile Include="Assets\Scripts\GameManager\ResourceManager.cs" />
     <Compile Include="Assets\Scripts\GameManager\SelectionManager.cs" />
     <Compile Include="Assets\Scripts\GameManager\SettingsManager.cs" />
+    <None Include="Assets\AssetStoreContent\MedievalTownExteriors\Readme.txt" />
+    <None Include="Assets\AssetStoreContent\AurynSky\Gems Ultimate Pack\READ ME.txt" />
     <None Include="Assets\AssetStoreContent\Low Poly Toon Chests\Readme.txt" />
+    <None Include="Assets\AssetStoreContent\Cartoon Castle Building Kit\ReadMe.txt" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>D:/UnityProjects/VillageDefenders/VillageDefenders/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>

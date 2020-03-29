@@ -45,9 +45,9 @@ public class SelectionManager : MonoBehaviour
     public void SelectGameObject(GameObject gameObject)
     {
         CurrentSelection = gameObject;
-        if (gameObject.GetComponent<Building>())
+        var building = gameObject.GetComponent<Building>();
+        if (building != null)
         {
-            var building = gameObject.GetComponent<Building>();
             if (building.IsPlaced)
             {
                 building.Select();

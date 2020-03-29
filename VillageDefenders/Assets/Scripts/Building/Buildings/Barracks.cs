@@ -13,10 +13,11 @@ public class Barracks : Building
         BuildingType = BuildingTypes.Barracks;
     }
 
-    private void Start()
-    {
-        unitSpawnPoint = transform.Find("UnitSpawnPoint");
-    }
+    //Use virtual StartupActions()
+    //private void Start()
+    //{
+    //    unitSpawnPoint = transform.Find("UnitSpawnPoint");
+    //}
 
     public void SpawnTroop()
     {

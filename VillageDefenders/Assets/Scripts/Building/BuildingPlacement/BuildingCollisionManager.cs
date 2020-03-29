@@ -13,6 +13,8 @@ public class BuildingCollisionManager : MonoBehaviour
     [HideInInspector]
     //List used to keep track of all other colliders this building collides with
     private List<Collider> Colliders = new List<Collider>();
+
+    //private bool s = false;
     
     #endregion
 
@@ -38,19 +40,7 @@ public class BuildingCollisionManager : MonoBehaviour
     {
         return Colliders.Any();
     }
-
-    //public bool IsOverlapping()
-    //{
-    //    var collider = transform.GetComponent<Collider>();
-    //    List<Collider> colliders = Physics.OverlapBox(collider.bounds.center, collider.bounds.extents, transform.rotation, SettingsManager.Instance.BuildingLayerMask).ToList();
-    //    Debug.Log("Count: " + colliders.Count);
-    //    foreach (var c in colliders)
-    //    {
-    //        Debug.Log(c.transform.position);
-    //    }
-    //    return colliders.Any();
-    //}
-
+    
     public void ResetCollision()
     {
         Colliders = new List<Collider>();

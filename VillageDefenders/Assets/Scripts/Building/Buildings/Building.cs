@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.Internal;
 
@@ -18,8 +19,11 @@ public class Building : MonoBehaviour, IBuilding
     public float Cost;
     public BuildingTypes BuildingType;
 
+
     [HideInInspector]
     public bool IsPlaced { get; set; } = false;
+    [HideInInspector]
+    public Collider Collider;
 
     #endregion
 
@@ -66,9 +70,33 @@ public class Building : MonoBehaviour, IBuilding
         {
             if (Input.GetKey(KeyCode.Delete))
             {
+                SettingsManager.Instance.BuildingManager.DeleteBuildingFromList(this);
                 Destroy();
             }
         }
+    }
+
+    void Start()
+    {
+        GetCollider();
+        StartupActions();
+    }
+
+    //Method for derived classes to override if actions need to be made on Start()
+    protected virtual void StartupActions()
+    {
+
+    }
+
+    //Derived classes should override this if they are not using BoxCollider
+    protected virtual void GetCollider()
+    {
+        Collider = GetComponent<BoxCollider>();
+        if (Collider == null)
+        {
+            Collider = GetComponentInChildren<Collider>();
+        }
+        Debug.Log(Collider);
     }
 
     #endregion

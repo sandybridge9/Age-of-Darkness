@@ -10,14 +10,13 @@ public class Wall : Building
     {
         Health = 100f;
         Cost = 10f;
-        BuildingType = BuildingTypes.WoodenWall;
     }
 
-    public Wall(float health, float cost)
+    public Wall(float health, float cost, BuildingTypes type)
     {
         this.Health = health;
         this.Cost = cost;
-        BuildingType = BuildingTypes.WoodenWall;
+        this.BuildingType = type;
     }
 
     #endregion
