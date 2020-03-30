@@ -61,6 +61,7 @@ public class Building : MonoBehaviour, IBuilding
 
     public void Destroy()
     {
+        SettingsManager.Instance.BuildingManager.DeleteBuildingFromList(this);
         Object.Destroy(this.gameObject);
     }
 
@@ -70,7 +71,7 @@ public class Building : MonoBehaviour, IBuilding
         {
             if (Input.GetKey(KeyCode.Delete))
             {
-                SettingsManager.Instance.BuildingManager.DeleteBuildingFromList(this);
+                //SettingsManager.Instance.BuildingManager.DeleteBuildingFromList(this);
                 Destroy();
             }
         }

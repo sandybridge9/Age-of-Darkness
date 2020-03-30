@@ -68,15 +68,16 @@
     <Compile Include="Assets\Scripts\Building\BuildingPlacement\BuildingManager.cs" />
     <Compile Include="Assets\Scripts\Building\BuildingPlacement\HeightChecking.cs" />
     <Compile Include="Assets\Scripts\Building\Buildings\Barracks.cs" />
-    <Compile Include="Assets\Scripts\Building\Buildings\BasicTower.cs" />
     <Compile Include="Assets\Scripts\Building\Buildings\Building.cs" />
     <Compile Include="Assets\Scripts\Building\Buildings\BuildingTypes.cs" />
     <Compile Include="Assets\Scripts\Building\Buildings\Gatehouse.cs" />
     <Compile Include="Assets\Scripts\Building\Buildings\IBuilding.cs" />
+    <Compile Include="Assets\Scripts\Building\Buildings\StoneTower.cs" />
     <Compile Include="Assets\Scripts\Building\Buildings\Townhall.cs" />
     <Compile Include="Assets\Scripts\Building\Buildings\Wall.cs" />
     <Compile Include="Assets\Scripts\Building\Buildings\Warehouse.cs" />
     <Compile Include="Assets\Scripts\Building\Buildings\WizardTower.cs" />
+    <Compile Include="Assets\Scripts\Building\Buildings\WoodenTower.cs" />
     <Compile Include="Assets\Scripts\Camera\CameraMovement.cs" />
     <Compile Include="Assets\Scripts\GameManager\ResourceManager.cs" />
     <Compile Include="Assets\Scripts\GameManager\SelectionManager.cs" />

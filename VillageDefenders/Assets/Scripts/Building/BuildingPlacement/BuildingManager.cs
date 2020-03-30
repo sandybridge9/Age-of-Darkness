@@ -22,7 +22,7 @@ public class BuildingManager : MonoBehaviour
     //Private settings used in internal logic
     private List<Building> allBuildings; 
     private List<Building> allWalls;
-    private const float tileSize = 0.5f; // Grid snapping step size
+    private const float tileSize = 0.25f; // Grid snapping step size
     private float rotationDelay = 60f; // Used to delay rotation
     private float cancelDelay = 60f; // Used to delay canceling
     private float placementDelay = 120f;
@@ -124,6 +124,15 @@ public class BuildingManager : MonoBehaviour
             wallStepSizeX = wallBoxCollider.bounds.size.x;
             wallStepSizeZ = wallBoxCollider.bounds.size.z;
         }
+
+        if (b.BuildingType == BuildingTypes.StoneGatehouse ||
+            b.BuildingType == BuildingTypes.StoneTower ||
+            b.BuildingType == BuildingTypes.WoodenTower)
+        {
+            //Exclude walls from collision checking, because gate house and towers can be built on the walls
+            currentBuildingCollisionManager.AddException(BuildingTypes.WoodenWall);
+            currentBuildingCollisionManager.AddException(BuildingTypes.StoneWall);
+        }
     }
 
     private void MoveCurrentObjectToMouse()
@@ -185,10 +194,11 @@ public class BuildingManager : MonoBehaviour
         {
             PlaceUniqueBuilding();
         }
-        //else if (currentBuildingSelection.BuildingType == BuildingTypes.StoneGatehouse)
-        //{
-        //    PlaceGatehouse();
-        //}
+        else if (currentBuildingSelection.BuildingType == BuildingTypes.StoneGatehouse || currentBuildingSelection.BuildingType == BuildingTypes.StoneTower ||
+                 currentBuildingSelection.BuildingType == BuildingTypes.WoodenTower)
+        {
+            PlaceBuildingThatCanOverlapWithWalls();
+        }
         else
         {
             PlaceBuilding();
@@ -348,7 +358,17 @@ public class BuildingManager : MonoBehaviour
                 building.Collider.bounds.center.z - building.Collider.bounds.extents.z);
             if ((location.x >= topLeft.x && location.x <= topRight.x) && (location.z >= bottomLeft.z && location.z <= topLeft.z))
             {
-                occupied = true;
+                //Walls can overlap with towers and gatehouses a bit
+                if (building.BuildingType == BuildingTypes.StoneGatehouse ||
+                    building.BuildingType == BuildingTypes.StoneTower)
+                {
+                    occupied = false;
+                }
+                else
+                {
+                    occupied = true;
+                }
+
                 return occupied;
             }
         }
@@ -372,10 +392,50 @@ public class BuildingManager : MonoBehaviour
 
     #endregion
 
-    //public void PlaceGatehouse()
-    //{
+    public void PlaceBuildingThatCanOverlapWithWalls()
+    {
+        if (Input.GetKey(KeyCode.Mouse0) && IsPositionViable() && placementDelay >= 120f)
+        {
+            ClearLocationForBuilding();
+            BuildBuilding(currentBuildingSelection.transform.position.x,
+                currentBuildingHeightChecking.OptimalHeight,
+                currentBuildingSelection.transform.position.z,
+                currentBuildingSelection.transform.rotation);
+            placementDelay = 0;
+        }
+    }
 
-    //}
+    //Clear location from walls for buildings like towers, gatehouses and etc.
+    public void ClearLocationForBuilding()
+    {
+        Collider c = currentBuildingSelection.Collider;
+        Vector3 topLeft = new Vector3(c.bounds.center.x - c.bounds.extents.x,
+            c.bounds.center.y,
+            c.bounds.center.z + c.bounds.extents.z);
+        Vector3 topRight = new Vector3(c.bounds.center.x + c.bounds.extents.x,
+            c.bounds.center.y,
+            c.bounds.center.z + c.bounds.extents.z);
+        Vector3 bottomLeft = new Vector3(c.bounds.center.x - c.bounds.extents.x,
+            c.bounds.center.y,
+            c.bounds.center.z - c.bounds.extents.z);
+        Vector3 bottomRight = new Vector3(c.bounds.center.x + c.bounds.extents.x,
+            c.bounds.center.y,
+            c.bounds.center.z - c.bounds.extents.z);
+        List<Building> wallsToDelete = new List<Building>();
+        foreach (var wall in allWalls)
+        {
+            Vector3 wallPosition = wall.transform.position;
+            //Check if there is a wall bellow the building, but let them overlap a bit
+            if ((wallPosition.x >= topLeft.x +0.1f && wallPosition.x <= topRight.x - 0.1f) && (wallPosition.z >= bottomLeft.z +0.1f && wallPosition.z <= topLeft.z -0.1f))
+            {
+                wallsToDelete.Add(wall);
+            }
+        }
+        foreach (var wall in wallsToDelete)
+        {
+            wall.Destroy();
+        }
+    }
 
     private void PlaceBuilding()
     {

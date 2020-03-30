@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BasicTower : Building
+public class WoodenTower : Building
 {
-    public BasicTower()
+    public WoodenTower()
     {
         Health = 100f;
         Cost = 15f;
-        BuildingType = BuildingTypes.BasicTower;
+        BuildingType = BuildingTypes.WoodenTower;
     }
 }

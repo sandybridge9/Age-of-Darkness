@@ -12,7 +12,8 @@ public class BuildingCollisionManager : MonoBehaviour
 
     [HideInInspector]
     //List used to keep track of all other colliders this building collides with
-    private List<Collider> Colliders = new List<Collider>();
+    public List<Collider> CurrentColliders = new List<Collider>();
+    public List<BuildingTypes> ExceptionList = new List<BuildingTypes>();
 
     //private bool s = false;
     
@@ -24,7 +25,11 @@ public class BuildingCollisionManager : MonoBehaviour
     {
         if(c.tag == "Building")
         {
-            Colliders.Add(c);
+            var building = c.transform.GetComponent<Building>();
+            if (!ExceptionList.Contains(building.BuildingType))
+            {
+                CurrentColliders.Add(c);
+            }
         }
     }
 
@@ -32,18 +37,23 @@ public class BuildingCollisionManager : MonoBehaviour
     {
         if (c.tag == "Building")
         {
-            Colliders.Remove(c);
+            CurrentColliders.Remove(c);
         }
     }
 
     public bool IsColliding()
     {
-        return Colliders.Any();
+        return CurrentColliders.Any();
     }
     
     public void ResetCollision()
     {
-        Colliders = new List<Collider>();
+        CurrentColliders = new List<Collider>();
+    }
+
+    public void AddException(BuildingTypes type)
+    {
+        ExceptionList.Add(type);
     }
 
     #endregion
