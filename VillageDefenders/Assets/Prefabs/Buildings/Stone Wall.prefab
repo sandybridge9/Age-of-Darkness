@@ -136,9 +136,9 @@ GameObject:
   - component: {fileID: 7556340478249450339}
   - component: {fileID: 7523662813079574513}
   - component: {fileID: 1947718912025135996}
-  - component: {fileID: 4061656203244521853}
   - component: {fileID: 4441637587342822885}
   - component: {fileID: 9013200016268736072}
+  - component: {fileID: -6756661917173573111}
   m_Layer: 8
   m_Name: Stone Wall
   m_TagString: Building
@@ -237,22 +237,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
---- !u!114 &4061656203244521853
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7532462141135818309}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0df972f2676a52249981c696422e6413, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Health: 100
-  Cost: 1
-  BuildingType: 5
-  Collider: {fileID: 0}
 --- !u!114 &4441637587342822885
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -280,3 +264,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02ce97187a7da9b4288fb4033f892f02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CurrentColliders: []
+  ExceptionList: 
+--- !u!114 &-6756661917173573111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7532462141135818309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cd635343018fd8408aa67165d1c6e67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Health: 100
+  BuildingType: 5
+  Collider: {fileID: 0}

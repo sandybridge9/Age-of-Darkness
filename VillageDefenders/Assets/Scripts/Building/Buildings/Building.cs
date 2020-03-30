@@ -61,12 +61,14 @@ public class Building : MonoBehaviour, IBuilding
         selected = false;
     }
 
+    //Destroys this gameObject
     public void Destroy()
     {
         Object.Destroy(this.gameObject);
     }
 
-    private void Delete()
+    //Same as Destroy() but first deletes Building from BuildingManager lists, and also returns some of the resources used
+    public void Delete()
     {
         SettingsManager.Instance.BuildingManager.DeleteBuildingFromList(this);
         Destroy();
@@ -103,7 +105,6 @@ public class Building : MonoBehaviour, IBuilding
         {
             Collider = GetComponentInChildren<Collider>();
         }
-        Debug.Log(Collider);
     }
 
     #endregion

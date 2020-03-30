@@ -15,8 +15,6 @@ public class BuildingCollisionManager : MonoBehaviour
     public List<Collider> CurrentColliders = new List<Collider>();
     public List<BuildingTypes> ExceptionList = new List<BuildingTypes>();
 
-    //private bool s = false;
-    
     #endregion
 
     #region Overriden Methods

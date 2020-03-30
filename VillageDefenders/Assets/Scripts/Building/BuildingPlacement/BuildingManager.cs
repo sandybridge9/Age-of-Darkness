@@ -433,7 +433,7 @@ public class BuildingManager : MonoBehaviour
         }
         foreach (var wall in wallsToDelete)
         {
-            wall.Destroy();
+            wall.Delete();
         }
     }
 
@@ -449,7 +449,7 @@ public class BuildingManager : MonoBehaviour
         }
     }
 
-    //Placement for unique building(Buildings that you can't have several of)
+    //Placement for unique building(Buildings that you can't have several of: Townhall, Warehouse)
     private void PlaceUniqueBuilding()
     {
         if (Input.GetKey(KeyCode.Mouse0) && IsPositionViable())
@@ -461,8 +461,22 @@ public class BuildingManager : MonoBehaviour
                     currentBuildingHeightChecking.OptimalHeight,
                     currentBuildingSelection.transform.position.z,
                     currentBuildingSelection.transform.rotation);
+                ExtendMaximumResourceCapacity();
                 CleanUp();
             }
+        }
+    }
+
+    //When building Townhall or Warehouse, extends maximum resource capacity
+    private void ExtendMaximumResourceCapacity()
+    {
+        if (currentBuilding is Townhall)
+        {
+            SettingsManager.Instance.ResourceManager.BuildTownhall(currentBuilding as Townhall);
+        }
+        else if (currentBuilding is Warehouse)
+        {
+            SettingsManager.Instance.ResourceManager.BuildWarehouse(currentBuilding as Warehouse);
         }
     }
 
@@ -485,6 +499,7 @@ public class BuildingManager : MonoBehaviour
         }
     }
 
+    //Press C to cancel currently selected building
     private void CancelSelection()
     {
         if (Input.GetKey(KeyCode.C) && cancelDelay >= 60 && currentBuildingSelection != null)
@@ -499,6 +514,7 @@ public class BuildingManager : MonoBehaviour
         cancelDelay++;
     }
 
+    //Performs a clean up, resets all fields and properties
     public void CleanUp()
     {
         currentBuildingHeightChecking = null;
@@ -519,6 +535,7 @@ public class BuildingManager : MonoBehaviour
         }
     }
 
+    //Deletes a building from allBuildings/allWalls list <-- Performed on Building.Delete()
     public void DeleteBuildingFromList(Building building)
     {
         if (building.BuildingType == BuildingTypes.WoodenWall || building.BuildingType == BuildingTypes.StoneWall)

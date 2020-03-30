@@ -47,7 +47,6 @@ public class SettingsManager : MonoBehaviour
         BuildingManager = GetComponent<BuildingManager>();
         SelectionManager = GetComponent<SelectionManager>();
         ResourceManager = GetComponent<ResourceManager>();
-        ResourceManager.SetCurrentResources(new ResourceBundle(StartingGold, StartingWood, StartingStone, StartingIron));
     }
 
     void Update()

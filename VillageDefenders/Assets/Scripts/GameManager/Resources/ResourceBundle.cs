@@ -101,11 +101,51 @@ public class ResourceBundle
         iron -= cost.iron;
     }
 
-    public void ReturnResources(ResourceBundle resources, int percentage)
+    public void ReturnResources(ResourceBundle maximumCapacity, ResourceBundle resources, int percentage)
     {
-        gold += (resources.Gold * percentage) / 100;
-        wood += (resources.Wood * percentage) / 100;
-        stone += (resources.Stone * percentage) / 100;
-        iron += (resources.Iron * percentage) / 100;
+        var goldAmount = (resources.Gold * percentage) / 100;
+        var woodAmount = (resources.Wood * percentage) / 100;
+        var stoneAmount = (resources.Stone * percentage) / 100;
+        var ironAmount = (resources.Iron * percentage) / 100;
+        if (gold + goldAmount >= maximumCapacity.gold)
+        {
+            gold = maximumCapacity.gold;
+        }
+        else
+        {
+            gold += goldAmount;
+        }
+        if (wood + woodAmount >= maximumCapacity.wood)
+        {
+            wood = maximumCapacity.wood;
+        }
+        else
+        {
+            wood += woodAmount;
+        }
+        if (stone + stoneAmount >= maximumCapacity.stone)
+        {
+            stone = maximumCapacity.stone;
+        }
+        else
+        {
+            stone += stoneAmount;
+        }
+        if (iron + ironAmount >= maximumCapacity.iron)
+        {
+            iron = maximumCapacity.iron;
+        }
+        else
+        {
+            iron += ironAmount;
+        }
+    }
+
+    public void AddResources(ResourceBundle resources)
+    {
+        gold += resources.Gold;
+        wood += resources.Wood;
+        stone += resources.Stone;
+        iron += resources.Iron;
     }
 }

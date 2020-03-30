@@ -136,6 +136,7 @@ GameObject:
   - component: {fileID: 1017745183}
   - component: {fileID: 1017745182}
   - component: {fileID: 1017745178}
+  - component: {fileID: 1017745186}
   - component: {fileID: 1017745185}
   m_Layer: 0
   m_Name: Main Camera
@@ -276,14 +277,19 @@ MonoBehaviour:
   - {fileID: 5606232815364281016, guid: 88012513d9690834fbf8716c347c5e97, type: 3}
   - {fileID: 3625311228872381835, guid: e4fee4d9551855349b5f973c861b40e0, type: 3}
   - {fileID: 508425209793004298, guid: 1ca725ef2d4b5ff4988c6076b58b3421, type: 3}
-  - {fileID: 4061656203244521853, guid: 30c074dee4770984dbc253a676e40e33, type: 3}
-  - {fileID: 4212061169550847647, guid: 50c99df039ebdc2408c7779330fc5bab, type: 3}
+  - {fileID: -6756661917173573111, guid: 30c074dee4770984dbc253a676e40e33, type: 3}
   - {fileID: 6390272583025468082, guid: 3663db1874ebf36409cc1d7507674e14, type: 3}
   - {fileID: 8602776882364731825, guid: a507f501a5e307946afd56c0c6cf62f0, type: 3}
+  - {fileID: 7660127894022655661, guid: d16cb795a011d3a4886acaa27d15132d, type: 3}
   MaterialCanBuild: {fileID: 2100000, guid: 92b82f4761bd7c140803167f9c20837d, type: 2}
   MaterialCantBuild: {fileID: 2100000, guid: b94782059a0a6004282d8a1a218230ec, type: 2}
+  StartingGold: 500
+  StartingWood: 100
+  StartingStone: 100
+  StartingIron: 100
   BuildingManager: {fileID: 0}
   SelectionManager: {fileID: 0}
+  ResourceManager: {fileID: 0}
 --- !u!45 &1017745185
 Skybox:
   m_ObjectHideFlags: 0
@@ -293,6 +299,18 @@ Skybox:
   m_GameObject: {fileID: 1017745177}
   m_Enabled: 1
   m_CustomSkybox: {fileID: 2100000, guid: 47cd86021c335854592b2fcf105c3e2c, type: 2}
+--- !u!114 &1017745186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1017745177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcf2e3529a382ae4a820840e96b361b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1242721873
 GameObject:
   m_ObjectHideFlags: 0

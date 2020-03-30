@@ -4,17 +4,21 @@ using UnityEngine;
 
 public class Townhall : Building
 {
+    public ResourceBundle ResourceCapacity;
+
     public Townhall()
     {
         Health = 100f;
         Cost = new ResourceBundle(0, 0, 0, 0);
+        ResourceCapacity = new ResourceBundle(1000, 750, 750 ,750);
         BuildingType = BuildingTypes.Townhall;
     }
 
-    public Townhall(float health, ResourceBundle cost, BuildingTypes type)
+    public Townhall(float health, ResourceBundle cost, ResourceBundle resourceCapacity, BuildingTypes type)
     {
         Health = health;
         Cost = cost;
+        ResourceCapacity = resourceCapacity;
         BuildingType = type;
     }
 
