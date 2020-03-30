@@ -299,7 +299,7 @@ public class BuildingManager : MonoBehaviour
         foreach (var wall in tempWalls)
         {
             //Implement check for dublicate buildings in one location
-            if (!CheckIfLocationIsOccupied(wall.transform.position))
+            if (!CheckIfLocationIsOccupied(wall.transform.position) && SettingsManager.Instance.ResourceManager.SubtractBuildingCostFromCurrentResources(wall.Cost))
             {
                 wall.IsPlaced = true;
                 wall.GetComponent<HeightChecking>().enabled = false;
@@ -475,11 +475,14 @@ public class BuildingManager : MonoBehaviour
     //Method responsible for instantiating a new building and setting up its components
     private void BuildBuilding(float x, float y, float z, Quaternion rotation, Building building)
     {
-        var newCopy = GameObject.Instantiate(building, new Vector3(x,y,z), rotation);
-        newCopy.IsPlaced = true;
-        newCopy.GetComponent<HeightChecking>().enabled = false;
-        newCopy.GetComponent<BuildingCollisionManager>().enabled = false;
-        allBuildings.Add(newCopy);
+        if (SettingsManager.Instance.ResourceManager.SubtractBuildingCostFromCurrentResources(building.Cost))
+        {
+            var newCopy = GameObject.Instantiate(building, new Vector3(x, y, z), rotation);
+            newCopy.IsPlaced = true;
+            newCopy.GetComponent<HeightChecking>().enabled = false;
+            newCopy.GetComponent<BuildingCollisionManager>().enabled = false;
+            allBuildings.Add(newCopy);
+        }
     }
 
     private void CancelSelection()
@@ -520,10 +523,12 @@ public class BuildingManager : MonoBehaviour
     {
         if (building.BuildingType == BuildingTypes.WoodenWall || building.BuildingType == BuildingTypes.StoneWall)
         {
+            SettingsManager.Instance.ResourceManager.ReturnPercentageOfBuildingCost(building.Cost, 50);
             allWalls.Remove(building);
         }
         else
         {
+            SettingsManager.Instance.ResourceManager.ReturnPercentageOfBuildingCost(building.Cost, 25);
             allBuildings.Remove(building);
         }
     }

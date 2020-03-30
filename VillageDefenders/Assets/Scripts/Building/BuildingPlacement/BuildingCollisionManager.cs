@@ -21,23 +21,23 @@ public class BuildingCollisionManager : MonoBehaviour
 
     #region Overriden Methods
 
-    void OnTriggerEnter(Collider c)
+    void OnTriggerEnter(Collider other)
     {
-        if(c.tag == "Building")
+        if(other.tag == "Building")
         {
-            var building = c.transform.GetComponent<Building>();
+            var building = other.transform.GetComponent<Building>();
             if (!ExceptionList.Contains(building.BuildingType))
             {
-                CurrentColliders.Add(c);
+                CurrentColliders.Add(other);
             }
         }
     }
 
-    void OnTriggerExit(Collider c)
+    void OnTriggerExit(Collider other)
     {
-        if (c.tag == "Building")
+        if (other.tag == "Building")
         {
-            CurrentColliders.Remove(c);
+            CurrentColliders.Remove(other);
         }
     }
 

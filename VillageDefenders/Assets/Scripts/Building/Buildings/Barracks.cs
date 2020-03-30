@@ -9,8 +9,15 @@ public class Barracks : Building
     public Barracks()
     {
         Health = 100f;
-        Cost = 10f;
+        Cost = new ResourceBundle(0, 50, 0, 0);
         BuildingType = BuildingTypes.Barracks;
+    }
+
+    public Barracks(float health, ResourceBundle cost, BuildingTypes type)
+    {
+        Health = health;
+        Cost = cost;
+        BuildingType = type;
     }
 
     //Use virtual StartupActions()

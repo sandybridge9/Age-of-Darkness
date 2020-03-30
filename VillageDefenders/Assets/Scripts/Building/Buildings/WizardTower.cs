@@ -16,18 +16,18 @@ public class WizardTower : Building
     public WizardTower()
     {
         Health = 100f;
-        Cost = 10f;
+        Cost = new ResourceBundle(500, 50, 50, 50);
         Damage = 25f;
         FireRate = 3f;
         BuildingType = BuildingTypes.WizardTower;
     }
 
-    public WizardTower(float health, float cost, float damage, float fireRate)
+    public WizardTower(float health, ResourceBundle cost, float damage, float fireRate)
     {
-        this.Health = health;
-        this.Cost = cost;
-        this.Damage = damage;
-        this.FireRate = fireRate;
+        Health = health;
+        Cost = cost;
+        Damage = damage;
+        FireRate = fireRate;
         BuildingType = BuildingTypes.WizardTower;
     }
 

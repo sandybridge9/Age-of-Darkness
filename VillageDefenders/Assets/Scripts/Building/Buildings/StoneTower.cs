@@ -7,7 +7,14 @@ public class StoneTower : Building
     public StoneTower()
     {
         Health = 100f;
-        Cost = 25f;
+        Cost = new ResourceBundle(0, 0, 25, 0);
         BuildingType = BuildingTypes.StoneTower;
+    }
+
+    public StoneTower(float health, ResourceBundle cost, BuildingTypes type)
+    {
+        Health = health;
+        Cost = cost;
+        BuildingType = type;
     }
 }

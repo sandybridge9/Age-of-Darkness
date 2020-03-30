@@ -27,21 +27,27 @@ public class SettingsManager : MonoBehaviour
 
     public Material MaterialCanBuild;
     public Material MaterialCantBuild;
+    public double StartingGold = 500f;
+    public double StartingWood = 100f;
+    public double StartingStone = 100f;
+    public double StartingIron = 100f;
 
     //Properties hidden in editor
     [HideInInspector]
     public BuildingManager BuildingManager;
     [HideInInspector]
     public SelectionManager SelectionManager;
-
-
-
+    [HideInInspector]
+    public ResourceManager ResourceManager;
+    
     #endregion
 
     void Start()
     {
         BuildingManager = GetComponent<BuildingManager>();
         SelectionManager = GetComponent<SelectionManager>();
+        ResourceManager = GetComponent<ResourceManager>();
+        ResourceManager.SetCurrentResources(new ResourceBundle(StartingGold, StartingWood, StartingStone, StartingIron));
     }
 
     void Update()

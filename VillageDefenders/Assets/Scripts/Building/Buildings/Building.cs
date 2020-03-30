@@ -16,7 +16,7 @@ public class Building : MonoBehaviour, IBuilding
     #region Properties
 
     public float Health;
-    public float Cost;
+    public ResourceBundle Cost;
     public BuildingTypes BuildingType;
 
 
@@ -32,13 +32,15 @@ public class Building : MonoBehaviour, IBuilding
     public Building()
     {
         Health = 100f;
-        Cost = 0f;
+        Cost = new ResourceBundle(10,10,10,10);
     }
+
     public Building(BuildingTypes buildingType) : this()
     {
         BuildingType = buildingType;
     }
-    public Building(float health, float cost, BuildingTypes buildingType)
+
+    public Building(float health, ResourceBundle cost, BuildingTypes buildingType)
     {
         Health = health;
         Cost = cost;
@@ -61,8 +63,13 @@ public class Building : MonoBehaviour, IBuilding
 
     public void Destroy()
     {
-        SettingsManager.Instance.BuildingManager.DeleteBuildingFromList(this);
         Object.Destroy(this.gameObject);
+    }
+
+    private void Delete()
+    {
+        SettingsManager.Instance.BuildingManager.DeleteBuildingFromList(this);
+        Destroy();
     }
 
     void Update()
@@ -71,8 +78,7 @@ public class Building : MonoBehaviour, IBuilding
         {
             if (Input.GetKey(KeyCode.Delete))
             {
-                //SettingsManager.Instance.BuildingManager.DeleteBuildingFromList(this);
-                Destroy();
+                Delete();
             }
         }
     }
