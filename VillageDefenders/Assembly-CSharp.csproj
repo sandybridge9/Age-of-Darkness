@@ -84,6 +84,9 @@
     <Compile Include="Assets\Scripts\GameManager\Resources\ResourceManager.cs" />
     <Compile Include="Assets\Scripts\GameManager\SelectionManager.cs" />
     <Compile Include="Assets\Scripts\GameManager\SettingsManager.cs" />
+    <Compile Include="Assets\Scripts\Units\Unit.cs" />
+    <Compile Include="Assets\Scripts\Units\Warrior.cs" />
+    <Compile Include="Assets\Scripts\Units\Worker.cs" />
     <None Include="Assets\AssetStoreContent\MedievalTownExteriors\Readme.txt" />
     <None Include="Assets\AssetStoreContent\AurynSky\Gems Ultimate Pack\READ ME.txt" />
     <None Include="Assets\AssetStoreContent\Low Poly Toon Chests\Readme.txt" />

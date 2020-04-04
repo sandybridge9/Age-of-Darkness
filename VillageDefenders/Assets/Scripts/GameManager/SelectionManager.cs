@@ -1,71 +1,143 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SelectionManager : MonoBehaviour
 {
-    private LayerMask buildingLayerMask;
-    private GameObject CurrentSelection;
+    //private LayerMask buildingLayerMask;
+    //private LayerMask unitLayerMask;
+    private LayerMask combinedMask;
+    private List<GameObject> currentSelections;
+    private GameObject currentSelection;
 
     void Start()
     {
-        buildingLayerMask = SettingsManager.Instance.BuildingLayerMask;
+        //buildingLayerMask = SettingsManager.Instance.BuildingLayerMask;
+        //unitLayerMask = SettingsManager.Instance.UnitLayerMask;
+        combinedMask = (1 << LayerMask.NameToLayer("Building")) | (1 << LayerMask.NameToLayer("Unit"));
+        //combinedMask = (1 << SettingsManager.Instance.BuildingLayerMask.value) | (1 << SettingsManager.Instance.UnitLayerMask.value);
+        currentSelections = new List<GameObject>();
     }
 
     void Update()
     {
         ShootRay();
+        Debug.Log(currentSelections.Count);
     }
 
     private void ShootRay()
     {
-        if (Input.GetKey(KeyCode.Mouse0))
+        if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             if (!SettingsManager.Instance.BuildingManager.HasSelectedBuilding())
             {
-                DeSelectCurrentGameObject();
                 var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hitInfo;
-                if (Physics.Raycast(ray, out hitInfo, 1000f, buildingLayerMask))
+                if (Physics.Raycast(ray, out hitInfo, 1000f, combinedMask))
                 {
-                    if (hitInfo.transform.GetComponent<Building>())
+                    //If shift key is held then add selected gameobjects to list
+                    if (Input.GetKey(KeyCode.LeftShift))
                     {
-                        SelectGameObject(hitInfo.transform.gameObject);
+                        SelectGameObject(hitInfo.transform.gameObject, true);
                     }
-                    //TODO: else if check if hitInfo hit an unit
+                    else
+                    {
+                        ClearSelection();
+                        SelectGameObject(hitInfo.transform.gameObject, false);
+                    }
+                }
+                //If clicked elsewhere - clear selection
+                else
+                {
+                    ClearSelection();
                 }
             }
             else
             {
-                DeSelectCurrentGameObject();
+                ClearSelection();
             }
         }
     }
 
-    public void SelectGameObject(GameObject gameObject)
+    //Method that is called upon object selection
+    private void SelectGameObject(GameObject selectedObject, bool addToList)
     {
-        CurrentSelection = gameObject;
-        var building = gameObject.GetComponent<Building>();
-        if (building != null)
+        if (selectedObject.GetComponent<Building>())
         {
-            if (building.IsPlaced)
+            var building = selectedObject.GetComponent<Building>();
+            building.Select();
+            //Check if currentSelections list has any units selected, and if yes, then clear it
+            //Because units and buildings can't be selected at the same time
+            if (currentSelections.Any(s=>s.GetComponent<Unit>() != null))//Where(s => s.GetComponent<Unit>() != null).Any())
             {
-                building.Select();
+                ClearSelection();
             }
         }
-        //TODO: Impelement unit selection
+        else if (selectedObject.GetComponent<Unit>())
+        {
+            var unit = selectedObject.GetComponent<Unit>();
+            unit.Select();
+            //Check if currentSelections list has any buildings selected, and if yes, then clear it
+            //Because units and buildings can't be selected at the same time
+            if (currentSelections.Any(s => s.GetComponent<Building>() != null))//Where(s => s.GetComponent<Unit>() != null).Any())
+            {
+                ClearSelection();
+            }
+        }
+        if (addToList && !currentSelections.Contains(selectedObject))
+        {
+            currentSelections.Add(selectedObject);
+        }
+        else
+        {
+            currentSelection = selectedObject;
+        }
     }
 
-    public void DeSelectCurrentGameObject()
+    public void ClearSelection()
     {
-        if (CurrentSelection != null && CurrentSelection.GetComponent<Building>())
+        Debug.Log("Clearing selections");
+        foreach (var selection in currentSelections)
         {
-            var building = CurrentSelection.GetComponent<Building>();
-            if (building.IsPlaced)
+            var b = selection.GetComponent<Building>();
+            if (b != null)
             {
-                building.DeSelect();
+                b.DeSelect();
+            }
+            else
+            {
+                var u = selection.GetComponent<Unit>();
+                if (u != null)
+                {
+                    u.DeSelect();
+                }
             }
         }
-        //TODO: Implement unit deselection
+        currentSelections = new List<GameObject>();
+        if (currentSelection != null)
+        {
+            var b = currentSelection.GetComponent<Building>();
+            if (b != null)
+            {
+                b.DeSelect();
+            }
+            else
+            {
+                var u = currentSelection.GetComponent<Unit>();
+                if (u != null)
+                {
+                    u.DeSelect();
+                }
+            }
+
+            currentSelection = null;
+        }
+    }
+
+    public void RemoveGameObjectFromSelection(GameObject _gameObject)
+    {
+        currentSelection = null;
+        currentSelections.Remove(_gameObject);
     }
 }

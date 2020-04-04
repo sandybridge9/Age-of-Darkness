@@ -9,7 +9,6 @@ public class Building : MonoBehaviour, IBuilding
 {
     #region Fields
 
-    private bool selected;
 
     #endregion
 
@@ -22,6 +21,9 @@ public class Building : MonoBehaviour, IBuilding
 
     [HideInInspector]
     public bool IsPlaced { get; set; } = false;
+    [HideInInspector]
+    public bool IsSelected { get; set; } = false;
+
     [HideInInspector]
     public Collider Collider;
 
@@ -51,32 +53,9 @@ public class Building : MonoBehaviour, IBuilding
 
     #region Methods
 
-    public void Select()
-    {
-        selected = true;
-    }
-
-    public void DeSelect()
-    {
-        selected = false;
-    }
-
-    //Destroys this gameObject
-    public void Destroy()
-    {
-        Object.Destroy(this.gameObject);
-    }
-
-    //Same as Destroy() but first deletes Building from BuildingManager lists, and also returns some of the resources used
-    public void Delete()
-    {
-        SettingsManager.Instance.BuildingManager.DeleteBuildingFromList(this);
-        Destroy();
-    }
-
     void Update()
     {
-        if (selected)
+        if (IsSelected)
         {
             if (Input.GetKey(KeyCode.Delete))
             {
@@ -95,6 +74,30 @@ public class Building : MonoBehaviour, IBuilding
     protected virtual void StartupActions()
     {
 
+    }
+
+    public void Select()
+    {
+        IsSelected = true;
+    }
+
+    public void DeSelect()
+    {
+        IsSelected = false;
+    }
+
+    //Destroys this gameObject
+    public void Destroy()
+    {
+        Object.Destroy(this.gameObject);
+    }
+
+    //Same as Destroy() but first deletes Building from manager lists
+    public void Delete()
+    {
+        SettingsManager.Instance.BuildingManager.DeleteBuildingFromList(this);
+        SettingsManager.Instance.SelectionManager.RemoveGameObjectFromSelection(this.gameObject);
+        Destroy();
     }
 
     //Derived classes should override this if they are not using BoxCollider
