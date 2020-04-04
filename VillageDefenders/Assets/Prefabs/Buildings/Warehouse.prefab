@@ -372,6 +372,7 @@ GameObject:
   - component: {fileID: 5606232815364281016}
   - component: {fileID: 8688850098004893110}
   - component: {fileID: 7972447065184275598}
+  - component: {fileID: 1639212309366403820}
   m_Layer: 8
   m_Name: Warehouse
   m_TagString: Building
@@ -515,6 +516,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CurrentColliders: []
   ExceptionList: 
+--- !u!208 &1639212309366403820
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7300732222156471234}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 4.2060003, y: 3.2050002, z: 4.532}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: -0.15100001, y: 2.2050002, z: -0.272}
+  m_TimeToStationary: 0.5
 --- !u!1 &9009797434320743259
 GameObject:
   m_ObjectHideFlags: 0

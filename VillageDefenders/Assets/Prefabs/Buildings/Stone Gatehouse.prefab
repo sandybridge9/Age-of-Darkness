@@ -77,8 +77,9 @@ GameObject:
   - component: {fileID: 2640073412881377177}
   - component: {fileID: 1576220887653719815}
   - component: {fileID: 8602776882364731825}
+  - component: {fileID: 550208266262541317}
   m_Layer: 8
-  m_Name: Gatehouse
+  m_Name: Stone Gatehouse
   m_TagString: Building
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -216,6 +217,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02ce97187a7da9b4288fb4033f892f02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CurrentColliders: []
+  ExceptionList: 
 --- !u!114 &8602776882364731825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -229,9 +232,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Health: 100
-  Cost: 10
   BuildingType: 8
   Collider: {fileID: 0}
+--- !u!208 &550208266262541317
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5983241986033447281}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 3.3750002, y: 3.3750002, z: 0.51000005}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 3.3750002, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &8029617715114314192
 GameObject:
   m_ObjectHideFlags: 0

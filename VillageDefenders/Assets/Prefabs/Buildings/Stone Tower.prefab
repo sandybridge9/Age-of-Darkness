@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 3634939760455014796}
   - component: {fileID: 7215755497512432844}
   - component: {fileID: 7660127894022655661}
+  - component: {fileID: 2117058248573685329}
   m_Layer: 8
   m_Name: Stone Tower
   m_TagString: Building
@@ -171,9 +172,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Health: 100
-  Cost: 25
   BuildingType: 9
   Collider: {fileID: 0}
+--- !u!208 &2117058248573685329
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 544977868847805305}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 1.6610001, y: 3.7500002, z: 1.6610001}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 3.7500002, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &1564607794076032321
 GameObject:
   m_ObjectHideFlags: 0

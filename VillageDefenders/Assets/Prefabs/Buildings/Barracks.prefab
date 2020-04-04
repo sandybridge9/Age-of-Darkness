@@ -343,6 +343,7 @@ GameObject:
   - component: {fileID: 3625311228872381835}
   - component: {fileID: 8895329638246935165}
   - component: {fileID: 344390379537722168}
+  - component: {fileID: 5279139996739012550}
   m_Layer: 8
   m_Name: Barracks
   m_TagString: Building
@@ -487,6 +488,22 @@ MonoBehaviour:
   MaximumHeightDifference: 1
   CanPlace: 0
   OptimalHeight: 0
+--- !u!208 &5279139996739012550
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6824203598611946676}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 4.2060003, y: 4.8250003, z: 4.866}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0.018000001, y: 3.5850003, z: 0.003}
+  m_TimeToStationary: 0.5
 --- !u!1 &7767701981036378302
 GameObject:
   m_ObjectHideFlags: 0

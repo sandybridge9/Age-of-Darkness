@@ -196,8 +196,9 @@ GameObject:
   - component: {fileID: 5272442137099495001}
   - component: {fileID: 9171817726792981474}
   - component: {fileID: 6390272583025468082}
+  - component: {fileID: 8947026833288835733}
   m_Layer: 8
-  m_Name: Basic Tower
+  m_Name: Wooden Tower
   m_TagString: Building
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -321,6 +322,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02ce97187a7da9b4288fb4033f892f02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CurrentColliders: []
+  ExceptionList: 
 --- !u!114 &6390272583025468082
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -334,9 +337,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Health: 100
-  Cost: 15
   BuildingType: 6
   Collider: {fileID: 0}
+--- !u!208 &8947026833288835733
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5934096469947860923}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 2.6810002, y: 5.4430003, z: 2.361}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: -1.2880001, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &7224509894342642717
 GameObject:
   m_ObjectHideFlags: 0

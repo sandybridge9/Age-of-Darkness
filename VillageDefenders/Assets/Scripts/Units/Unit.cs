@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Unit : MonoBehaviour
 {
     public float Health;
+    private NavMeshAgent agent;
     [HideInInspector]
     public bool IsSelected { get; set; } = false;
 
@@ -16,7 +18,7 @@ public class Unit : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        agent = GetComponent<NavMeshAgent>();
     }
 
     // Update is called once per frame
@@ -24,16 +26,35 @@ public class Unit : MonoBehaviour
     {
         if (IsSelected)
         {
-            if (Input.GetKey(KeyCode.Delete))
-            {
-                Delete();
-            }
+            DeleteOrder();
+            MoveOrder();
+        }
+    }
+
+    private void MoveOrder()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            Move();
         }
     }
 
     public void Move()
     {
+        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hitInfo;
+        if (Physics.Raycast(ray, out hitInfo))
+        {
+            agent.SetDestination(hitInfo.point);
+        }
+    }
 
+    private void DeleteOrder()
+    {
+        if (Input.GetKey(KeyCode.Delete))
+        {
+            Delete();
+        }
     }
 
     public void Delete()
@@ -43,7 +64,7 @@ public class Unit : MonoBehaviour
         Destroy();
     }
 
-    public void Destroy()
+    private void Destroy()
     {
         Object.Destroy(this.gameObject);
     }

@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: 508425209793004298}
   - component: {fileID: 8805846662568058139}
   - component: {fileID: 5617506395428898581}
+  - component: {fileID: 9056007812830395965}
   m_Layer: 8
   m_Name: Wood Wall
   m_TagString: Building
@@ -109,7 +110,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Health: 100
-  Cost: 1
   BuildingType: 4
   Collider: {fileID: 0}
 --- !u!114 &8805846662568058139
@@ -124,6 +124,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02ce97187a7da9b4288fb4033f892f02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CurrentColliders: []
+  ExceptionList: 
 --- !u!114 &5617506395428898581
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -139,6 +141,22 @@ MonoBehaviour:
   MaximumHeightDifference: 5
   CanPlace: 0
   OptimalHeight: 0
+--- !u!208 &9056007812830395965
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3119155790902616482}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.3, y: 1.25, z: 0.235}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: -0.12, y: 1.24, z: 0.03}
+  m_TimeToStationary: 0.5
 --- !u!1 &3119957123115501098
 GameObject:
   m_ObjectHideFlags: 0

@@ -267,6 +267,7 @@ GameObject:
   - component: {fileID: 4212061169550847647}
   - component: {fileID: -5922265323884704810}
   - component: {fileID: 6300964220350943579}
+  - component: {fileID: 272830506405125430}
   m_Layer: 8
   m_Name: Wizard Tower
   m_TagString: Building
@@ -332,7 +333,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Health: 100
-  Cost: 500
   BuildingType: 7
   Collider: {fileID: 0}
   Damage: 25
@@ -349,6 +349,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02ce97187a7da9b4288fb4033f892f02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CurrentColliders: []
+  ExceptionList: 
 --- !u!114 &6300964220350943579
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -364,6 +366,22 @@ MonoBehaviour:
   MaximumHeightDifference: 1
   CanPlace: 0
   OptimalHeight: 0
+--- !u!208 &272830506405125430
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2162672228258714004}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 1.7111005, y: 5.086655, z: 1.506509}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: -0.01071739, y: 5.102149, z: 0.06526089}
+  m_TimeToStationary: 0.5
 --- !u!1 &2298967745777733307
 GameObject:
   m_ObjectHideFlags: 0

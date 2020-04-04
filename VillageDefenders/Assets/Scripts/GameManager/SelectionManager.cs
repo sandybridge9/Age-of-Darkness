@@ -7,9 +7,12 @@ public class SelectionManager : MonoBehaviour
 {
     //private LayerMask buildingLayerMask;
     //private LayerMask unitLayerMask;
+    //public Transform SelectionArea;
     private LayerMask combinedMask;
     private List<GameObject> currentSelections;
     private GameObject currentSelection;
+
+    private bool needsClearing = false;
 
     void Start()
     {
@@ -43,17 +46,16 @@ public class SelectionManager : MonoBehaviour
                     }
                     else
                     {
-                        ClearSelection();
                         SelectGameObject(hitInfo.transform.gameObject, false);
                     }
                 }
                 //If clicked elsewhere - clear selection
                 else
                 {
-                    ClearSelection();
+                    needsClearing = true;
                 }
             }
-            else
+            if(needsClearing)
             {
                 ClearSelection();
             }
@@ -91,7 +93,11 @@ public class SelectionManager : MonoBehaviour
         }
         else
         {
-            currentSelection = selectedObject;
+            ClearSelection();
+            if (currentSelection != selectedObject)
+            {
+                currentSelection = selectedObject;
+            }
         }
     }
 
@@ -130,9 +136,9 @@ public class SelectionManager : MonoBehaviour
                     u.DeSelect();
                 }
             }
-
             currentSelection = null;
         }
+        needsClearing = false;
     }
 
     public void RemoveGameObjectFromSelection(GameObject _gameObject)
