@@ -9,7 +9,7 @@ public class StoneWall : Building
     public StoneWall()
     {
         Health = 100f;
-        Cost = new ResourceBundle(0, 0, 1, 0);
+        Cost = new ResourceBundle(0, 0, 1, 0, 0);
         BuildingType = BuildingTypes.StoneWall;
     }
 

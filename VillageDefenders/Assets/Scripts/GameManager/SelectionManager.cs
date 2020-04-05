@@ -94,10 +94,7 @@ public class SelectionManager : MonoBehaviour
         else
         {
             ClearSelection();
-            if (currentSelection != selectedObject)
-            {
-                currentSelection = selectedObject;
-            }
+            currentSelection = selectedObject;
         }
     }
 

@@ -11,6 +11,7 @@ public class ResourceBundle
     private double wood;
     private double stone;
     private double iron;
+    private double food;
 
     #endregion
 
@@ -36,6 +37,11 @@ public class ResourceBundle
         get { return iron; }
     }
 
+    public double Food
+    {
+        get { return food; }
+    }
+
     #endregion
 
     public ResourceBundle()
@@ -44,22 +50,24 @@ public class ResourceBundle
         wood = 0;
         stone = 0;
         iron = 0;
+        food = 0;
     }
 
-    public ResourceBundle(double gold, double wood, double stone, double iron)
+    public ResourceBundle(double gold, double wood, double stone, double iron, double food)
     {
         this.gold = gold;
         this.wood = wood;
         this.stone = stone;
         this.iron = iron;
+        this.food = food;
     }
 
     public bool CheckIfThereAreEnoughResources(ResourceBundle bundle)
     {
-        return CheckIfThereAreEnoughResources(bundle.Gold, bundle.Wood, bundle.Stone, bundle.Iron);
+        return CheckIfThereAreEnoughResources(bundle.Gold, bundle.Wood, bundle.Stone, bundle.Iron, bundle.Food);
     }
 
-    private bool CheckIfThereAreEnoughResources(double gold, double wood, double stone, double iron)
+    private bool CheckIfThereAreEnoughResources(double gold, double wood, double stone, double iron, double food)
     {
         if (Gold < gold)
         {
@@ -77,7 +85,42 @@ public class ResourceBundle
         {
             return false;
         }
+        if (Food < food)
+        {
+            return false;
+        }
         return true;
+    }
+
+    public bool HasReachedMaximumCapacity(ResourceBundle maximumCapacity)
+    {
+        bool hasReached = false;
+        if (gold >= maximumCapacity.Gold)
+        {
+            gold = maximumCapacity.Gold;
+            hasReached = true;
+        }
+        if (wood >= maximumCapacity.Wood)
+        {
+            wood = maximumCapacity.Wood;
+            hasReached = true;
+        }
+        if (stone >= maximumCapacity.Stone)
+        {
+            stone = maximumCapacity.Stone;
+            hasReached = true;
+        }
+        if (iron >= maximumCapacity.Iron)
+        {
+            iron = maximumCapacity.Iron;
+            hasReached = true;
+        }
+        if (food >= maximumCapacity.Food)
+        {
+            food = maximumCapacity.Food;
+            hasReached = true;
+        }
+        return hasReached;
     }
 
     public bool SubtractResources(ResourceBundle cost)
@@ -99,6 +142,7 @@ public class ResourceBundle
         wood -= cost.Wood;
         stone -= cost.stone;
         iron -= cost.iron;
+        food -= cost.food;
     }
 
     public void ReturnResources(ResourceBundle maximumCapacity, ResourceBundle resources, int percentage)
@@ -107,6 +151,7 @@ public class ResourceBundle
         var woodAmount = (resources.Wood * percentage) / 100;
         var stoneAmount = (resources.Stone * percentage) / 100;
         var ironAmount = (resources.Iron * percentage) / 100;
+        var foodAmount = (resources.Food * percentage) / 100;
         if (gold + goldAmount >= maximumCapacity.gold)
         {
             gold = maximumCapacity.gold;
@@ -115,7 +160,7 @@ public class ResourceBundle
         {
             gold += goldAmount;
         }
-        if (wood + woodAmount >= maximumCapacity.wood)
+        if (wood + woodAmount >= maximumCapacity.Wood)
         {
             wood = maximumCapacity.wood;
         }
@@ -123,7 +168,7 @@ public class ResourceBundle
         {
             wood += woodAmount;
         }
-        if (stone + stoneAmount >= maximumCapacity.stone)
+        if (stone + stoneAmount >= maximumCapacity.Stone)
         {
             stone = maximumCapacity.stone;
         }
@@ -131,13 +176,21 @@ public class ResourceBundle
         {
             stone += stoneAmount;
         }
-        if (iron + ironAmount >= maximumCapacity.iron)
+        if (iron + ironAmount >= maximumCapacity.Iron)
         {
             iron = maximumCapacity.iron;
         }
         else
         {
             iron += ironAmount;
+        }
+        if (food + foodAmount >= maximumCapacity.Food)
+        {
+            food = maximumCapacity.food;
+        }
+        else
+        {
+            food += foodAmount;
         }
     }
 
@@ -147,5 +200,11 @@ public class ResourceBundle
         wood += resources.Wood;
         stone += resources.Stone;
         iron += resources.Iron;
+        food += resources.Food;
+    }
+
+    public override string ToString()
+    {
+        return "Gold:" +gold +" Wood: " +wood +" Stone: " +stone +" Iron: " +iron +" Food:"  +food;
     }
 }

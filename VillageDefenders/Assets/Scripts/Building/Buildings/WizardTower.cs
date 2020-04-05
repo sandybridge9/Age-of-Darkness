@@ -16,7 +16,7 @@ public class WizardTower : Building
     public WizardTower()
     {
         Health = 100f;
-        Cost = new ResourceBundle(500, 50, 50, 50);
+        Cost = new ResourceBundle(500, 50, 50, 50, 0);
         Damage = 25f;
         FireRate = 3f;
         BuildingType = BuildingTypes.WizardTower;

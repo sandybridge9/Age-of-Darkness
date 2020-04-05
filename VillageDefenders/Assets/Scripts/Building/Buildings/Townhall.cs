@@ -9,8 +9,8 @@ public class Townhall : Building
     public Townhall()
     {
         Health = 100f;
-        Cost = new ResourceBundle(0, 0, 0, 0);
-        ResourceCapacity = new ResourceBundle(1000, 750, 750 ,750);
+        Cost = new ResourceBundle(0, 0, 0, 0, 0);
+        ResourceCapacity = new ResourceBundle(1000, 750, 750 ,750, 750);
         BuildingType = BuildingTypes.Townhall;
     }
 

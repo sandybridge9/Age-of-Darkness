@@ -34,7 +34,7 @@ public class Building : MonoBehaviour, IBuilding
     public Building()
     {
         Health = 100f;
-        Cost = new ResourceBundle(10,10,10,10);
+        Cost = new ResourceBundle(10,10,10,10, 0);
     }
 
     public Building(BuildingTypes buildingType) : this()

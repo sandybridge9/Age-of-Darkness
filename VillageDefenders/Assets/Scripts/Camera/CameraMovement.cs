@@ -103,7 +103,7 @@ public class CameraMovement : MonoBehaviour
             if (groundView == true)
             {
                 var cam = transform.GetComponent<Camera>();
-                cam.orthographicSize -= wheelInput;
+                cam.orthographicSize -= wheelInput * ScrollSpeed;
             }
             else
             {

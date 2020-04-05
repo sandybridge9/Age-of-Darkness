@@ -61,7 +61,8 @@ public class ResourceManager : MonoBehaviour
                 SetStartingResources(new ResourceBundle(SettingsManager.Instance.StartingGold,
                     SettingsManager.Instance.StartingWood,
                     SettingsManager.Instance.StartingStone,
-                    SettingsManager.Instance.StartingIron));
+                    SettingsManager.Instance.StartingIron, 
+                    SettingsManager.Instance.StartingFood));
                 isInitialSetupDone = true;
             }
         }

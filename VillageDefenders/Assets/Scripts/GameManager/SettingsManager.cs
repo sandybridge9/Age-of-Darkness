@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class SettingsManager : MonoBehaviour
 {
@@ -21,6 +23,7 @@ public class SettingsManager : MonoBehaviour
     //Editor properties
     public float BuildingHeightCheckerSensitivity = 0.25f;
     public LayerMask GroundLayerMask;
+    public LayerMask ResourceLayerMask;
     public LayerMask BuildingLayerMask;
     public LayerMask UnitLayerMask;
     public List<Building> PlaceableBuildings;
@@ -31,6 +34,7 @@ public class SettingsManager : MonoBehaviour
     public double StartingWood = 100f;
     public double StartingStone = 100f;
     public double StartingIron = 100f;
+    public double StartingFood = 150f;
 
     //Properties hidden in editor
     [HideInInspector]

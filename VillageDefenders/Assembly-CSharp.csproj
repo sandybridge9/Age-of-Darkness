@@ -84,6 +84,10 @@
     <Compile Include="Assets\Scripts\GameManager\Resources\ResourceManager.cs" />
     <Compile Include="Assets\Scripts\GameManager\SelectionManager.cs" />
     <Compile Include="Assets\Scripts\GameManager\SettingsManager.cs" />
+    <Compile Include="Assets\Scripts\Resources\Food.cs" />
+    <Compile Include="Assets\Scripts\Resources\Resource.cs" />
+    <Compile Include="Assets\Scripts\Resources\Stone.cs" />
+    <Compile Include="Assets\Scripts\Resources\Wood.cs" />
     <Compile Include="Assets\Scripts\Units\Unit.cs" />
     <Compile Include="Assets\Scripts\Units\Warrior.cs" />
     <Compile Include="Assets\Scripts\Units\Worker.cs" />

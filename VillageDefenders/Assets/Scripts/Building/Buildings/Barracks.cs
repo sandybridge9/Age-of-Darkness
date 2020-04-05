@@ -9,7 +9,7 @@ public class Barracks : Building
     public Barracks()
     {
         Health = 100f;
-        Cost = new ResourceBundle(0, 50, 0, 0);
+        Cost = new ResourceBundle(0, 50, 0, 0, 0);
         BuildingType = BuildingTypes.Barracks;
     }
 
