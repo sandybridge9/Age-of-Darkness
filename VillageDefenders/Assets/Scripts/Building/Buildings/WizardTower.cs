@@ -19,7 +19,7 @@ public class WizardTower : Building
         Cost = new ResourceBundle(500, 50, 50, 50, 0);
         Damage = 25f;
         FireRate = 3f;
-        BuildingType = BuildingTypes.WizardTower;
+        BuildingType = global::BuildingType.WizardTower;
     }
 
     public WizardTower(float health, ResourceBundle cost, float damage, float fireRate)
@@ -28,7 +28,7 @@ public class WizardTower : Building
         Cost = cost;
         Damage = damage;
         FireRate = fireRate;
-        BuildingType = BuildingTypes.WizardTower;
+        BuildingType = global::BuildingType.WizardTower;
     }
 
     #endregion

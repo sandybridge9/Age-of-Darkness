@@ -11,10 +11,10 @@ public class Warehouse : Building
         Health = 100f;
         Cost = new ResourceBundle(0, 0, 0, 0, 0);
         ResourceCapacity = new ResourceBundle(2500, 1500, 1500, 1500, 1500);
-        BuildingType = BuildingTypes.Warehouse;
+        BuildingType = BuildingType.Warehouse;
     }
 
-    public Warehouse(float health, ResourceBundle cost, ResourceBundle resourceCapacity, BuildingTypes type)
+    public Warehouse(float health, ResourceBundle cost, ResourceBundle resourceCapacity, BuildingType type)
     {
         Health = health;
         Cost = cost;

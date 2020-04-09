@@ -1,4 +1,4 @@
-﻿public enum BuildingTypes : short 
+﻿public enum BuildingType : short 
 {
     Townhall = 1,
     Warehouse = 2,

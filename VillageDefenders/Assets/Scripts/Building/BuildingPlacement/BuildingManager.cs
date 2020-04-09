@@ -118,20 +118,20 @@ public class BuildingManager : MonoBehaviour
         }
         GetMeshRenderersOfCurrentBuilding();
 
-        if (b.BuildingType == BuildingTypes.WoodenWall || b.BuildingType == BuildingTypes.StoneWall)
+        if (b.BuildingType == BuildingType.WoodenWall || b.BuildingType == BuildingType.StoneWall)
         {
             wallBoxCollider = currentBuildingSelection.GetComponentInChildren<BoxCollider>();
             wallStepSizeX = wallBoxCollider.bounds.size.x;
             wallStepSizeZ = wallBoxCollider.bounds.size.z;
         }
 
-        if (b.BuildingType == BuildingTypes.StoneGatehouse ||
-            b.BuildingType == BuildingTypes.StoneTower ||
-            b.BuildingType == BuildingTypes.WoodenTower)
+        if (b.BuildingType == BuildingType.StoneGatehouse ||
+            b.BuildingType == BuildingType.StoneTower ||
+            b.BuildingType == BuildingType.WoodenTower)
         {
             //Exclude walls from collision checking, because gate house and towers can be built on the walls
-            currentBuildingCollisionManager.AddException(BuildingTypes.WoodenWall);
-            currentBuildingCollisionManager.AddException(BuildingTypes.StoneWall);
+            currentBuildingCollisionManager.AddException(BuildingType.WoodenWall);
+            currentBuildingCollisionManager.AddException(BuildingType.StoneWall);
         }
     }
 
@@ -143,7 +143,7 @@ public class BuildingManager : MonoBehaviour
         if (Physics.Raycast(ray, out hitInfo, 10000f, groundLayerMask))
         {
             //Snapping
-            if (currentBuildingSelection.BuildingType == BuildingTypes.WoodenWall || currentBuildingSelection.BuildingType == BuildingTypes.StoneWall)
+            if (currentBuildingSelection.BuildingType == BuildingType.WoodenWall || currentBuildingSelection.BuildingType == BuildingType.StoneWall)
             {
                 currentBuildingSelection.transform.position = new Vector3(
                     Mathf.Floor(hitInfo.point.x / wallStepSizeX) * wallStepSizeX,
@@ -164,7 +164,7 @@ public class BuildingManager : MonoBehaviour
     private void RotateBuilding()
     {
         //Walls can't be rotated to avoid various issues when wall isn't square
-        if (Input.GetKey(KeyCode.R) && currentBuilding.BuildingType != BuildingTypes.WoodenWall && currentBuilding.BuildingType != BuildingTypes.StoneWall)
+        if (Input.GetKey(KeyCode.R) && currentBuilding.BuildingType != BuildingType.WoodenWall && currentBuilding.BuildingType != BuildingType.StoneWall)
         {
             if (rotationDelay >= 60)
             {
@@ -186,16 +186,16 @@ public class BuildingManager : MonoBehaviour
 
     private void BuildingPlacement()
     {
-        if (currentBuildingSelection.BuildingType == BuildingTypes.WoodenWall || currentBuildingSelection.BuildingType == BuildingTypes.StoneWall)
+        if (currentBuildingSelection.BuildingType == BuildingType.WoodenWall || currentBuildingSelection.BuildingType == BuildingType.StoneWall)
         {
             PlaceWall();
         }
-        else if (currentBuildingSelection.BuildingType == BuildingTypes.Townhall || currentBuildingSelection.BuildingType == BuildingTypes.Warehouse)
+        else if (currentBuildingSelection.BuildingType == BuildingType.Townhall || currentBuildingSelection.BuildingType == BuildingType.Warehouse)
         {
             PlaceUniqueBuilding();
         }
-        else if (currentBuildingSelection.BuildingType == BuildingTypes.StoneGatehouse || currentBuildingSelection.BuildingType == BuildingTypes.StoneTower ||
-                 currentBuildingSelection.BuildingType == BuildingTypes.WoodenTower)
+        else if (currentBuildingSelection.BuildingType == BuildingType.StoneGatehouse || currentBuildingSelection.BuildingType == BuildingType.StoneTower ||
+                 currentBuildingSelection.BuildingType == BuildingType.WoodenTower)
         {
             PlaceBuildingThatCanOverlapWithWalls();
         }
@@ -359,8 +359,8 @@ public class BuildingManager : MonoBehaviour
             if ((location.x >= topLeft.x && location.x <= topRight.x) && (location.z >= bottomLeft.z && location.z <= topLeft.z))
             {
                 //Walls can overlap with towers and gatehouses a bit
-                if (building.BuildingType == BuildingTypes.StoneGatehouse ||
-                    building.BuildingType == BuildingTypes.StoneTower)
+                if (building.BuildingType == BuildingType.StoneGatehouse ||
+                    building.BuildingType == BuildingType.StoneTower)
                 {
                     occupied = false;
                 }
@@ -538,7 +538,7 @@ public class BuildingManager : MonoBehaviour
     //Deletes a building from allBuildings/allWalls list <-- Performed on Building.Delete()
     public void DeleteBuildingFromList(Building building)
     {
-        if (building.BuildingType == BuildingTypes.WoodenWall || building.BuildingType == BuildingTypes.StoneWall)
+        if (building.BuildingType == BuildingType.WoodenWall || building.BuildingType == BuildingType.StoneWall)
         {
             SettingsManager.Instance.ResourceManager.ReturnPercentageOfBuildingCost(building.Cost, 50);
             allWalls.Remove(building);
@@ -578,8 +578,8 @@ public class BuildingManager : MonoBehaviour
 
     private void ChangeColor()
     {
-        if (currentBuilding.BuildingType == BuildingTypes.WoodenWall ||
-            currentBuilding.BuildingType == BuildingTypes.StoneWall)
+        if (currentBuilding.BuildingType == BuildingType.WoodenWall ||
+            currentBuilding.BuildingType == BuildingType.StoneWall)
         {
             return;
         }
@@ -611,6 +611,20 @@ public class BuildingManager : MonoBehaviour
                 renderer.materials = newMaterials;
             }
         }
+    }
+
+    public Building GetTownhall()
+    {
+        var th = allBuildings.Where(x => x.BuildingType == BuildingType.Townhall).ToList();
+        return th.Count != 0 ? th.First() : null;
+        //return allBuildings.Where(x => x.BuildingType == BuildingType.Townhall).ToList().First() ?? null;
+        //return allBuildings.Where(x => x.BuildingType == BuildingType.Townhall).ToArray()[0] ?? null;
+    }
+
+    public Building GetWarehouse()
+    {
+        var w = allBuildings.Where(x => x.BuildingType == BuildingType.Warehouse).ToList();
+        return w.Count != 0 ? w.First() : null;
     }
 
     #endregion

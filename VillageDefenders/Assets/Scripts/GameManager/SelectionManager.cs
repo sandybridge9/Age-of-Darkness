@@ -26,7 +26,7 @@ public class SelectionManager : MonoBehaviour
     void Update()
     {
         ShootRay();
-        Debug.Log(currentSelections.Count);
+        //Debug.Log(currentSelections.Count);
     }
 
     private void ShootRay()

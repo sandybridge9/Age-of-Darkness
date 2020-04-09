@@ -10,14 +10,14 @@ public class StoneWall : Building
     {
         Health = 100f;
         Cost = new ResourceBundle(0, 0, 1, 0, 0);
-        BuildingType = BuildingTypes.StoneWall;
+        BuildingType = BuildingType.StoneWall;
     }
 
     public StoneWall(float health, ResourceBundle cost)
     {
         Health = health;
         Cost = cost;
-        BuildingType = BuildingTypes.StoneWall;
+        BuildingType = BuildingType.StoneWall;
     }
 
     #endregion

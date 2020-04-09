@@ -16,7 +16,7 @@ public class Building : MonoBehaviour, IBuilding
 
     public float Health;
     public ResourceBundle Cost;
-    public BuildingTypes BuildingType;
+    public BuildingType BuildingType;
 
 
     [HideInInspector]
@@ -37,12 +37,12 @@ public class Building : MonoBehaviour, IBuilding
         Cost = new ResourceBundle(10,10,10,10, 0);
     }
 
-    public Building(BuildingTypes buildingType) : this()
+    public Building(BuildingType buildingType) : this()
     {
         BuildingType = buildingType;
     }
 
-    public Building(float health, ResourceBundle cost, BuildingTypes buildingType)
+    public Building(float health, ResourceBundle cost, BuildingType buildingType)
     {
         Health = health;
         Cost = cost;

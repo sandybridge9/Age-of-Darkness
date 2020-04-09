@@ -10,10 +10,10 @@ public class Barracks : Building
     {
         Health = 100f;
         Cost = new ResourceBundle(0, 50, 0, 0, 0);
-        BuildingType = BuildingTypes.Barracks;
+        BuildingType = global::BuildingType.Barracks;
     }
 
-    public Barracks(float health, ResourceBundle cost, BuildingTypes type)
+    public Barracks(float health, ResourceBundle cost, BuildingType type)
     {
         Health = health;
         Cost = cost;

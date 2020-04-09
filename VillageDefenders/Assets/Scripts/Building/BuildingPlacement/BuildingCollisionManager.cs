@@ -13,7 +13,7 @@ public class BuildingCollisionManager : MonoBehaviour
     [HideInInspector]
     //List used to keep track of all other colliders this building collides with
     public List<Collider> CurrentColliders = new List<Collider>();
-    public List<BuildingTypes> ExceptionList = new List<BuildingTypes>();
+    public List<BuildingType> ExceptionList = new List<BuildingType>();
 
     #endregion
 
@@ -49,7 +49,7 @@ public class BuildingCollisionManager : MonoBehaviour
         CurrentColliders = new List<Collider>();
     }
 
-    public void AddException(BuildingTypes type)
+    public void AddException(BuildingType type)
     {
         ExceptionList.Add(type);
     }

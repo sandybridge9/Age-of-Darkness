@@ -10,11 +10,14 @@ public class Unit : MonoBehaviour
     protected NavMeshAgent agent;
     [HideInInspector]
     public bool IsSelected { get; set; } = false;
+    
+    public UnitState CurrentUnitState;
 
     public Unit()
     {
         Health = 100f;
         Cost = new ResourceBundle(0,0,0,0,15);
+        CurrentUnitState = UnitState.Idle;
     }
 
     // Start is called before the first frame update
@@ -29,9 +32,13 @@ public class Unit : MonoBehaviour
     {
         if (IsSelected)
         {
+            //All units can be deleted
             DeleteOrder();
-            UnitSpecificOrders();
+            //All units can have specific orders when selected
+            SelectedUnitSpecificOrders();
         }
+        //All units can have specific orders when unselected - actions that are completed automatically without user input
+        UnitSpecificOrders();
     }
 
     //Method that can be overriden when some unit specific actions are needed on start
@@ -40,10 +47,16 @@ public class Unit : MonoBehaviour
 
     }
 
-    //Method which can be overriden when some unit specific actions are needed on update
-    protected virtual void UnitSpecificOrders()
+    //Method which can be overriden when some unit specific actions are needed on update (when unit is selected (moving, manual unloading etc.))
+    protected virtual void SelectedUnitSpecificOrders()
     {
         MoveOrder();
+    }
+
+    //Method which can be overriden when some unit specific actions are needed on update (when unit is not necessarily selected (automatic gathering, attacking etc.)
+    protected virtual void UnitSpecificOrders()
+    {
+
     }
 
     private void MoveOrder()
@@ -60,6 +73,8 @@ public class Unit : MonoBehaviour
         RaycastHit hitInfo;
         if (Physics.Raycast(ray, out hitInfo))
         {
+            agent.ResetPath();
+            CurrentUnitState = UnitState.Moving;
             agent.SetDestination(hitInfo.point);
         }
     }

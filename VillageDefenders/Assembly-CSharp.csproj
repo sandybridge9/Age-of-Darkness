@@ -69,7 +69,7 @@
     <Compile Include="Assets\Scripts\Building\BuildingPlacement\HeightChecking.cs" />
     <Compile Include="Assets\Scripts\Building\Buildings\Barracks.cs" />
     <Compile Include="Assets\Scripts\Building\Buildings\Building.cs" />
-    <Compile Include="Assets\Scripts\Building\Buildings\BuildingTypes.cs" />
+    <Compile Include="Assets\Scripts\Building\Buildings\BuildingType.cs" />
     <Compile Include="Assets\Scripts\Building\Buildings\IBuilding.cs" />
     <Compile Include="Assets\Scripts\Building\Buildings\StoneGatehouse.cs" />
     <Compile Include="Assets\Scripts\Building\Buildings\StoneTower.cs" />
@@ -89,6 +89,7 @@
     <Compile Include="Assets\Scripts\Resources\Stone.cs" />
     <Compile Include="Assets\Scripts\Resources\Wood.cs" />
     <Compile Include="Assets\Scripts\Units\Unit.cs" />
+    <Compile Include="Assets\Scripts\Units\UnitState.cs" />
     <Compile Include="Assets\Scripts\Units\Warrior.cs" />
     <Compile Include="Assets\Scripts\Units\Worker.cs" />
     <None Include="Assets\AssetStoreContent\MedievalTownExteriors\Readme.txt" />

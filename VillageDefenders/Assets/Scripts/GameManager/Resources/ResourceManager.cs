@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Windows.WebCam;
 
 public class ResourceManager : MonoBehaviour
 {
@@ -22,6 +23,7 @@ public class ResourceManager : MonoBehaviour
     {
         //Debug.Log("Gold: " + currentResources.Gold +" Wood: " +currentResources.Wood + " Iron: " + currentResources.Iron +" Stone: " +currentResources.Stone);
         //Debug.Log("Gold: " + maximumCapacity.Gold + " Wood: " + maximumCapacity.Wood + " Iron: " + maximumCapacity.Iron + " Stone: " + maximumCapacity.Stone);
+        Debug.Log(currentResources.ToString());
     }
 
     public void SetStartingResources(ResourceBundle resources)
@@ -48,6 +50,11 @@ public class ResourceManager : MonoBehaviour
     public void AddMaximumCapacity(ResourceBundle capacity)
     {
         maximumCapacity.AddResources(capacity);
+    }
+
+    public void AddToCurrentResources(ResourceBundle resourcesToAdd)
+    {
+        currentResources.AddResources(resourcesToAdd);
     }
 
     public void BuildTownhall(Townhall townhall)

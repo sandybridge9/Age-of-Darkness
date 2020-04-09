@@ -11,10 +11,10 @@ public class Townhall : Building
         Health = 100f;
         Cost = new ResourceBundle(0, 0, 0, 0, 0);
         ResourceCapacity = new ResourceBundle(1000, 750, 750 ,750, 750);
-        BuildingType = BuildingTypes.Townhall;
+        BuildingType = BuildingType.Townhall;
     }
 
-    public Townhall(float health, ResourceBundle cost, ResourceBundle resourceCapacity, BuildingTypes type)
+    public Townhall(float health, ResourceBundle cost, ResourceBundle resourceCapacity, BuildingType type)
     {
         Health = health;
         Cost = cost;

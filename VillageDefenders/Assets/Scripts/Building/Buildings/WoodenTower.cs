@@ -8,10 +8,10 @@ public class WoodenTower : Building
     {
         Health = 100f;
         Cost = new ResourceBundle(5, 15, 5, 5, 0);
-        BuildingType = BuildingTypes.WoodenTower;
+        BuildingType = BuildingType.WoodenTower;
     }
 
-    public WoodenTower(float health, ResourceBundle cost, BuildingTypes type)
+    public WoodenTower(float health, ResourceBundle cost, BuildingType type)
     {
         Health = health;
         Cost = cost;
