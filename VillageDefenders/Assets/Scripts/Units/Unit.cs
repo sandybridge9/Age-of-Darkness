@@ -10,6 +10,7 @@ public class Unit : MonoBehaviour
     protected NavMeshAgent agent;
     [HideInInspector]
     public bool IsSelected { get; set; } = false;
+    public bool IsEnemy = false;
     
     public UnitState CurrentUnitState;
 
@@ -30,6 +31,11 @@ public class Unit : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Unit's health reached 0, it is now dead
+        if (IsDead())
+        {
+            UnitSpecificDeathActions();
+        }
         if (IsSelected)
         {
             //All units can be deleted
@@ -59,6 +65,12 @@ public class Unit : MonoBehaviour
 
     }
 
+    //Method which can be overriden in derived classes when some specific actions need to happen on unit's death - drop loot, play animation etc.
+    protected virtual void UnitSpecificDeathActions()
+    {
+        Delete();
+    }
+
     private void MoveOrder()
     {
         if (Input.GetMouseButtonDown(1))
@@ -77,6 +89,15 @@ public class Unit : MonoBehaviour
             CurrentUnitState = UnitState.Moving;
             agent.SetDestination(hitInfo.point);
         }
+    }
+
+    public bool IsDead()
+    {
+        if (Health <= 0)
+        {
+            return true;
+        }
+        return false;
     }
 
     private void DeleteOrder()

@@ -89,6 +89,7 @@
     <Compile Include="Assets\Scripts\Resources\Stone.cs" />
     <Compile Include="Assets\Scripts\Resources\Wood.cs" />
     <Compile Include="Assets\Scripts\Units\Unit.cs" />
+    <Compile Include="Assets\Scripts\Units\UnitManager.cs" />
     <Compile Include="Assets\Scripts\Units\UnitState.cs" />
     <Compile Include="Assets\Scripts\Units\Warrior.cs" />
     <Compile Include="Assets\Scripts\Units\Worker.cs" />

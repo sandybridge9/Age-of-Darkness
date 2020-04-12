@@ -21,6 +21,7 @@ public class Worker : Unit
     {
         Health = 50f;
         Cost = new ResourceBundle(0, 0, 0, 0, 20);
+        CurrentUnitState = UnitState.Idle;
         currentlyHeldResources = new ResourceBundle(0, 0, 0, 0, 0);
         maximumResourceCapacity = new ResourceBundle(50, 50, 50, 50, 50);
     }

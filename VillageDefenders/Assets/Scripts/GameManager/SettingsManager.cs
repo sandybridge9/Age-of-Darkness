@@ -43,6 +43,8 @@ public class SettingsManager : MonoBehaviour
     public SelectionManager SelectionManager;
     [HideInInspector]
     public ResourceManager ResourceManager;
+    [HideInInspector]
+    public UnitManager UnitManager;
     
     #endregion
 
@@ -51,6 +53,7 @@ public class SettingsManager : MonoBehaviour
         BuildingManager = GetComponent<BuildingManager>();
         SelectionManager = GetComponent<SelectionManager>();
         ResourceManager = GetComponent<ResourceManager>();
+        UnitManager = GetComponent<UnitManager>();
     }
 
     void Update()

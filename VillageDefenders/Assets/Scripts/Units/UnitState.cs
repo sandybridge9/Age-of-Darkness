@@ -10,5 +10,6 @@ public enum UnitState : short
     Gathering = 4,
     MovingToUnload = 5,
     Unloading = 6,
-    Attacking = 7,
+    MovingToAttack = 7,
+    Attacking = 8,
 }
