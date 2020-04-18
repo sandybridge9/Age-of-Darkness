@@ -564,16 +564,6 @@ public class BuildingManager : MonoBehaviour
             currentlySelectedBuildingRenderers.Add(parentRenderer);
         }
         currentlySelectedBuildingRenderers.AddRange(currentBuildingSelection.GetComponentsInChildren<Renderer>().ToList());
-        ////If parent object doesn't have a renderer, search in children
-        //if(parentRenderer == null)
-        //{
-        //    currentlySelectedBuildingRenderers = currentBuildingSelection.GetComponentsInChildren<Renderer>().ToList();
-        //}
-        //else
-        //{
-        //    //Add parent object renderer
-        //    currentlySelectedBuildingRenderers.Add(parentRenderer);
-        //}
     }
 
     private void ChangeColor()

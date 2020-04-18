@@ -14,6 +14,7 @@ public class SettingsManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
+        SetupOnAwake();
     }
 
     #endregion
@@ -21,12 +22,15 @@ public class SettingsManager : MonoBehaviour
     #region Properties
 
     //Editor properties
+    public Canvas MainUICanvas;
     public float BuildingHeightCheckerSensitivity = 0.25f;
     public LayerMask GroundLayerMask;
     public LayerMask ResourceLayerMask;
     public LayerMask BuildingLayerMask;
     public LayerMask UnitLayerMask;
     public List<Building> PlaceableBuildings;
+    public List<Unit> TownhallTrainableUnits;
+    public List<Unit> BarracksTrainableUnits;
 
     public Material MaterialCanBuild;
     public Material MaterialCantBuild;
@@ -45,15 +49,23 @@ public class SettingsManager : MonoBehaviour
     public ResourceManager ResourceManager;
     [HideInInspector]
     public UnitManager UnitManager;
+    [HideInInspector] 
+    public UIManager UIManager;
     
     #endregion
 
-    void Start()
+    private void SetupOnAwake()
     {
         BuildingManager = GetComponent<BuildingManager>();
         SelectionManager = GetComponent<SelectionManager>();
         ResourceManager = GetComponent<ResourceManager>();
         UnitManager = GetComponent<UnitManager>();
+        UIManager = GetComponent<UIManager>();
+    }
+
+    void Start()
+    {
+
     }
 
     void Update()

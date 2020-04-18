@@ -84,6 +84,7 @@
     <Compile Include="Assets\Scripts\GameManager\Resources\ResourceManager.cs" />
     <Compile Include="Assets\Scripts\GameManager\SelectionManager.cs" />
     <Compile Include="Assets\Scripts\GameManager\SettingsManager.cs" />
+    <Compile Include="Assets\Scripts\GameManager\UIManager.cs" />
     <Compile Include="Assets\Scripts\Resources\Food.cs" />
     <Compile Include="Assets\Scripts\Resources\Resource.cs" />
     <Compile Include="Assets\Scripts\Resources\Stone.cs" />

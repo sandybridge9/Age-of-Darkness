@@ -79,11 +79,23 @@ public class Building : MonoBehaviour, IBuilding
     public void Select()
     {
         IsSelected = true;
+        OnSelectActions();
+    }
+
+    protected virtual void OnSelectActions()
+    {
+
     }
 
     public void DeSelect()
     {
         IsSelected = false;
+        OnDeSelectActions();
+    }
+
+    protected virtual void OnDeSelectActions()
+    {
+
     }
 
     //Destroys this gameObject

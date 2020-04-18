@@ -6,16 +6,23 @@ using UnityEngine.Windows.WebCam;
 public class ResourceManager : MonoBehaviour
 {
     //Current resources
-    private ResourceBundle currentResources;
-    private ResourceBundle maximumCapacity;
+    [HideInInspector]
+    public ResourceBundle CurrentResources;
+    [HideInInspector]
+    public ResourceBundle MaximumCapacity;
     [HideInInspector]
     private bool isTownhallBuilt = false;
     private bool isInitialSetupDone = false;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         SetStartingMaximumCapacity();
+    }
+
+    void Start()
+    {
+
     }
 
     // Update is called once per frame
@@ -23,38 +30,39 @@ public class ResourceManager : MonoBehaviour
     {
         //Debug.Log("Gold: " + currentResources.Gold +" Wood: " +currentResources.Wood + " Iron: " + currentResources.Iron +" Stone: " +currentResources.Stone);
         //Debug.Log("Gold: " + maximumCapacity.Gold + " Wood: " + maximumCapacity.Wood + " Iron: " + maximumCapacity.Iron + " Stone: " + maximumCapacity.Stone);
-        //Debug.Log(currentResources.ToString());
+        Debug.Log(CurrentResources.ToString());
     }
 
     public void SetStartingResources(ResourceBundle resources)
     {
-        currentResources = resources;
+        //CurrentResources = resources;
+        CurrentResources.AddResources(resources);
     }
 
     public bool SubtractBuildingCostFromCurrentResources(ResourceBundle cost)
     {
-        return currentResources.SubtractResources(cost);
+        return CurrentResources.SubtractResources(cost);
     }
 
     public void ReturnPercentageOfBuildingCost(ResourceBundle cost, int percentage)
     {
-        currentResources.ReturnResources(maximumCapacity, cost, percentage);
+        CurrentResources.ReturnResources(MaximumCapacity, cost, percentage);
     }
 
     public void SetStartingMaximumCapacity()
     {
-        maximumCapacity = new ResourceBundle();
-        currentResources = new ResourceBundle();
+        MaximumCapacity = new ResourceBundle();
+        CurrentResources = new ResourceBundle();
     }
 
     public void AddMaximumCapacity(ResourceBundle capacity)
     {
-        maximumCapacity.AddResources(capacity);
+        MaximumCapacity.AddResources(capacity);
     }
 
     public void AddToCurrentResources(ResourceBundle resourcesToAdd)
     {
-        currentResources.AddResources(resourcesToAdd);
+        CurrentResources.AddResources(resourcesToAdd);
     }
 
     public void BuildTownhall(Townhall townhall)
@@ -79,4 +87,60 @@ public class ResourceManager : MonoBehaviour
     {
         AddMaximumCapacity(warehouse.ResourceCapacity);
     }
+
+    public double GetCurrentResourceCount(string resource)
+    {
+        double currentResourceCount = 0;
+        switch (resource)
+        {
+            case "Food":
+                currentResourceCount = CurrentResources.Food;
+                break;
+            case "Gold":
+                currentResourceCount = CurrentResources.Gold;
+                break;
+            case "Stone":
+                currentResourceCount = CurrentResources.Stone;
+                break;
+            case "Iron":
+                currentResourceCount = CurrentResources.Iron;
+                break;
+            case "Wood":
+                currentResourceCount = CurrentResources.Wood;
+                break;
+            default:
+                Debug.Log("Resource Type was not found. ");
+                break;
+        }
+        return currentResourceCount;
+    }
+
+    public double GetMaximumResourceCount(string resource)
+    {
+        double maximumResourceCount = 0;
+        switch (resource)
+        {
+            case "Food":
+                maximumResourceCount = MaximumCapacity.Food;
+                break;
+            case "Gold":
+                maximumResourceCount = MaximumCapacity.Gold;
+                break;
+            case "Stone":
+                maximumResourceCount = MaximumCapacity.Stone;
+                break;
+            case "Iron":
+                maximumResourceCount = MaximumCapacity.Iron;
+                break;
+            case "Wood":
+                maximumResourceCount = MaximumCapacity.Wood;
+                break;
+            default:
+                Debug.Log("Resource Type was not found. ");
+                break;
+        }
+        return maximumResourceCount;
+    }
+
+    
 }

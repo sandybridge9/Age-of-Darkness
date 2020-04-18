@@ -5,6 +5,8 @@ using UnityEngine;
 public class Townhall : Building
 {
     public ResourceBundle ResourceCapacity;
+    [HideInInspector]
+    public List<Unit> TownhallTrainableUnits;
 
     public Townhall()
     {
@@ -20,6 +22,29 @@ public class Townhall : Building
         Cost = cost;
         ResourceCapacity = resourceCapacity;
         BuildingType = type;
+    }
+
+    protected override void StartupActions()
+    {
+        TownhallTrainableUnits = SettingsManager.Instance.TownhallTrainableUnits;
+    }
+
+    protected override void OnSelectActions()
+    {
+        base.OnSelectActions();
+        for (int i = 0; i < TownhallTrainableUnits.Count; i++)
+        {
+            if (GUI.Button(new Rect(Screen.width / 80, Screen.height / 85 - Screen.height / 12 * i, 100, 30),
+                TownhallTrainableUnits[i].name))
+            {
+                TrainUnit(TownhallTrainableUnits[i]);
+            }
+        }
+    }
+
+    private void TrainUnit(Unit unit)
+    {
+
     }
 
     public void SpawnBuilder()

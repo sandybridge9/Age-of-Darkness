@@ -5,6 +5,7 @@ using UnityEngine;
 public class Barracks : Building
 {
     private Transform unitSpawnPoint;
+    public List<Unit> BarracksTrainableUnits;
 
     public Barracks()
     {
@@ -20,13 +21,24 @@ public class Barracks : Building
         BuildingType = type;
     }
 
-    //Use virtual StartupActions()
-    //private void Start()
+    protected override void StartupActions()
+    {
+        BarracksTrainableUnits = SettingsManager.Instance.BarracksTrainableUnits;
+    }
+
+    //void OnGUI()
     //{
-    //    unitSpawnPoint = transform.Find("UnitSpawnPoint");
+    //    for (int i = 0; i < BarracksTrainableUnits.Count; i++)
+    //    {
+    //        if (GUI.Button(new Rect(Screen.width / 80, Screen.height / 85 - Screen.height / 12 * i, 100, 30),
+    //            BarracksTrainableUnits[i].name))
+    //        {
+    //            TrainUnit(BarracksTrainableUnits[i]);
+    //        }
+    //    }
     //}
 
-    public void SpawnTroop()
+    private void TrainUnit(Unit unit)
     {
 
     }
