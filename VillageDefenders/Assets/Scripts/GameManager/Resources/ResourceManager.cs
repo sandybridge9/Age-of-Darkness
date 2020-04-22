@@ -30,7 +30,7 @@ public class ResourceManager : MonoBehaviour
     {
         //Debug.Log("Gold: " + currentResources.Gold +" Wood: " +currentResources.Wood + " Iron: " + currentResources.Iron +" Stone: " +currentResources.Stone);
         //Debug.Log("Gold: " + maximumCapacity.Gold + " Wood: " + maximumCapacity.Wood + " Iron: " + maximumCapacity.Iron + " Stone: " + maximumCapacity.Stone);
-        Debug.Log(CurrentResources.ToString());
+        //Debug.Log(CurrentResources.ToString());
     }
 
     public void SetStartingResources(ResourceBundle resources)

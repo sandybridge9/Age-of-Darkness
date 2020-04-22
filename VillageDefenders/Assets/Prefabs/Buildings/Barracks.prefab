@@ -426,8 +426,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 14.937499, y: 9.649782, z: 9.731955}
-  m_Center: {x: -3.2451522, y: 3.5851107, z: 0.002861917}
+  m_Size: {x: 8.395628, y: 9.649782, z: 9.731955}
+  m_Center: {x: 0.025803566, y: 3.5851107, z: 0.002861917}
 --- !u!54 &8869208390974452289
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -459,6 +459,7 @@ MonoBehaviour:
   Health: 100
   BuildingType: 3
   Collider: {fileID: 0}
+  BarracksTrainableUnits: []
 --- !u!114 &8895329638246935165
 MonoBehaviour:
   m_ObjectHideFlags: 0

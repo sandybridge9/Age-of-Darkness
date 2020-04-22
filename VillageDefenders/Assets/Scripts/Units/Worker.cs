@@ -1,21 +1,33 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = System.Random;
+using UnityStandardAssets;
+using UnityStandardAssets.Characters.ThirdPerson;
+using Vector3 = UnityEngine.Vector3;
 
 public class Worker : Unit
 {
     private Transform currentResourceSelection;
     private Transform unloadingSite;
     private string currentResourceSelectionTypeName = "";
-    private readonly float maxDistance = 3f;
+    //private readonly float maxDistance = 3f;
     private float gatheringDelay = 60f;
 
     private ResourceBundle currentlyHeldResources;
     private ResourceBundle maximumResourceCapacity;
+
+    //Worker maximum gathering amounts
+    private int GoldAmount = 3;
+    private int WoodAmount = 10;
+    private int StoneAmount = 7;
+    private int IronAmount = 4;
+    private int FoodAmount = 7;
+
 
     public Worker()
     {
@@ -26,6 +38,15 @@ public class Worker : Unit
         maximumResourceCapacity = new ResourceBundle(50, 50, 50, 50, 50);
     }
 
+    protected override void UnitSpecificStartup()
+    {
+        GoldAmount = SettingsManager.Instance.MaximumGoldGatheringAmount;
+        WoodAmount = SettingsManager.Instance.MaximumWoodGatheringAmount;
+        StoneAmount = SettingsManager.Instance.MaximumStoneGatheringAmount;
+        IronAmount = SettingsManager.Instance.MaximumIronGatheringAmount;
+        FoodAmount = SettingsManager.Instance.MaximumFoodGatheringAmount;
+    }
+
     protected override void SelectedUnitSpecificOrders()
     {
         if (Input.GetMouseButtonDown(1))
@@ -34,26 +55,52 @@ public class Worker : Unit
         }
     }
 
+    //protected override void UnitSpecificOrders()
+    //{
+    //    switch (CurrentUnitState)
+    //    {
+    //        case UnitState.Moving:
+    //            CheckIfArrivedAtDestination();
+    //            break;
+    //        case UnitState.MovingToResource:
+    //            CheckIfArrivedAtResource();
+    //            break;
+    //        case UnitState.Gathering:
+    //            GatherResource();
+    //            break;
+    //        case UnitState.MovingToUnload:
+    //            CheckIfArrivedAtUnloadingSite();
+    //            break;
+    //        case UnitState.Unloading:
+    //            Unload();
+    //            break;
+    //        case UnitState.Idle:
+    //            character.Move(Vector3.zero, false, false);
+    //            break;
+    //    }
+    //}
+
     protected override void UnitSpecificOrders()
     {
         switch (CurrentUnitState)
         {
             case UnitState.Moving:
-                CheckIfArrivedAtDestination();
+                Move();
                 break;
             case UnitState.MovingToResource:
-                CheckIfArrivedAtResource();
+                MoveToResource();
                 break;
             case UnitState.Gathering:
                 GatherResource();
                 break;
             case UnitState.MovingToUnload:
-                CheckIfArrivedAtUnloadingSite();
+                MoveToUnloadingSite();
                 break;
             case UnitState.Unloading:
                 Unload();
                 break;
-            default:
+            case UnitState.Idle:
+                character.Move(Vector3.zero, false, false);
                 break;
         }
     }
@@ -68,7 +115,7 @@ public class Worker : Unit
             Debug.Log("Got orders to move to resource. ");
             currentResourceSelection = hitInfo.transform;
             GetResourceTypeName();
-            MoveToResource();
+            MoveToResourceOrder();
         }
         else if (Physics.Raycast(ray, out hitInfo, 1000f, SettingsManager.Instance.BuildingLayerMask))
         {
@@ -79,24 +126,26 @@ public class Worker : Unit
             {
                 case Warehouse w:
                     unloadingSite = hitBuilding.transform.Find("UnloadingPoint");
-                    MoveToUnloadingSite();
+                    MoveToUnloadingSiteOrder();
                     break;
                 case Townhall th:
                     unloadingSite = hitBuilding.transform.Find("UnloadingPoint");
-                    MoveToUnloadingSite();
+                    MoveToUnloadingSiteOrder();
                     break;
                 default:
-                    Move();
+                    MoveOrder();
                     break;
             }
         }
         else
         {
             Debug.Log("Got orders to move to a location. ");
-            Move();
+            MoveOrder();
             currentResourceSelection = null;
         }
     }
+
+    #region MoveToResource
 
     //Get resource type name once after resource selection, to avoid calling type checker every Update
     private void GetResourceTypeName()
@@ -120,7 +169,7 @@ public class Worker : Unit
         Debug.Log(currentResourceSelectionTypeName);
     }
 
-    private void MoveToResource()
+    private void MoveToResourceOrder()
     {
         if (currentResourceSelection != null)
         {
@@ -134,46 +183,95 @@ public class Worker : Unit
         }
     }
 
-    private void MoveToUnloadingSite()
+    private void MoveToResource()
     {
-        agent.ResetPath();
-        CurrentUnitState = UnitState.MovingToUnload;
-        agent.SetDestination(unloadingSite.transform.position);
+        if (currentResourceSelection != null)
+        {
+            CheckIfArrivedAtResource();
+            if (CurrentUnitState == UnitState.MovingToResource)
+            {
+                character.Move(agent.desiredVelocity, false, false);
+            }
+            else
+            {
+                character.Move(Vector3.zero, false, false);
+            }
+        }
+        //else
+        //{
+        //    CurrentUnitState = UnitState.Idle;
+        //}
     }
 
     //Check if worker has arrived at harvesting location (location doesn't have to be exact, because one cannot stand on top of resources)
     private void CheckIfArrivedAtResource()
     {
-        if (Vector3.Distance(currentResourceSelection.position, transform.position) < maxDistance)
+        if (Vector3.Distance(currentResourceSelection.position, transform.position) < 1.5f)
         {
             Debug.Log("I have arrived, and I can now gather resources");
             agent.ResetPath();
             CurrentUnitState = UnitState.Gathering;
+            character.Move(Vector3.zero, false, false);
         }
     }
 
-    //Check if worker has arrived at harvesting location (location doesn't have to be exact, because one cannot stand on top of resources)
-    private void CheckIfArrivedAtDestination()
+    #endregion
+
+    #region MoveToUnloadingSite
+
+
+    private void MoveToUnloadingSiteOrder()
     {
-        if (Vector3.Distance(agent.destination, transform.position) < 1)
+        if (unloadingSite != null)
         {
-            Debug.Log("I have arrived at my destination and I am now idle.");
             agent.ResetPath();
-            CurrentUnitState = UnitState.Idle;
+            CurrentUnitState = UnitState.MovingToUnload;
+            agent.SetDestination(unloadingSite.transform.position);
         }
     }
+
+    private void MoveToUnloadingSite()
+    {
+        if (unloadingSite != null)
+        {
+            CheckIfArrivedAtUnloadingSite();
+            if (CurrentUnitState == UnitState.MovingToUnload)
+            {
+                character.Move(agent.desiredVelocity, false, false);
+            }
+            else
+            {
+                character.Move(Vector3.zero, false, false);
+            }
+        }
+    }
+
+    //Method that is called when worker's state is set to MovingToUnload
+    private void CheckIfArrivedAtUnloadingSite()
+    {
+        if (Vector3.Distance(transform.position, unloadingSite.transform.position) < 1.5f)
+        {
+            agent.ResetPath();
+            character.Move(Vector3.zero, false, false);
+            CurrentUnitState = UnitState.Unloading;
+        }
+    }
+
+    #endregion
 
     //Method that is called when worker's state is set to Gathering
     private void GatherResource()
     {
+        character.Move(Vector3.zero, false, false);
         if (gatheringDelay >= 60f)
         {
             if (currentlyHeldResources.HasReachedMaximumCapacity(maximumResourceCapacity))
             {
+                agent.speed /= 2;
                 GetNearestUnloadingSite();
                 if (unloadingSite != null)
                 {
-                    MoveToUnloadingSite();
+                    MoveToUnloadingSiteOrder();
                     Debug.Log("Found an unloading site. Going to unload.");
                 }
                 else
@@ -184,17 +282,18 @@ public class Worker : Unit
             }
             else
             {
+                //TODO Play animation when gathering, 3 different animations are needed.
                 Random rand = new Random();
                 switch (currentResourceSelectionTypeName)
                 {
                     case "Stone":
-                        currentlyHeldResources.AddResources(new ResourceBundle(0, 0, rand.Next(1, 10), rand.Next(1, 5), 0));
+                        currentlyHeldResources.AddResources(new ResourceBundle(0, 0, rand.Next(1, StoneAmount), rand.Next(1, IronAmount), 0));
                         break;
                     case "Wood":
-                        currentlyHeldResources.AddResources(new ResourceBundle(0, rand.Next(5, 20), 0, 0, 0));
+                        currentlyHeldResources.AddResources(new ResourceBundle(0, rand.Next(1, WoodAmount), 0, 0, 0));
                         break;
                     case "Food":
-                        currentlyHeldResources.AddResources(new ResourceBundle(0, 0, 0, 0, rand.Next(5, 15)));
+                        currentlyHeldResources.AddResources(new ResourceBundle(0, 0, 0, 0, rand.Next(1, FoodAmount)));
                         break;
                     default:
                         break;
@@ -206,22 +305,15 @@ public class Worker : Unit
         gatheringDelay++;
     }
 
-    //Method that is called when worker's state is set to MovingToUnload
-    private void CheckIfArrivedAtUnloadingSite()
-    {
-        if (unloadingSite != null && Vector3.Distance(transform.position, unloadingSite.transform.position) < maxDistance)
-        {
-            CurrentUnitState = UnitState.Unloading;
-        }
-    }
-
     //Method that is called when worker's state is set to Unloading
     private void Unload()
     {
+        Debug.Log("Unload");
         SettingsManager.Instance.ResourceManager.AddToCurrentResources(currentlyHeldResources);
         currentlyHeldResources = new ResourceBundle();
+        agent.speed *= 2;
         //Get back to the resource after unloading (only when gathering and unloading automatically)
-        MoveToResource();
+        MoveToResourceOrder();
         Debug.Log("Unloaded. Have to get back to gathering resources.");
     }
 
@@ -261,3 +353,23 @@ public class Worker : Unit
         }
     }
 }
+
+
+/* OLD Stuff
+
+    ////Check if worker has arrived at harvesting location (location doesn't have to be exact, because one cannot stand on top of resources)
+    //private void CheckIfArrivedAtDestination()
+    //{
+    //    if (Vector3.Distance(agent.destination, transform.position) < 1)
+    //    {
+    //        Debug.Log("I have arrived at my destination and I am now idle.");
+    //        agent.ResetPath();
+    //        CurrentUnitState = UnitState.Idle;
+    //        if (character != null)
+    //        {
+    //            character.Move(Vector3.zero, false, false);
+    //        }
+    //    }
+    //}
+
+ */

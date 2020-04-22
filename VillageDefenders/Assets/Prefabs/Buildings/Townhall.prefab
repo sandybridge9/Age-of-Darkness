@@ -175,8 +175,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 8.404898, y: 10.200958, z: 18.862917}
-  m_Center: {x: 0.09244919, y: 3.8368542, z: 2.2601366}
+  m_Size: {x: 8.404898, y: 10.200958, z: 13.316637}
+  m_Center: {x: 0.09244919, y: 3.836854, z: -0.51300454}
 --- !u!114 &6169576285954527984
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -192,6 +192,7 @@ MonoBehaviour:
   Health: 100
   BuildingType: 1
   Collider: {fileID: 0}
+  TownhallTrainableUnits: []
 --- !u!114 &8557193828006802799
 MonoBehaviour:
   m_ObjectHideFlags: 0

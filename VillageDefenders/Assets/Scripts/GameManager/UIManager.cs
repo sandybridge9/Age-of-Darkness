@@ -36,7 +36,7 @@ public class UIManager : MonoBehaviour
             currentResources.Stone, maximumResources.Stone,
             currentResources.Iron, maximumResources.Iron,
             currentResources.Wood, maximumResources.Wood);
-        Debug.Log(updatedText);
+        //Debug.Log(updatedText);
         resourceText.text = updatedText;
     }
 

@@ -22,25 +22,40 @@ public class SettingsManager : MonoBehaviour
     #region Properties
 
     //Editor properties
+    [Header("GUI")]
     public Canvas MainUICanvas;
-    public float BuildingHeightCheckerSensitivity = 0.25f;
+
+    [Header("Layer masks for raycasting")]
     public LayerMask GroundLayerMask;
     public LayerMask ResourceLayerMask;
     public LayerMask BuildingLayerMask;
     public LayerMask UnitLayerMask;
+
+    [Header("Buildings")]
     public List<Building> PlaceableBuildings;
+    public float BuildingHeightCheckerSensitivity = 0.25f;
+    public Material MaterialCanBuild;
+    public Material MaterialCantBuild;
+
+    [Header("Units")]
     public List<Unit> TownhallTrainableUnits;
     public List<Unit> BarracksTrainableUnits;
 
-    public Material MaterialCanBuild;
-    public Material MaterialCantBuild;
+    [Header("Starting resources")]
     public double StartingGold = 500f;
     public double StartingWood = 100f;
     public double StartingStone = 100f;
     public double StartingIron = 100f;
     public double StartingFood = 150f;
 
-    //Properties hidden in editor
+    [Header("Worker resource maximum gathering amounts per action")]
+    public int MaximumGoldGatheringAmount = 3;
+    public int MaximumWoodGatheringAmount = 10;
+    public int MaximumStoneGatheringAmount = 7;
+    public int MaximumIronGatheringAmount = 4;
+    public int MaximumFoodGatheringAmount = 7;
+
+    //Managers
     [HideInInspector]
     public BuildingManager BuildingManager;
     [HideInInspector]

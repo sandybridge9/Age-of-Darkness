@@ -2,33 +2,47 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityStandardAssets.Characters.ThirdPerson;
 
 public class Unit : MonoBehaviour
 {
     public float Health;
     public ResourceBundle Cost;
-    protected NavMeshAgent agent;
-    [HideInInspector]
+    //[HideInInspector]
     public bool IsSelected { get; set; } = false;
     public bool IsEnemy = false;
-    
+
     public UnitState CurrentUnitState;
+    protected NavMeshAgent agent;
+    protected ThirdPersonCharacter character;
 
     public Unit()
     {
         Health = 100f;
-        Cost = new ResourceBundle(0,0,0,0,15);
+        Cost = new ResourceBundle(0, 0, 0, 0, 15);
         CurrentUnitState = UnitState.Idle;
     }
 
-    // Start is called before the first frame update
+    #region Start
+
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        character = GetComponent<ThirdPersonCharacter>();
+        agent.updateRotation = false;
         UnitSpecificStartup();
     }
 
-    // Update is called once per frame
+    //Method that can be overriden when some unit specific actions are needed on start
+    protected virtual void UnitSpecificStartup()
+    {
+
+    }
+
+    #endregion
+
+    #region Update
+
     void Update()
     {
         //Unit's health reached 0, it is now dead
@@ -43,52 +57,13 @@ public class Unit : MonoBehaviour
             //All units can have specific orders when selected
             SelectedUnitSpecificOrders();
         }
-        //All units can have specific orders when unselected - actions that are completed automatically without user input
+        else
+        {
+            //All units can have specific orders when deselected (patroling, gathering etc.)
+            DeSelectedUnitSpecificOrders();
+        }
+
         UnitSpecificOrders();
-    }
-
-    //Method that can be overriden when some unit specific actions are needed on start
-    protected virtual void UnitSpecificStartup()
-    {
-
-    }
-
-    //Method which can be overriden when some unit specific actions are needed on update (when unit is selected (moving, manual unloading etc.))
-    protected virtual void SelectedUnitSpecificOrders()
-    {
-        MoveOrder();
-    }
-
-    //Method which can be overriden when some unit specific actions are needed on update (when unit is not necessarily selected (automatic gathering, attacking etc.)
-    protected virtual void UnitSpecificOrders()
-    {
-
-    }
-
-    //Method which can be overriden in derived classes when some specific actions need to happen on unit's death - drop loot, play animation etc.
-    protected virtual void UnitSpecificDeathActions()
-    {
-        Delete();
-    }
-
-    private void MoveOrder()
-    {
-        if (Input.GetMouseButtonDown(1))
-        {
-            Move();
-        }
-    }
-
-    protected void Move()
-    {
-        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hitInfo;
-        if (Physics.Raycast(ray, out hitInfo))
-        {
-            agent.ResetPath();
-            CurrentUnitState = UnitState.Moving;
-            agent.SetDestination(hitInfo.point);
-        }
     }
 
     public bool IsDead()
@@ -100,6 +75,41 @@ public class Unit : MonoBehaviour
         return false;
     }
 
+    //Method which can be overriden when some unit specific actions are needed on update (when unit is selected (moving, manual unloading etc.))
+    protected virtual void SelectedUnitSpecificOrders()
+    {
+        MoveOrder();
+    }
+
+    //Method which can be overriden when some unit specific actions are needed on update (when unit is DeSelected)
+    protected virtual void DeSelectedUnitSpecificOrders()
+    {
+
+    }
+
+    //Method which can be overriden when some unit specific actions are needed on update (when unit is not necessarily selected (automatic gathering, attacking etc.)
+    protected virtual void UnitSpecificOrders()
+    {
+        switch (CurrentUnitState)
+        {
+            case UnitState.Moving:
+                Move();
+                break;
+            case UnitState.Idle:
+                character.Move(Vector3.zero, false, false);
+                break;
+            default:
+                break;
+        }
+    }
+
+    //Method which can be overriden in derived classes when some specific actions need to happen on unit's death - drop loot, play animation etc.
+    protected virtual void UnitSpecificDeathActions()
+    {
+        //TODO Add some death actions
+        Delete();
+    }
+
     private void DeleteOrder()
     {
         if (Input.GetKey(KeyCode.Delete))
@@ -107,6 +117,62 @@ public class Unit : MonoBehaviour
             Delete();
         }
     }
+
+    protected void MoveOrder()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hitInfo;
+            if (Physics.Raycast(ray, out hitInfo))
+            {
+                //agent.ResetPath();
+                CurrentUnitState = UnitState.Moving;
+                agent.SetDestination(hitInfo.point);
+                Move();
+            }
+        }
+    }
+
+    #endregion
+
+    #region Other Methods
+
+    protected void Move()
+    {
+        CheckIfArrivedAtDestination();
+        if (CurrentUnitState == UnitState.Moving)
+        {
+            character.Move(agent.desiredVelocity, false, false);
+        }
+        else
+        {
+            character.Move(Vector3.zero, false, false);
+        }
+    }
+
+    private void CheckIfArrivedAtDestination()
+    {
+        Debug.Log(Vector3.Distance(agent.destination, transform.position));
+        if (Vector3.Distance(agent.destination, transform.position) < 0.1)
+        {
+            Debug.Log("I have arrived at my destination and I am now idle.");
+            agent.ResetPath();
+            CurrentUnitState = UnitState.Idle;
+            character.Move(Vector3.zero, false, false);
+        }
+    }
+
+    public void Select()
+    {
+        IsSelected = true;
+    }
+
+    public void DeSelect()
+    {
+        IsSelected = false;
+    }
+    
 
     public void Delete()
     {
@@ -120,13 +186,5 @@ public class Unit : MonoBehaviour
         Object.Destroy(this.gameObject);
     }
 
-    public void Select()
-    {
-        IsSelected = true;
-    }
-
-    public void DeSelect()
-    {
-        IsSelected = false;
-    }
+    #endregion
 }

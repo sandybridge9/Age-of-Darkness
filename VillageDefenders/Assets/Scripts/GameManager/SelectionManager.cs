@@ -67,38 +67,49 @@ public class SelectionManager : MonoBehaviour
     {
         if (selectedObject.GetComponent<Building>())
         {
-            var building = selectedObject.GetComponent<Building>();
-            building.Select();
+            //ClearSingleSelection();
             //Check if currentSelections list has any units selected, and if yes, then clear it
             //Because units and buildings can't be selected at the same time
             if (currentSelections.Any(s=>s.GetComponent<Unit>() != null))//Where(s => s.GetComponent<Unit>() != null).Any())
             {
-                ClearSelection();
+                ClearSelectionList();
             }
+            var building = selectedObject.GetComponent<Building>();
+            building.Select();
         }
         else if (selectedObject.GetComponent<Unit>())
         {
-            var unit = selectedObject.GetComponent<Unit>();
-            unit.Select();
+            //ClearSingleSelection();
             //Check if currentSelections list has any buildings selected, and if yes, then clear it
             //Because units and buildings can't be selected at the same time
             if (currentSelections.Any(s => s.GetComponent<Building>() != null))//Where(s => s.GetComponent<Unit>() != null).Any())
             {
                 ClearSelection();
             }
+            var unit = selectedObject.GetComponent<Unit>();
+            unit.Select();
         }
         if (addToList && !currentSelections.Contains(selectedObject))
         {
             currentSelections.Add(selectedObject);
+            Debug.Log("added" +selectedObject);
         }
         else
         {
             ClearSelection();
             currentSelection = selectedObject;
+            Debug.Log("selected: " + selectedObject);
         }
     }
 
     public void ClearSelection()
+    {
+        ClearSelectionList();
+        ClearSingleSelection();
+        needsClearing = false;
+    }
+
+    public void ClearSelectionList()
     {
         Debug.Log("Clearing selections");
         foreach (var selection in currentSelections)
@@ -118,6 +129,11 @@ public class SelectionManager : MonoBehaviour
             }
         }
         currentSelections = new List<GameObject>();
+    }
+
+    public void ClearSingleSelection()
+    {
+        Debug.Log("Clearing single selection");
         if (currentSelection != null)
         {
             var b = currentSelection.GetComponent<Building>();
@@ -140,7 +156,7 @@ public class SelectionManager : MonoBehaviour
 
     public void RemoveGameObjectFromSelection(GameObject _gameObject)
     {
-        currentSelection = null;
+        ClearSingleSelection();
         currentSelections.Remove(_gameObject);
     }
 }
