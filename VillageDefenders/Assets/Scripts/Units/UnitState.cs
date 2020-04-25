@@ -12,4 +12,5 @@ public enum UnitState : short
     Unloading = 6,
     MovingToAttack = 7,
     Attacking = 8,
+    Rotating = 9,
 }

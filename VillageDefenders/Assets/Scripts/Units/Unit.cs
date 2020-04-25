@@ -9,12 +9,13 @@ public class Unit : MonoBehaviour
     public float Health;
     public ResourceBundle Cost;
     //[HideInInspector]
-    public bool IsSelected { get; set; } = false;
+    public bool IsSelected = false;
     public bool IsEnemy = false;
 
     public UnitState CurrentUnitState;
     protected NavMeshAgent agent;
     protected ThirdPersonCharacter character;
+    protected Animator animator;
 
     public Unit()
     {
@@ -29,6 +30,7 @@ public class Unit : MonoBehaviour
     {
         agent = GetComponent<NavMeshAgent>();
         character = GetComponent<ThirdPersonCharacter>();
+        animator = GetComponent<Animator>();
         agent.updateRotation = false;
         UnitSpecificStartup();
     }
@@ -138,7 +140,7 @@ public class Unit : MonoBehaviour
 
     #region Other Methods
 
-    protected void Move()
+    protected virtual void Move()
     {
         CheckIfArrivedAtDestination();
         if (CurrentUnitState == UnitState.Moving)
@@ -153,7 +155,6 @@ public class Unit : MonoBehaviour
 
     private void CheckIfArrivedAtDestination()
     {
-        Debug.Log(Vector3.Distance(agent.destination, transform.position));
         if (Vector3.Distance(agent.destination, transform.position) < 0.1)
         {
             Debug.Log("I have arrived at my destination and I am now idle.");

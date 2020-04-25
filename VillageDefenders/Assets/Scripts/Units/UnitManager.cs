@@ -6,6 +6,14 @@ public class UnitManager : MonoBehaviour
 {
     private List<Unit> allUnits;
 
+    private List<Unit> workers;
+    private List<Unit> warriors;
+
+    public void AddUnit(Unit unit)
+    {
+        allUnits.Add(unit);
+    }
+
     // Start is called before the first frame update
     void Start()
     {
