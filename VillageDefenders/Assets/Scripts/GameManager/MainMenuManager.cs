@@ -17,16 +17,17 @@ public class MainMenuManager : MonoBehaviour
         settingsMenu = transform.Find("SettingsMenu").gameObject;
         aboutMenu = transform.Find("AboutMenu").gameObject;
     }
+
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void OnPlayButtonClick()
@@ -49,39 +50,44 @@ public class MainMenuManager : MonoBehaviour
         //    b.animationTriggers.normalTrigger.
         //}
         settingsMenu.SetActive(true);
-        ResetCertainMenuButtons(settingsMenu);
     }
 
     public void OnAboutButtonClick()
     {
         mainMenu.SetActive(false);
         aboutMenu.SetActive(true);
-        ResetCertainMenuButtons(aboutMenu);
     }
 
     public void OnSettingsBackButtonClick()
     {
         settingsMenu.SetActive(false);
         mainMenu.SetActive(true);
-        ResetCertainMenuButtons(mainMenu);
     }
 
     public void OnAboutBackButtonClick()
     {
         aboutMenu.SetActive(false);
         mainMenu.SetActive(true);
-        ResetCertainMenuButtons(mainMenu);
     }
 
-    private void ResetCertainMenuButtons(GameObject menu)
+    public void Set720pResolution()
     {
-        List<Button> buttons = menu.GetComponentsInChildren<Button>().ToList();
-        foreach (var b in buttons)
-        {
-            //b.enabled = true;
-            //b.enabled = false;
-            //b.enabled = true;
-            Debug.Log("reseting " +b);
-        }
+        Screen.SetResolution(1280, 720, true);
     }
+
+    public void Set900pResolution()
+    {
+        Screen.SetResolution(1600, 900, true);
+    }
+
+    public void Set1080pResolution()
+    {
+        Screen.SetResolution(1920, 1080, true);
+    }
+
+    public void Set1440pResolution()
+    {
+        Screen.SetResolution(2560, 1440, true);
+    }
+
 }
