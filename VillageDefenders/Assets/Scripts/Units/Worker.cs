@@ -297,7 +297,7 @@ public class Worker : Unit
     {
         var direction = (currentResourceSelection.position - transform.position).normalized;
         var lookRotation = Quaternion.LookRotation(direction);
-        if (Quaternion.Angle(lookRotation, transform.rotation) > 15f)
+        if (Quaternion.Angle(lookRotation, transform.rotation) > 25f)
         {
             Debug.Log("Rotating");
             character.Move(direction, false, false);
