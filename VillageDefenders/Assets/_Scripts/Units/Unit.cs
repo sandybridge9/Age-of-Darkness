@@ -11,6 +11,7 @@ public class Unit : MonoBehaviour
     //[HideInInspector]
     public bool IsSelected = false;
     public bool IsEnemy = false;
+    public bool IsDead = false;
 
     public UnitState CurrentUnitState;
     protected NavMeshAgent agent;
@@ -48,7 +49,7 @@ public class Unit : MonoBehaviour
     void Update()
     {
         //Unit's health reached 0, it is now dead
-        if (IsDead())
+        if (HasDied())
         {
             UnitSpecificDeathActions();
         }
@@ -68,10 +69,11 @@ public class Unit : MonoBehaviour
         UnitSpecificOrders();
     }
 
-    public bool IsDead()
+    public bool HasDied()
     {
         if (Health <= 0)
         {
+            IsDead = true;
             return true;
         }
         return false;
@@ -109,7 +111,8 @@ public class Unit : MonoBehaviour
     protected virtual void UnitSpecificDeathActions()
     {
         //TODO Add some death actions
-        Delete();
+        animator.SetBool("DeathTrigger", true);
+        Delete(10f);
     }
 
     private void DeleteOrder()
@@ -175,16 +178,17 @@ public class Unit : MonoBehaviour
     }
     
 
-    public void Delete()
+    public void Delete(float deathTimer = 0f)
     {
         //Some previous logic for removing this unit from lists, etc.
         SettingsManager.Instance.SelectionManager.RemoveGameObjectFromSelection(this.gameObject);
-        Destroy();
+        //TODO remove unit from UnitManager unit list
+        Destroy(deathTimer);
     }
 
-    private void Destroy()
+    private void Destroy(float deathTimer = 0f)
     {
-        Object.Destroy(this.gameObject);
+        Object.Destroy(this.gameObject, deathTimer);
     }
 
     #endregion

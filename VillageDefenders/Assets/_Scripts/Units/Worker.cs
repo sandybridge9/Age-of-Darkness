@@ -47,6 +47,8 @@ public class Worker : Unit
 
     protected override void UnitSpecificStartup()
     {
+        base.UnitSpecificStartup();
+
         GoldAmount = SettingsManager.Instance.MaximumGoldGatheringAmount;
         WoodAmount = SettingsManager.Instance.MaximumWoodGatheringAmount;
         StoneAmount = SettingsManager.Instance.MaximumStoneGatheringAmount;
@@ -401,50 +403,3 @@ public class Worker : Unit
 
     #endregion
 }
-
-
-/* OLD Stuff
-
-    ////Check if worker has arrived at harvesting location (location doesn't have to be exact, because one cannot stand on top of resources)
-    //private void CheckIfArrivedAtDestination()
-    //{
-    //    if (Vector3.Distance(agent.destination, transform.position) < 1)
-    //    {
-    //        Debug.Log("I have arrived at my destination and I am now idle.");
-    //        agent.ResetPath();
-    //        CurrentUnitState = UnitState.Idle;
-    //        if (character != null)
-    //        {
-    //            character.Move(Vector3.zero, false, false);
-    //        }
-    //    }
-    //}
-
-
-    
-    //protected override void UnitSpecificOrders()
-    //{
-    //    switch (CurrentUnitState)
-    //    {
-    //        case UnitState.Moving:
-    //            CheckIfArrivedAtDestination();
-    //            break;
-    //        case UnitState.MovingToResource:
-    //            CheckIfArrivedAtResource();
-    //            break;
-    //        case UnitState.Gathering:
-    //            GatherResource();
-    //            break;
-    //        case UnitState.MovingToUnload:
-    //            CheckIfArrivedAtUnloadingSite();
-    //            break;
-    //        case UnitState.Unloading:
-    //            Unload();
-    //            break;
-    //        case UnitState.Idle:
-    //            character.Move(Vector3.zero, false, false);
-    //            break;
-    //    }
-    //}
-
- */

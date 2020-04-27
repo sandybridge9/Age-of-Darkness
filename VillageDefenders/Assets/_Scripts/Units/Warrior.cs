@@ -4,17 +4,37 @@ using UnityEngine;
 
 public class Warrior : Unit
 {
-    public float MeleeRange = 1.5f;
+    public float AttackRange = 1.5f;
     public float Damage = 10f;
+    public UnitState CombatMode = UnitState.StandGround;
+    private float attackDelay = 60f;
+    private bool isCurrentlyInCombat = false;
+
     private Unit enemyToAttack;
     private Vector3 lastKnownEnemyLocation;
-    private float attackDelay = 60f;
+
+    private GameObject shield;
+    private GameObject sword;
+    private GameObject swordSide;
 
     public Warrior()
     {
         Health = 150f;
         Cost = new ResourceBundle(0, 0, 0, 0, 15);
         CurrentUnitState = UnitState.Idle;
+    }
+
+    protected override void UnitSpecificStartup()
+    {
+        base.UnitSpecificStartup();
+
+        shield = GameObject.Find("Shield");
+        sword = GameObject.Find("Sword");
+        swordSide = GameObject.Find("SwordSide");
+
+        shield.SetActive(true);
+        sword.SetActive(false);
+        swordSide.SetActive(true);
     }
 
     protected override void SelectedUnitSpecificOrders()
@@ -30,15 +50,16 @@ public class Warrior : Unit
         switch (CurrentUnitState)
         {
             case UnitState.Moving:
-                CheckIfArrivedAtDestination();
+                Move();
                 break;
             case UnitState.MovingToAttack:
-                CheckIfReachedEnemyLocation();
+                MoveToEnemy();
                 break;
             case UnitState.Attacking:
                 Attack();
                 break;
-            default:
+            case UnitState.Idle:
+                character.Move(Vector3.zero, false, false);
                 break;
         }
     }
@@ -52,55 +73,31 @@ public class Warrior : Unit
         {
             Unit hitUnit = hitInfo.transform.GetComponent<Unit>();
             //If hit unit is not THIS unit and hitUnit is an enemy, then move to attack
-            if (CheckIfEnemy(hitUnit) && hitUnit != this)
+            if (CheckIfHitEnemyUnit(hitUnit) && hitUnit != this)
             {
-                enemyToAttack = hitUnit;
-                MoveToEnemy();
                 Debug.Log("Got orders to move to attack. ");
+                enemyToAttack = hitUnit;
+                MoveToEnemyOrder();
             }
             else
             {
-                agent.ResetPath();
                 Debug.Log("Can't attack friendly units. ");
+                agent.ResetPath();
+                SheatheWeapon();
             }
         }
         else
         {
             Debug.Log("Got orders to move to a location. ");
-            Move();
+            SheatheWeapon();
+            MoveOrder();
         }
+        ResetAttackAnimations();
     }
 
-    private void MoveToEnemy()
+    private bool CheckIfHitEnemyUnit(Unit unit)
     {
-        Debug.Log("Moving to enemy. ");
-        lastKnownEnemyLocation = enemyToAttack.transform.position;
-        CurrentUnitState = UnitState.MovingToAttack;
-        agent.ResetPath();
-        agent.SetDestination(lastKnownEnemyLocation);
-    }
-
-    private void CheckIfReachedEnemyLocation()
-    {
-        Debug.Log("Checking if arrived at enemy location. ");
-        //If enemy changed location, reset movement to enemy
-        if (lastKnownEnemyLocation != enemyToAttack.transform.position)
-        {
-            Debug.Log("Enemy location - changed. ");
-            MoveToEnemy();
-        }
-
-        //If enemy is in melee range, attack
-        if (Vector3.Distance(transform.position, enemyToAttack.transform.position) <= MeleeRange)
-        {
-            Debug.Log("Enemy location - reached. ");
-            agent.ResetPath();
-            CurrentUnitState = UnitState.Attacking;
-        }
-    }
-
-    private bool CheckIfEnemy(Unit unit)
-    {
+        //This unit can have IsEnemy flag too
         if ((IsEnemy && !unit.IsEnemy) || (!IsEnemy && unit.IsEnemy))
         {
             return true;
@@ -111,38 +108,133 @@ public class Warrior : Unit
         }
     }
 
-    private bool CheckIfEnemyIsInRange()
+    private void MoveToEnemyOrder()
     {
-        if (Vector3.Distance(transform.position, enemyToAttack.transform.position) > MeleeRange)
+        if (enemyToAttack != null)
         {
-            MoveToEnemy();
-            return false;
+            agent.ResetPath();
+            lastKnownEnemyLocation = enemyToAttack.transform.position;
+            isCurrentlyInCombat = true;
+            UnsheatheWeapon();
+            CurrentUnitState = UnitState.MovingToAttack;
+            agent.SetDestination(enemyToAttack.transform.position);
         }
-        return true;
+        else
+        {
+            CurrentUnitState = UnitState.Idle;
+        }
     }
 
-    private void Attack()
+    private void MoveToEnemy()
     {
-        //Check if enemy has been killed or if enemy is still in range for an attack
-        if (enemyToAttack != null && CheckIfEnemyIsInRange())
+        if (enemyToAttack != null && !enemyToAttack.IsDead)
         {
-            if (attackDelay >= 60f)
+            //TODO add some sort of detection/vision range
+            lastKnownEnemyLocation = enemyToAttack.transform.position;
+            CheckIfArrivedAtEnemyLocation();
+            if (CurrentUnitState == UnitState.MovingToAttack)
             {
-                enemyToAttack.Health -= Damage;
-                attackDelay = 0;
+                character.Move(agent.desiredVelocity, false, false);
             }
+            else
+            {
+                character.Move(Vector3.zero, false, false);
+            }
+        }
+        else
+        {
+            CurrentUnitState = UnitState.Idle;
+        }
+    }
+
+    private void CheckIfArrivedAtEnemyLocation()
+    {
+        if ((lastKnownEnemyLocation - transform.position).sqrMagnitude < AttackRange * AttackRange)
+        {
+            Debug.Log("I have arrived at enemy location, and I should now commence the attack");
+            agent.ResetPath();
+            CurrentUnitState = UnitState.Attacking;
+            character.Move(Vector3.zero, false, false);
+        }
+    }
+
+    protected virtual void Attack()
+    {
+        //Check if enemy has been killed
+        if (enemyToAttack != null && !enemyToAttack.IsDead)
+        {
+            if (CheckIfEnemyIsInRange())
+            {
+                RotateToFaceEnemy();
+                //Check if CurrentUnitState is Attacking, because it can be changed to Rotating
+                if (attackDelay >= 60f && CurrentUnitState == UnitState.Attacking)
+                {
+                    enemyToAttack.Health -= Damage;
+                    attackDelay = 0;
+                }
+            }
+        }
+        else
+        {
+            //TODO find closest enemy to attack if aggresive, else idle
+            CurrentUnitState = UnitState.Idle;
+            SheatheWeapon();
+            ResetAttackAnimations();
         }
         attackDelay++;
     }
 
-    //Check if worker has arrived at harvesting location (location doesn't have to be exact, because one cannot stand on top of resources)
-    private void CheckIfArrivedAtDestination()
+    //Checks if enemy is still in range, and if not, sets a MoveToEnemyOrder()
+    private bool CheckIfEnemyIsInRange()
     {
-        if (Vector3.Distance(agent.destination, transform.position) < 1)
+        if ((enemyToAttack.transform.position - transform.position).sqrMagnitude < AttackRange * AttackRange)
         {
-            Debug.Log("I have arrived at my destination and I am now idle.");
-            agent.ResetPath();
-            CurrentUnitState = UnitState.Idle;
+            PlayAttackAnimation();
+            return true;
         }
+        else
+        {
+            ResetAttackAnimations();
+            MoveToEnemyOrder();
+            return false;
+        }
+    }
+
+    private void RotateToFaceEnemy()
+    {
+        var direction = (enemyToAttack.transform.position - transform.position).normalized;
+        var lookRotation = Quaternion.LookRotation(direction);
+        if (Quaternion.Angle(lookRotation, transform.rotation) > 15f)
+        {
+            Debug.Log("Rotating");
+            character.Move(direction, false, false);
+        }
+        else
+        {
+            CurrentUnitState = UnitState.Attacking;
+            character.Move(Vector3.zero, false, false);
+        }
+    }
+
+    private void PlayAttackAnimation()
+    {
+        animator.SetBool("Attacking", true);
+    }
+
+    private void ResetAttackAnimations()
+    {
+        animator.SetBool("Attacking", false);
+    }
+
+    private void UnsheatheWeapon()
+    {
+        swordSide.SetActive(false);
+        sword.SetActive(true);
+    }
+
+    private void SheatheWeapon()
+    {
+        swordSide.SetActive(true);
+        sword.SetActive(false);
     }
 }

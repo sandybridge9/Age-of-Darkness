@@ -13,4 +13,10 @@ public enum UnitState : short
     MovingToAttack = 7,
     Attacking = 8,
     Rotating = 9,
+    Patroling = 10,
+
+    //Combat Modes
+    Aggressive = 91,
+    Defensive = 92,
+    StandGround = 93,
 }
