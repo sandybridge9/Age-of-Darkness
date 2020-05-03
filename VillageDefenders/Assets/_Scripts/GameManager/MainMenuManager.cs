@@ -44,11 +44,6 @@ public class MainMenuManager : MonoBehaviour
     public void OnSettingsButtonClick()
     {
         mainMenu.SetActive(false);
-        //List<Button> buttons = mainMenu.GetComponents<Button>().ToList();
-        //foreach (var b in buttons)
-        //{
-        //    b.animationTriggers.normalTrigger.
-        //}
         settingsMenu.SetActive(true);
     }
 

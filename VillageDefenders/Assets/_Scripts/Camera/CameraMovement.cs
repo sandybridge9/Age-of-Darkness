@@ -122,29 +122,6 @@ public class CameraMovement : MonoBehaviour
     //Manages Rotation of the camera (Rotates only around Y axis)
     public void Rotation()
     {
-        //var currentRotation = transform.rotation.eulerAngles;
-        //if (Input.GetKey(KeyCode.E))
-        //{
-        //    if (currentRotation.y >= 0)
-        //    {
-        //        transform.Rotate(0, RotationSpeed, 0, Space.World);
-        //    }
-        //    else if (currentRotation.y < 0)
-        //    {
-        //        transform.Rotate(0, RotationSpeed * -1, 0, Space.World);
-        //    }
-        //}
-        //if (Input.GetKey(KeyCode.Q))
-        //{
-        //    if (currentRotation.y > 0)
-        //    {
-        //        transform.Rotate(0, RotationSpeed * -1, 0, Space.World);
-        //    }
-        //    else if (currentRotation.y <= 0)
-        //    {
-        //        transform.Rotate(0, RotationSpeed, 0, Space.World);
-        //    }
-        //}
         var currentRotation = transform.rotation.eulerAngles;
         if (Input.GetKey(KeyCode.E))
         {
@@ -188,13 +165,13 @@ public class CameraMovement : MonoBehaviour
                 var thisCamera = GetComponent<Camera>();
                 if (groundView)
                 {
-                    transform.Rotate(-45, 0, 0);
+                    transform.Rotate(-20, 0, 0);
                     groundView = false;
                     thisCamera.orthographic = false;
                 }
                 else
                 {
-                    transform.Rotate(45, 0, 0);
+                    transform.Rotate(20, 0, 0);
                     groundView = true;
                     thisCamera.orthographic = true;
                 }

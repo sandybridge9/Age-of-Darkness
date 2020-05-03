@@ -64,7 +64,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\AssetStoreContent\CharacterAssets\BrackeysAnimationVideoProjectContent\LowMan\Scripts\ThirdPersonCharacter.cs" />
-    <Compile Include="Assets\AssetStoreContent\CharacterAssets\Pigman\test_scene\camera.cs" />
     <Compile Include="Assets\AssetStoreContent\Standard Assets\Characters\FirstPersonCharacter\Scripts\FirstPersonController.cs" />
     <Compile Include="Assets\AssetStoreContent\Standard Assets\Characters\FirstPersonCharacter\Scripts\HeadBob.cs" />
     <Compile Include="Assets\AssetStoreContent\Standard Assets\Characters\FirstPersonCharacter\Scripts\MouseLook.cs" />
@@ -135,6 +134,8 @@
     <Compile Include="Assets\_Scripts\Building\Buildings\Barracks.cs" />
     <Compile Include="Assets\_Scripts\Building\Buildings\Building.cs" />
     <Compile Include="Assets\_Scripts\Building\Buildings\BuildingType.cs" />
+    <Compile Include="Assets\_Scripts\Building\Buildings\EnemyCamp.cs" />
+    <Compile Include="Assets\_Scripts\Building\Buildings\FarmBuilding.cs" />
     <Compile Include="Assets\_Scripts\Building\Buildings\IBuilding.cs" />
     <Compile Include="Assets\_Scripts\Building\Buildings\StoneGatehouse.cs" />
     <Compile Include="Assets\_Scripts\Building\Buildings\StoneTower.cs" />
@@ -145,6 +146,7 @@
     <Compile Include="Assets\_Scripts\Building\Buildings\WoodenTower.cs" />
     <Compile Include="Assets\_Scripts\Building\Buildings\WoodenWall.cs" />
     <Compile Include="Assets\_Scripts\Camera\CameraMovement.cs" />
+    <Compile Include="Assets\_Scripts\Camera\Minimap.cs" />
     <Compile Include="Assets\_Scripts\GameManager\MainMenuManager.cs" />
     <Compile Include="Assets\_Scripts\GameManager\Resources\ResourceBundle.cs" />
     <Compile Include="Assets\_Scripts\GameManager\Resources\ResourceManager.cs" />
@@ -155,7 +157,9 @@
     <Compile Include="Assets\_Scripts\Resources\Resource.cs" />
     <Compile Include="Assets\_Scripts\Resources\Stone.cs" />
     <Compile Include="Assets\_Scripts\Resources\Wood.cs" />
-    <Compile Include="Assets\_Scripts\Units\OldUnit.cs" />
+    <Compile Include="Assets\_Scripts\Units\ArmedPeasant.cs" />
+    <Compile Include="Assets\_Scripts\Units\EnemySkeleton.cs" />
+    <Compile Include="Assets\_Scripts\Units\EnemyWarrior.cs" />
     <Compile Include="Assets\_Scripts\Units\Unit.cs" />
     <Compile Include="Assets\_Scripts\Units\UnitManager.cs" />
     <Compile Include="Assets\_Scripts\Units\UnitState.cs" />
@@ -208,7 +212,6 @@
     <None Include="Assets\AssetStoreContent\TextMesh Pro\Resources\Shaders\TMP_Bitmap-Mobile.shader" />
     <None Include="Assets\AssetStoreContent\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
     <None Include="Assets\AssetStoreContent\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile.shader" />
-    <None Include="Assets\AssetStoreContent\BuildingAssets\Low Poly Medieval Buildings\Read me.txt" />
     <None Include="Assets\AssetStoreContent\Standard Assets\Characters\ThirdPersonCharacter\ThirdPersonCharacterGuidelines.txt" />
     <None Include="Assets\AssetStoreContent\TextMesh Pro\Resources\Shaders\TMP_Sprite.shader" />
     <Reference Include="Unity.Timeline.Editor">
@@ -216,6 +219,12 @@
     </Reference>
     <Reference Include="Unity.VSCode.Editor">
       <HintPath>D:/UnityProjects/VillageDefenders/VillageDefenders/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipelines.Core.Editor">
+      <HintPath>D:/UnityProjects/VillageDefenders/VillageDefenders/Library/ScriptAssemblies/Unity.RenderPipelines.Core.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipelines.Core.Runtime">
+      <HintPath>D:/UnityProjects/VillageDefenders/VillageDefenders/Library/ScriptAssemblies/Unity.RenderPipelines.Core.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>D:/UnityProjects/VillageDefenders/VillageDefenders/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
@@ -232,11 +241,20 @@
     <Reference Include="Unity.Rider.Editor">
       <HintPath>D:/UnityProjects/VillageDefenders/VillageDefenders/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary">
+      <HintPath>D:/UnityProjects/VillageDefenders/VillageDefenders/Library/ScriptAssemblies/Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.2D.Sprite.Editor">
       <HintPath>D:/UnityProjects/VillageDefenders/VillageDefenders/Library/ScriptAssemblies/Unity.2D.Sprite.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.2D.Tilemap.Editor">
       <HintPath>D:/UnityProjects/VillageDefenders/VillageDefenders/Library/ScriptAssemblies/Unity.2D.Tilemap.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.ShaderGraph.Editor">
+      <HintPath>D:/UnityProjects/VillageDefenders/VillageDefenders/Library/ScriptAssemblies/Unity.ShaderGraph.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipelines.Core.ShaderLibrary">
+      <HintPath>D:/UnityProjects/VillageDefenders/VillageDefenders/Library/ScriptAssemblies/Unity.RenderPipelines.Core.ShaderLibrary.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>D:/UnityProjects/VillageDefenders/VillageDefenders/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
@@ -246,21 +264,6 @@
     </Reference>
     <Reference Include="UnityEditor.UI">
       <HintPath>D:/UnityProjects/VillageDefenders/VillageDefenders/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.RenderPipelines.Core.Editor">
-      <HintPath>D:/UnityProjects/VillageDefenders/VillageDefenders/Library/ScriptAssemblies/Unity.RenderPipelines.Core.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.RenderPipelines.Core.Runtime">
-      <HintPath>D:/UnityProjects/VillageDefenders/VillageDefenders/Library/ScriptAssemblies/Unity.RenderPipelines.Core.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary">
-      <HintPath>D:/UnityProjects/VillageDefenders/VillageDefenders/Library/ScriptAssemblies/Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.ShaderGraph.Editor">
-      <HintPath>D:/UnityProjects/VillageDefenders/VillageDefenders/Library/ScriptAssemblies/Unity.ShaderGraph.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.RenderPipelines.Core.ShaderLibrary">
-      <HintPath>D:/UnityProjects/VillageDefenders/VillageDefenders/Library/ScriptAssemblies/Unity.RenderPipelines.Core.ShaderLibrary.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.2f1/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>

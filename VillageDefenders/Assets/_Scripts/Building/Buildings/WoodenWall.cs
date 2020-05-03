@@ -9,7 +9,7 @@ public class WoodenWall : Building
     public WoodenWall()
     {
         Health = 100f;
-        Cost = new ResourceBundle(0, 1, 0, 0, 0);
+        Cost = new ResourceBundle(0, 2, 0, 0, 0);
         BuildingType = BuildingType.WoodenWall;
     }
 

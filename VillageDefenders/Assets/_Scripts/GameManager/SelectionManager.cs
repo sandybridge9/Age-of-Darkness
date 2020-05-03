@@ -1,162 +1,191 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public class SelectionManager : MonoBehaviour
 {
-    //private LayerMask buildingLayerMask;
-    //private LayerMask unitLayerMask;
-    //public Transform SelectionArea;
     private LayerMask combinedMask;
-    private List<GameObject> currentSelections;
-    private GameObject currentSelection;
+    private Building currentlySelectedBuilding;
+    private List<Unit> currentlySelectedUnits;
 
-    private bool needsClearing = false;
+    private bool isSelecting;
+    private Vector3 currentMousePoint;
+    private Vector3? startPosition;
+    private Vector3? endPosition;
+    public GUIStyle MouseDragSkin;
+    public float DistanceBetweenUnits = 0.5f;
 
     void Start()
     {
-        //buildingLayerMask = SettingsManager.Instance.BuildingLayerMask;
-        //unitLayerMask = SettingsManager.Instance.UnitLayerMask;
         combinedMask = (1 << LayerMask.NameToLayer("Building")) | (1 << LayerMask.NameToLayer("Unit"));
-        //combinedMask = (1 << SettingsManager.Instance.BuildingLayerMask.value) | (1 << SettingsManager.Instance.UnitLayerMask.value);
-        currentSelections = new List<GameObject>();
+        currentlySelectedUnits = new List<Unit>();
     }
 
     void Update()
     {
-        ShootRay();
-        //Debug.Log(currentSelections.Count);
+        MakeSelection();
     }
 
-    private void ShootRay()
+    void OnGUI()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (isSelecting)
         {
-            if (!SettingsManager.Instance.BuildingManager.HasSelectedBuilding())
+            float boxWidth = Camera.main.WorldToScreenPoint(startPosition.Value).x -
+                             Camera.main.WorldToScreenPoint(currentMousePoint).x;
+            float boxHeight = Camera.main.WorldToScreenPoint(startPosition.Value).y -
+                              Camera.main.WorldToScreenPoint(currentMousePoint).y;
+
+            float boxLeft = Input.mousePosition.x;
+            float boxTop = (Screen.height - Input.mousePosition.y) - boxHeight;
+            GUI.backgroundColor = new Color(177f, 29f, 33f, 0.5f);
+            Rect rect = new Rect(boxLeft, boxTop, boxWidth, boxHeight);
+            GUI.Box(rect, "", MouseDragSkin);
+        }
+    }
+
+    private void MakeSelection()
+    {
+        //Cannot make selections while building is being placed
+        if (!SettingsManager.Instance.BuildingManager.HasSelectedBuilding())
+        {
+            if (Input.GetMouseButtonDown(0))
             {
+                startPosition = new Vector3();
+                endPosition = new Vector3();
+                currentMousePoint = new Vector3();
+                ClearSelections();
                 var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hitInfo;
-                if (Physics.Raycast(ray, out hitInfo, 1000f, combinedMask))
+                if (Physics.Raycast(ray, out hitInfo))
                 {
-                    //If shift key is held then add selected gameobjects to list
-                    if (Input.GetKey(KeyCode.LeftShift))
+                    if (hitInfo.transform.GetComponent<Building>())
                     {
-                        SelectGameObject(hitInfo.transform.gameObject, true);
+                        currentlySelectedBuilding = hitInfo.transform.GetComponent<Building>();
+                        if (currentlySelectedBuilding != null)
+                        {
+                            currentlySelectedBuilding.Select();
+                        }
                     }
-                    else
-                    {
-                        SelectGameObject(hitInfo.transform.gameObject, false);
-                    }
-                }
-                //If clicked elsewhere - clear selection
-                else
-                {
-                    needsClearing = true;
+                    startPosition = hitInfo.point;
                 }
             }
-            if(needsClearing)
-            {
-                ClearSelection();
-            }
-        }
-    }
 
-    //Method that is called upon object selection
-    private void SelectGameObject(GameObject selectedObject, bool addToList)
-    {
-        if (selectedObject.GetComponent<Building>())
-        {
-            //ClearSingleSelection();
-            //Check if currentSelections list has any units selected, and if yes, then clear it
-            //Because units and buildings can't be selected at the same time
-            if (currentSelections.Any(s=>s.GetComponent<Unit>() != null))//Where(s => s.GetComponent<Unit>() != null).Any())
+            if (Input.GetMouseButton(0))
             {
-                ClearSelectionList();
+                isSelecting = true;
+                var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hitInfo;
+                if (Physics.Raycast(ray, out hitInfo))
+                {
+                    currentMousePoint = hitInfo.point;
+                }
             }
-            var building = selectedObject.GetComponent<Building>();
-            building.Select();
-        }
-        else if (selectedObject.GetComponent<Unit>())
-        {
-            //ClearSingleSelection();
-            //Check if currentSelections list has any buildings selected, and if yes, then clear it
-            //Because units and buildings can't be selected at the same time
-            if (currentSelections.Any(s => s.GetComponent<Building>() != null))//Where(s => s.GetComponent<Unit>() != null).Any())
+
+            if (Input.GetMouseButtonUp(0))
             {
-                ClearSelection();
+                if (startPosition != null)
+                {
+                    var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                    RaycastHit hitInfo;
+                    if (Physics.Raycast(ray, out hitInfo))
+                    {
+                        endPosition = hitInfo.point;
+                        BoxSelectAnArea();
+                    }
+                }
+                isSelecting = false;
             }
-            var unit = selectedObject.GetComponent<Unit>();
-            unit.Select();
-        }
-        if (addToList && !currentSelections.Contains(selectedObject))
-        {
-            currentSelections.Add(selectedObject);
-            Debug.Log("added" +selectedObject);
         }
         else
         {
-            ClearSelection();
-            currentSelection = selectedObject;
-            Debug.Log("selected: " + selectedObject);
+            ClearSelections();
+            startPosition = new Vector3();
+            endPosition = new Vector3();
+            currentMousePoint = new Vector3();
         }
     }
 
-    public void ClearSelection()
+    private void BoxSelectAnArea()
     {
-        ClearSelectionList();
-        ClearSingleSelection();
-        needsClearing = false;
+        var middle = new Vector3()
+        {
+            x = (startPosition.Value.x + endPosition.Value.x) / 2,
+            y = (startPosition.Value.y + endPosition.Value.y) / 2,
+            z = (startPosition.Value.z + endPosition.Value.z) / 2
+        };
+        var halfExtents = new Vector3()
+        {
+            x = Math.Abs(Math.Abs(startPosition.Value.x) - Math.Abs(endPosition.Value.x)) / 2,
+            y = (Math.Abs(Math.Abs(startPosition.Value.y) - Math.Abs(endPosition.Value.y)) / 2) + 200,
+            z = Math.Abs(Math.Abs(startPosition.Value.z) - Math.Abs(endPosition.Value.z)) / 2
+        };
+        List<Collider> colliders = Physics.OverlapBox(middle, halfExtents).ToList();
+        foreach (var c in colliders)
+        {
+            Unit u = c.GetComponent<Unit>();
+            if (u != null && !currentlySelectedUnits.Contains(u))
+            {
+                u.Select();
+                currentlySelectedUnits.Add(u);
+            }
+        }
     }
 
-    public void ClearSelectionList()
+    private void ClearSelections()
     {
-        Debug.Log("Clearing selections");
-        foreach (var selection in currentSelections)
+        if (currentlySelectedBuilding != null)
         {
-            var b = selection.GetComponent<Building>();
-            if (b != null)
+            currentlySelectedBuilding.DeSelect();
+            currentlySelectedBuilding = null;
+        }
+
+        foreach (var u in currentlySelectedUnits)
+        {
+            u.DeSelect();
+        }
+        currentlySelectedUnits.Clear();
+    }
+
+    public void RemoveUnitFromSelection(Unit unit)
+    {
+        currentlySelectedUnits.Remove(unit);
+    }
+
+    public void RemoveBuildingFromSelection(Building building)
+    {
+        if (currentlySelectedBuilding != null && currentlySelectedBuilding == building)
+        {
+            currentlySelectedBuilding.DeSelect();
+            currentlySelectedBuilding = null;
+        }
+    }
+
+    public Vector3 GetPositionForUnit(Unit unit, Vector3 destination)
+    {
+        if (currentlySelectedUnits.Contains(unit) && unit.IsSelected)
+        {
+            if (currentlySelectedUnits.Count > 1)
             {
-                b.DeSelect();
+                int currentUnitIndex = currentlySelectedUnits.FindIndex(u => u == unit);
+                float angle = currentUnitIndex * (360f / currentlySelectedUnits.Count);
+                Vector3 direction = ApplyRotationToVector(new Vector3(1, 0, 1), angle);
+                Vector3 position = destination + direction * DistanceBetweenUnits;
+                return position;
             }
             else
             {
-                var u = selection.GetComponent<Unit>();
-                if (u != null)
-                {
-                    u.DeSelect();
-                }
+                return destination;
             }
         }
-        currentSelections = new List<GameObject>();
+        return destination;
     }
 
-    public void ClearSingleSelection()
+    private Vector3 ApplyRotationToVector(Vector3 vector, float angle)
     {
-        Debug.Log("Clearing single selection");
-        if (currentSelection != null)
-        {
-            var b = currentSelection.GetComponent<Building>();
-            if (b != null)
-            {
-                b.DeSelect();
-            }
-            else
-            {
-                var u = currentSelection.GetComponent<Unit>();
-                if (u != null)
-                {
-                    u.DeSelect();
-                }
-            }
-            currentSelection = null;
-        }
-        needsClearing = false;
+        Debug.Log(Quaternion.Euler(0, 0, angle) * vector);
+        return Quaternion.Euler(0, 0, angle) * vector;
     }
 
-    public void RemoveGameObjectFromSelection(GameObject _gameObject)
-    {
-        ClearSingleSelection();
-        currentSelections.Remove(_gameObject);
-    }
 }

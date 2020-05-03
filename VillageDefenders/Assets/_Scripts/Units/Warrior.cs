@@ -1,43 +1,54 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Warrior : Unit
 {
+    #region PROPERTIES
+
     public float AttackRange = 1.5f;
     public float Damage = 10f;
-    public UnitState CombatMode = UnitState.StandGround;
+
+    public GameObject shield;
+    public GameObject sword;
+    public GameObject swordSide;
+
+    #endregion
+
+    #region FIELDS
+
     private float attackDelay = 60f;
     private bool isCurrentlyInCombat = false;
 
     private Unit enemyToAttack;
     private Vector3 lastKnownEnemyLocation;
 
-    private GameObject shield;
-    private GameObject sword;
-    private GameObject swordSide;
+    #endregion
+
+    #region CONSTRUCTORS
 
     public Warrior()
     {
         Health = 150f;
-        Cost = new ResourceBundle(0, 0, 0, 0, 15);
+        Cost = new ResourceBundle(0, 20, 0, 15, 30);
         CurrentUnitState = UnitState.Idle;
     }
+
+    #endregion
+
+    #region OVERRIDEN METHODS
 
     protected override void UnitSpecificStartup()
     {
         base.UnitSpecificStartup();
-
-        shield = GameObject.Find("Shield");
-        sword = GameObject.Find("Sword");
-        swordSide = GameObject.Find("SwordSide");
 
         shield.SetActive(true);
         sword.SetActive(false);
         swordSide.SetActive(true);
     }
 
-    protected override void SelectedUnitSpecificOrders()
+    protected override void SelectedUnitSpecificOrdersOnUpdate()
     {
         if (Input.GetMouseButtonDown(1))
         {
@@ -45,7 +56,7 @@ public class Warrior : Unit
         }
     }
 
-    protected override void UnitSpecificOrders()
+    protected override void UnitSpecificOrdersOnUpdate()
     {
         switch (CurrentUnitState)
         {
@@ -59,10 +70,29 @@ public class Warrior : Unit
                 Attack();
                 break;
             case UnitState.Idle:
+                agent.ResetPath();
                 character.Move(Vector3.zero, false, false);
+                switch (CombatMode)
+                {
+                    case UnitState.Aggressive:
+                        SearchForEnemy();
+                        break;
+                    case UnitState.Defensive:
+                        //Defend target
+                        break;
+                    case UnitState.StandGround:
+                        //Do nothing
+                        break;
+                }
                 break;
         }
+        //CheckIfBeingAttacked();
+        ResetEnemyOnDeath();
     }
+
+    #endregion
+
+    #region COMBAT
 
     //Method that is responsible for processing mouse click worker commands (gather, unload, move).
     private void GiveOrder()
@@ -73,7 +103,7 @@ public class Warrior : Unit
         {
             Unit hitUnit = hitInfo.transform.GetComponent<Unit>();
             //If hit unit is not THIS unit and hitUnit is an enemy, then move to attack
-            if (CheckIfHitEnemyUnit(hitUnit) && hitUnit != this)
+            if (CheckIfClickedOnEnemyUnit(hitUnit) && hitUnit != this)
             {
                 Debug.Log("Got orders to move to attack. ");
                 enemyToAttack = hitUnit;
@@ -95,7 +125,7 @@ public class Warrior : Unit
         ResetAttackAnimations();
     }
 
-    private bool CheckIfHitEnemyUnit(Unit unit)
+    private bool CheckIfClickedOnEnemyUnit(Unit unit)
     {
         //This unit can have IsEnemy flag too
         if ((IsEnemy && !unit.IsEnemy) || (!IsEnemy && unit.IsEnemy))
@@ -117,7 +147,10 @@ public class Warrior : Unit
             isCurrentlyInCombat = true;
             UnsheatheWeapon();
             CurrentUnitState = UnitState.MovingToAttack;
-            agent.SetDestination(enemyToAttack.transform.position);
+            var correctedPosition =
+                SettingsManager.Instance.SelectionManager.GetPositionForUnit(this, enemyToAttack.transform.position);
+            //agent.SetDestination(enemyToAttack.transform.position);
+            agent.SetDestination(correctedPosition);
         }
         else
         {
@@ -129,8 +162,10 @@ public class Warrior : Unit
     {
         if (enemyToAttack != null && !enemyToAttack.IsDead)
         {
+            Debug.Log("I am attacking the enemy");
             //TODO add some sort of detection/vision range
             lastKnownEnemyLocation = enemyToAttack.transform.position;
+            agent.SetDestination(lastKnownEnemyLocation);
             CheckIfArrivedAtEnemyLocation();
             if (CurrentUnitState == UnitState.MovingToAttack)
             {
@@ -189,11 +224,13 @@ public class Warrior : Unit
     {
         if ((enemyToAttack.transform.position - transform.position).sqrMagnitude < AttackRange * AttackRange)
         {
+            Debug.Log("enemy is in range");
             PlayAttackAnimation();
             return true;
         }
         else
         {
+            Debug.Log("enemy is not in range");
             ResetAttackAnimations();
             MoveToEnemyOrder();
             return false;
@@ -202,6 +239,7 @@ public class Warrior : Unit
 
     private void RotateToFaceEnemy()
     {
+        Debug.Log("Trying to rotate");
         var direction = (enemyToAttack.transform.position - transform.position).normalized;
         var lookRotation = Quaternion.LookRotation(direction);
         if (Quaternion.Angle(lookRotation, transform.rotation) > 15f)
@@ -209,10 +247,13 @@ public class Warrior : Unit
             Debug.Log("Rotating");
             character.Move(direction, false, false);
         }
-        else
+    }
+
+    private void ResetEnemyOnDeath()
+    {
+        if (enemyToAttack == null || enemyToAttack.IsDead)
         {
-            CurrentUnitState = UnitState.Attacking;
-            character.Move(Vector3.zero, false, false);
+            enemyToAttack = null;
         }
     }
 
@@ -237,4 +278,30 @@ public class Warrior : Unit
         swordSide.SetActive(true);
         sword.SetActive(false);
     }
+
+    #endregion
+
+    #region CombatModes
+
+    //Aggressive
+    private void SearchForEnemy()
+    {
+        var colliders = Physics.OverlapSphere(transform.position, sightRange).ToList();
+        foreach (var c in colliders)
+        {
+            Unit u = c.GetComponent<Unit>();
+            if (u != null && CheckIfUnitIsEnemy(u))
+            {
+                enemyToAttack = u;
+                MoveToEnemyOrder();
+            }
+        }
+    }
+
+    private bool CheckIfUnitIsEnemy(Unit unit)
+    {
+        return IsEnemy != unit.IsEnemy;
+    }
+
+    #endregion
 }

@@ -7,7 +7,7 @@ public class StoneGatehouse : Building
     public StoneGatehouse()
     {
         Health = 100f;
-        Cost = new ResourceBundle(0, 0, 15, 0, 0);
+        Cost = new ResourceBundle(0, 0, 35, 0, 0);
         BuildingType = global::BuildingType.StoneGatehouse;
     }
 

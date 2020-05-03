@@ -23,9 +23,9 @@ public class BuildingManager : MonoBehaviour
     private List<Building> allBuildings; 
     private List<Building> allWalls;
     private const float tileSize = 0.25f; // Grid snapping step size
-    private float rotationDelay = 60f; // Used to delay rotation
-    private float cancelDelay = 60f; // Used to delay canceling
-    private float placementDelay = 120f;
+    private float rotationDelay = 10f; // Used to delay rotation
+    private float cancelDelay = 10f; // Used to delay canceling
+    private float placementDelay = 20f;
     private LayerMask groundLayerMask;
     private Material materialCanBuild;
     private Material materialCantBuild;
@@ -74,17 +74,17 @@ public class BuildingManager : MonoBehaviour
         CancelSelection();
     }
 
-    void OnGUI()
-    {
-        for (int i = 0; i < placeableBuildings.Count; i++)
-        {
-            if (GUI.Button(new Rect(Screen.width / 20, Screen.height / 15 + Screen.height / 12 * i, 100, 30),
-                placeableBuildings[i].name))
-            {
-                SetItem(placeableBuildings[i]);
-            }
-        }
-    }
+    //void OnGUI()
+    //{
+    //    for (int i = 0; i < placeableBuildings.Count; i++)
+    //    {
+    //        if (GUI.Button(new Rect(Screen.width / 20, Screen.height / 15 + Screen.height / 12 * i, 100, 30),
+    //            placeableBuildings[i].name))
+    //        {
+    //            SetItem(placeableBuildings[i]);
+    //        }
+    //    }
+    //}
 
     #endregion
 
@@ -166,7 +166,7 @@ public class BuildingManager : MonoBehaviour
         //Walls can't be rotated to avoid various issues when wall isn't square
         if (Input.GetKey(KeyCode.R) && currentBuilding.BuildingType != BuildingType.WoodenWall && currentBuilding.BuildingType != BuildingType.StoneWall)
         {
-            if (rotationDelay >= 60)
+            if (rotationDelay >= 10)
             {
                 currentBuildingSelection.transform.Rotate(Vector3.up, -90);
                 rotationDelay = 0;
@@ -174,7 +174,7 @@ public class BuildingManager : MonoBehaviour
         }
         else if (Input.GetKey(KeyCode.T))
         {
-            if (rotationDelay >= 60)
+            if (rotationDelay >= 10)
             {
                 currentBuildingSelection.transform.Rotate(Vector3.up, 90);
                 rotationDelay = 0;
@@ -394,7 +394,7 @@ public class BuildingManager : MonoBehaviour
 
     public void PlaceBuildingThatCanOverlapWithWalls()
     {
-        if (Input.GetKey(KeyCode.Mouse0) && IsPositionViable() && placementDelay >= 120f)
+        if (Input.GetKey(KeyCode.Mouse0) && IsPositionViable() && placementDelay >= 40f)
         {
             ClearLocationForBuilding();
             BuildBuilding(currentBuildingSelection.transform.position.x,
@@ -502,7 +502,7 @@ public class BuildingManager : MonoBehaviour
     //Press C to cancel currently selected building
     private void CancelSelection()
     {
-        if (Input.GetKey(KeyCode.C) && cancelDelay >= 60 && currentBuildingSelection != null)
+        if (Input.GetKey(KeyCode.C) && cancelDelay >= 10 && currentBuildingSelection != null)
         {
             if (tempWalls != null)
             {
@@ -607,13 +607,17 @@ public class BuildingManager : MonoBehaviour
     {
         var th = allBuildings.Where(x => x.BuildingType == BuildingType.Townhall).ToList();
         return th.Count != 0 ? th.First() : null;
-        //return allBuildings.Where(x => x.BuildingType == BuildingType.Townhall).ToList().First() ?? null;
-        //return allBuildings.Where(x => x.BuildingType == BuildingType.Townhall).ToArray()[0] ?? null;
     }
 
     public Building GetWarehouse()
     {
         var w = allBuildings.Where(x => x.BuildingType == BuildingType.Warehouse).ToList();
+        return w.Count != 0 ? w.First() : null;
+    }
+
+    public Building GetBarracks()
+    {
+        var w = allBuildings.Where(x => x.BuildingType == BuildingType.Barracks).ToList();
         return w.Count != 0 ? w.First() : null;
     }
 

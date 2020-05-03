@@ -18,11 +18,9 @@ public class Building : MonoBehaviour, IBuilding
     public ResourceBundle Cost;
     public BuildingType BuildingType;
 
-
-    [HideInInspector]
-    public bool IsPlaced { get; set; } = false;
-    [HideInInspector]
-    public bool IsSelected { get; set; } = false;
+    public bool IsPlaced = false;
+    public bool IsSelected = false;
+    public bool IsEnemy = false;
 
     [HideInInspector]
     public Collider Collider;
@@ -108,7 +106,7 @@ public class Building : MonoBehaviour, IBuilding
     public void Delete()
     {
         SettingsManager.Instance.BuildingManager.DeleteBuildingFromList(this);
-        SettingsManager.Instance.SelectionManager.RemoveGameObjectFromSelection(this.gameObject);
+        SettingsManager.Instance.SelectionManager.RemoveBuildingFromSelection(this);
         Destroy();
     }
 

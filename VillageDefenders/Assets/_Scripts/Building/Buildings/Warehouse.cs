@@ -9,7 +9,7 @@ public class Warehouse : Building
     public Warehouse()
     {
         Health = 100f;
-        Cost = new ResourceBundle(0, 0, 0, 0, 0);
+        Cost = new ResourceBundle(5, 45, 20, 10, 20);
         ResourceCapacity = new ResourceBundle(2500, 1500, 1500, 1500, 1500);
         BuildingType = BuildingType.Warehouse;
     }

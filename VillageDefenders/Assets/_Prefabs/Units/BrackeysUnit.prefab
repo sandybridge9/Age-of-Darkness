@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 8141335297077832312}
   - component: {fileID: 8141335297077832313}
   - component: {fileID: 8141335297077832294}
+  - component: {fileID: 8428756255676759744}
   m_Layer: 10
   m_Name: BrackeysUnit
   m_TagString: Unit
@@ -73,8 +74,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Health: 100
+  IsSelected: 0
   IsEnemy: 0
+  IsDead: 0
   CurrentUnitState: 1
+  CombatMode: 93
 --- !u!54 &8141335297077832314
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -157,6 +161,22 @@ MonoBehaviour:
   m_MoveSpeedMultiplier: 1
   m_AnimSpeedMultiplier: 1
   m_GroundCheckDistance: 0.2
+--- !u!208 &8428756255676759744
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8141335297077832293}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 0
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1001 &8141335297195501786
 PrefabInstance:
   m_ObjectHideFlags: 0

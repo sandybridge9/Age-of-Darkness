@@ -28,9 +28,6 @@ public class ResourceManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Debug.Log("Gold: " + currentResources.Gold +" Wood: " +currentResources.Wood + " Iron: " + currentResources.Iron +" Stone: " +currentResources.Stone);
-        //Debug.Log("Gold: " + maximumCapacity.Gold + " Wood: " + maximumCapacity.Wood + " Iron: " + maximumCapacity.Iron + " Stone: " + maximumCapacity.Stone);
-        //Debug.Log(CurrentResources.ToString());
     }
 
     public void SetStartingResources(ResourceBundle resources)
@@ -40,6 +37,11 @@ public class ResourceManager : MonoBehaviour
     }
 
     public bool SubtractBuildingCostFromCurrentResources(ResourceBundle cost)
+    {
+        return CurrentResources.SubtractResources(cost);
+    }
+
+    public bool SubtractUnitCostFromCurrentResources(ResourceBundle cost)
     {
         return CurrentResources.SubtractResources(cost);
     }

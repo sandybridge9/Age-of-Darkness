@@ -13,10 +13,11 @@ using Vector3 = UnityEngine.Vector3;
 
 public class Worker : Unit
 {
+    #region FIELDS
+
     private Transform currentResourceSelection;
     private Transform unloadingSite;
     private string currentResourceSelectionTypeName = "";
-    //private readonly float maxDistance = 3f;
     private float gatheringDelay = 60f;
     private float normalMovementSpeed;
 
@@ -29,21 +30,32 @@ public class Worker : Unit
     private int StoneAmount = 7;
     private int IronAmount = 4;
     private int FoodAmount = 7;
-
-    private GameObject pickaxe;
-    private GameObject plow;
-    private GameObject axe;
     private bool isAnimationSet = false;
 
+    #endregion
+
+    #region PROPERTIES
+
+    public GameObject pickaxe;
+    public GameObject plow;
+    public GameObject axe;
+
+    #endregion
+
+    #region CONSTRUCTORS
 
     public Worker()
     {
         Health = 50f;
-        Cost = new ResourceBundle(0, 0, 0, 0, 20);
+        Cost = new ResourceBundle(0, 5, 0, 5, 30);
         CurrentUnitState = UnitState.Idle;
         currentlyHeldResources = new ResourceBundle(0, 0, 0, 0, 0);
         maximumResourceCapacity = new ResourceBundle(50, 50, 50, 50, 50);
     }
+
+    #endregion
+
+    #region OVERRIDEN METHODS
 
     protected override void UnitSpecificStartup()
     {
@@ -56,18 +68,16 @@ public class Worker : Unit
         FoodAmount = SettingsManager.Instance.MaximumFoodGatheringAmount;
         normalMovementSpeed = agent.speed;
 
-        pickaxe = GameObject.Find("Pickaxe");//transform.Find("Pickaxe").gameObject;
-        plow = GameObject.Find("Plow"); //transform.Find("Plow").gameObject;
-        axe = GameObject.Find("Axe");
-
         pickaxe.SetActive(false);
         plow.SetActive(false);
         axe.SetActive(false);
     }
 
+    #endregion
+
     #region ORDER MANAGEMENT
 
-    protected override void SelectedUnitSpecificOrders()
+    protected override void SelectedUnitSpecificOrdersOnUpdate()
     {
         if (Input.GetMouseButtonDown(1))
         {
@@ -75,7 +85,7 @@ public class Worker : Unit
         }
     }
 
-    protected override void UnitSpecificOrders()
+    protected override void UnitSpecificOrdersOnUpdate()
     {
         switch (CurrentUnitState)
         {
@@ -188,6 +198,7 @@ public class Worker : Unit
     {
         if (currentResourceSelection != null)
         {
+            Debug.Log("Checking if arrived at resource");
             CheckIfArrivedAtResource();
             if (CurrentUnitState == UnitState.MovingToResource)
             {
@@ -198,12 +209,16 @@ public class Worker : Unit
                 character.Move(Vector3.zero, false, false);
             }
         }
+        else
+        {
+            CurrentUnitState = UnitState.Idle;
+        }
     }
 
     //Check if worker has arrived at harvesting location (location doesn't have to be exact, because one cannot stand on top of resources)
     private void CheckIfArrivedAtResource()
     {
-        if ((currentResourceSelection.position - transform.position).sqrMagnitude < 1.5f * 1.5f)//Vector3.Distance(currentResourceSelection.position, transform.position) < 1.5f)
+        if ((currentResourceSelection.position - transform.position).sqrMagnitude < 3f * 3f)//Vector3.Distance(currentResourceSelection.position, transform.position) < 1.5f)
         {
             Debug.Log("I have arrived, and I should now rotate to face the resources");
             agent.ResetPath();
@@ -297,12 +312,20 @@ public class Worker : Unit
 
     private void RotateToFaceResource()
     {
-        var direction = (currentResourceSelection.position - transform.position).normalized;
-        var lookRotation = Quaternion.LookRotation(direction);
-        if (Quaternion.Angle(lookRotation, transform.rotation) > 25f)
+        if (currentResourceSelectionTypeName != "Food")
         {
-            Debug.Log("Rotating");
-            character.Move(direction, false, false);
+            var direction = (currentResourceSelection.position - transform.position).normalized;
+            var lookRotation = Quaternion.LookRotation(direction);
+            if (Quaternion.Angle(lookRotation, transform.rotation) > 40f)
+            {
+                Debug.Log("Rotating");
+                character.Move(direction, false, false);
+            }
+            else
+            {
+                CurrentUnitState = UnitState.Gathering;
+                character.Move(Vector3.zero, false, false);
+            }
         }
         else
         {

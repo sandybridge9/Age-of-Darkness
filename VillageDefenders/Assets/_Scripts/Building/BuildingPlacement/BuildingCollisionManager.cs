@@ -29,11 +29,19 @@ public class BuildingCollisionManager : MonoBehaviour
                 CurrentColliders.Add(other);
             }
         }
+        else if (other.tag == "Resource" || other.tag == "Unit")
+        {
+            CurrentColliders.Add(other);
+        }
     }
 
     void OnTriggerExit(Collider other)
     {
         if (other.tag == "Building")
+        {
+            CurrentColliders.Remove(other);
+        }
+        else if (other.tag == "Resource" || other.tag == "Unit")
         {
             CurrentColliders.Remove(other);
         }

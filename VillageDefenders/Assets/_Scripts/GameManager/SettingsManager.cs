@@ -64,7 +64,7 @@ public class SettingsManager : MonoBehaviour
     public ResourceManager ResourceManager;
     [HideInInspector]
     public UnitManager UnitManager;
-    [HideInInspector] 
+
     public UIManager UIManager;
     
     #endregion
@@ -75,7 +75,6 @@ public class SettingsManager : MonoBehaviour
         SelectionManager = GetComponent<SelectionManager>();
         ResourceManager = GetComponent<ResourceManager>();
         UnitManager = GetComponent<UnitManager>();
-        UIManager = GetComponent<UIManager>();
     }
 
     void Start()

@@ -6,32 +6,56 @@ using UnityStandardAssets.Characters.ThirdPerson;
 
 public class Unit : MonoBehaviour
 {
+    #region Properties
+
     public float Health;
     public ResourceBundle Cost;
-    //[HideInInspector]
     public bool IsSelected = false;
     public bool IsEnemy = false;
     public bool IsDead = false;
+    public bool IsObjective = false;
 
     public UnitState CurrentUnitState;
+    public UnitState CombatMode;
+
+    #endregion
+
+    #region Fields
+
+    protected float sightRange = 25f;
     protected NavMeshAgent agent;
     protected ThirdPersonCharacter character;
     protected Animator animator;
+    protected GameObject selectionMarker;
+    private bool removedOnDeath = false;
+
+    #endregion
+
+    #region Constructors
 
     public Unit()
     {
         Health = 100f;
         Cost = new ResourceBundle(0, 0, 0, 0, 15);
         CurrentUnitState = UnitState.Idle;
+        CombatMode = UnitState.StandGround;
     }
+
+    #endregion
 
     #region Start
 
-    void Start()
+    void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         character = GetComponent<ThirdPersonCharacter>();
         animator = GetComponent<Animator>();
+    }
+
+    void Start()
+    {
+        selectionMarker = transform.Find("SelectionMarker").gameObject;
+        selectionMarker.SetActive(false);
         agent.updateRotation = false;
         UnitSpecificStartup();
     }
@@ -58,15 +82,15 @@ public class Unit : MonoBehaviour
             //All units can be deleted
             DeleteOrder();
             //All units can have specific orders when selected
-            SelectedUnitSpecificOrders();
+            SelectedUnitSpecificOrdersOnUpdate();
         }
         else
         {
             //All units can have specific orders when deselected (patroling, gathering etc.)
-            DeSelectedUnitSpecificOrders();
+            DeSelectedUnitSpecificOrdersOnUpdate();
         }
 
-        UnitSpecificOrders();
+        UnitSpecificOrdersOnUpdate();
     }
 
     public bool HasDied()
@@ -80,19 +104,19 @@ public class Unit : MonoBehaviour
     }
 
     //Method which can be overriden when some unit specific actions are needed on update (when unit is selected (moving, manual unloading etc.))
-    protected virtual void SelectedUnitSpecificOrders()
+    protected virtual void SelectedUnitSpecificOrdersOnUpdate()
     {
         MoveOrder();
     }
 
     //Method which can be overriden when some unit specific actions are needed on update (when unit is DeSelected)
-    protected virtual void DeSelectedUnitSpecificOrders()
+    protected virtual void DeSelectedUnitSpecificOrdersOnUpdate()
     {
 
     }
 
     //Method which can be overriden when some unit specific actions are needed on update (when unit is not necessarily selected (automatic gathering, attacking etc.)
-    protected virtual void UnitSpecificOrders()
+    protected virtual void UnitSpecificOrdersOnUpdate()
     {
         switch (CurrentUnitState)
         {
@@ -111,6 +135,7 @@ public class Unit : MonoBehaviour
     protected virtual void UnitSpecificDeathActions()
     {
         //TODO Add some death actions
+        CurrentUnitState = UnitState.Idle;
         animator.SetBool("DeathTrigger", true);
         Delete(10f);
     }
@@ -131,9 +156,11 @@ public class Unit : MonoBehaviour
             RaycastHit hitInfo;
             if (Physics.Raycast(ray, out hitInfo))
             {
+                Vector3 correctedPosition = SettingsManager.Instance.SelectionManager.GetPositionForUnit(this, hitInfo.point);
                 //agent.ResetPath();
                 CurrentUnitState = UnitState.Moving;
-                agent.SetDestination(hitInfo.point);
+                //agent.SetDestination(hitInfo.point);
+                agent.SetDestination(correctedPosition);
                 Move();
             }
         }
@@ -170,24 +197,32 @@ public class Unit : MonoBehaviour
     public void Select()
     {
         IsSelected = true;
+        selectionMarker.SetActive(true);
     }
 
     public void DeSelect()
     {
         IsSelected = false;
+        selectionMarker.SetActive(false);
+        Debug.Log("Deselecting");
     }
     
 
     public void Delete(float deathTimer = 0f)
     {
         //Some previous logic for removing this unit from lists, etc.
-        SettingsManager.Instance.SelectionManager.RemoveGameObjectFromSelection(this.gameObject);
-        //TODO remove unit from UnitManager unit list
+        if (!removedOnDeath)
+        {
+            SettingsManager.Instance.SelectionManager.RemoveUnitFromSelection(this);
+            SettingsManager.Instance.UnitManager.RemoveUnitFromLists(this);
+            removedOnDeath = true;
+        }
         Destroy(deathTimer);
     }
 
     private void Destroy(float deathTimer = 0f)
     {
+        DeSelect();
         Object.Destroy(this.gameObject, deathTimer);
     }
 

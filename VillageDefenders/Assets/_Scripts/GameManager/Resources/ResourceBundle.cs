@@ -44,6 +44,8 @@ public class ResourceBundle
 
     #endregion
 
+    #region Constructors
+
     public ResourceBundle()
     {
         gold = 0;
@@ -61,6 +63,11 @@ public class ResourceBundle
         this.iron = iron;
         this.food = food;
     }
+
+    #endregion
+
+    #region HelperMethods
+
 
     public bool CheckIfThereAreEnoughResources(ResourceBundle bundle)
     {
@@ -207,4 +214,6 @@ public class ResourceBundle
     {
         return "Gold:" +gold +" Wood: " +wood +" Stone: " +stone +" Iron: " +iron +" Food:"  +food;
     }
+
+    #endregion
 }

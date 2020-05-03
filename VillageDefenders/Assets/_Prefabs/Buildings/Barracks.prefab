@@ -136,7 +136,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2569990640660264945}
   m_Layer: 8
-  m_Name: UnitSpawnPoint
+  m_Name: SpawnPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -150,7 +150,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 877890506618780745}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.12, y: 0.9, z: -0.28}
+  m_LocalPosition: {x: -11.11, y: 0.9, z: 1.26}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6827448195487517408}
@@ -874,6 +874,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Health: 100
   BuildingType: 3
+  IsPlaced: 0
+  IsSelected: 0
+  IsEnemy: 0
   Collider: {fileID: 0}
   BarracksTrainableUnits: []
 --- !u!114 &8895329638246935165

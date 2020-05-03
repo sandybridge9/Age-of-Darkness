@@ -34,9 +34,10 @@ public class HeightChecking : MonoBehaviour
     {
         heightCheckers = transform.Find("HeightCheckers").gameObject ?? null;
         BuildingHeightCheckerSensitivity = SettingsManager.Instance.BuildingHeightCheckerSensitivity;
+        transform.position = new Vector3(transform.position.x, 40f, transform.position.z);
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (groundLayerMask == 0)
         {

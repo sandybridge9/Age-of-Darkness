@@ -7,7 +7,7 @@ public class WoodenTower : Building
     public WoodenTower()
     {
         Health = 100f;
-        Cost = new ResourceBundle(5, 15, 5, 5, 0);
+        Cost = new ResourceBundle(0, 50, 0, 0, 0);
         BuildingType = BuildingType.WoodenTower;
     }
 
