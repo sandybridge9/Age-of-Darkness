@@ -8,13 +8,13 @@ public class FarmBuilding : Building
     {
         Health = 100f;
         Cost = new ResourceBundle(0, 20, 0, 0, 0);
-        BuildingType = global::BuildingType.StoneGatehouse;
+        BuildingType = global::BuildingType.Farm;
     }
 
     public FarmBuilding(float health, ResourceBundle cost)
     {
         Health = health;
         Cost = cost;
-        BuildingType = global::BuildingType.StoneGatehouse;
+        BuildingType = global::BuildingType.Farm;
     }
 }

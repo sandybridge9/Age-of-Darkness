@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Mime;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -41,9 +42,15 @@ public class UIManager : MonoBehaviour
 
     #endregion
 
-    #region START AND UPDATE
+    #region PROPERTIES
 
-    void Start()
+    public AudioMixer mixer;
+
+    #endregion
+
+    #region UNITY METHODS
+
+    private void Start()
     {
         gold = GameObject.Find("GoldText").GetComponent<TextMeshProUGUI>();
         food = GameObject.Find("FoodText").GetComponent<TextMeshProUGUI>();
@@ -74,7 +81,7 @@ public class UIManager : MonoBehaviour
         objectivesCompletedMenu.SetActive(false);
     }
 
-    void Update()
+    private void Update()
     {
         UpdateResourceText();
         if (Input.GetKeyDown(KeyCode.T))
@@ -205,6 +212,35 @@ public class UIManager : MonoBehaviour
     {
         Warrior w = (Warrior)SettingsManager.Instance.BarracksTrainableUnits.Find(x => x.name == "Warrior");
         SettingsManager.Instance.UnitManager.SetUnit(w);
+    }
+
+    #endregion
+
+    #region SETTINGS MENU BUTTON CLICKS
+
+    public void Set720pResolution()
+    {
+        Screen.SetResolution(1280, 720, true);
+    }
+
+    public void Set900pResolution()
+    {
+        Screen.SetResolution(1600, 900, true);
+    }
+
+    public void Set1080pResolution()
+    {
+        Screen.SetResolution(1920, 1080, true);
+    }
+
+    public void Set1440pResolution()
+    {
+        Screen.SetResolution(2560, 1440, true);
+    }
+
+    public void SetVolume(float volume)
+    {
+        mixer.SetFloat("Volume", volume);
     }
 
     #endregion

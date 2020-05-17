@@ -245,7 +245,7 @@ public class EnemyWarrior : Unit
 
     #endregion
 
-    #region CombatModes
+    #region COMBAT MODES
 
     //Aggressive
     private void SearchForEnemy()

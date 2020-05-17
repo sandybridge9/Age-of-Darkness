@@ -7,12 +7,7 @@ using UnityEngine.Internal;
 
 public class Building : MonoBehaviour, IBuilding
 {
-    #region Fields
-
-
-    #endregion
-
-    #region Properties
+    #region PROPERTIES
 
     public float Health;
     public ResourceBundle Cost;
@@ -27,7 +22,7 @@ public class Building : MonoBehaviour, IBuilding
 
     #endregion
 
-    #region Constructors
+    #region CONSTRUCTORS
 
     public Building()
     {
@@ -49,9 +44,9 @@ public class Building : MonoBehaviour, IBuilding
 
     #endregion
 
-    #region Methods
+    #region METHODS
 
-    void Update()
+    private void Update()
     {
         if (IsSelected)
         {
@@ -62,7 +57,7 @@ public class Building : MonoBehaviour, IBuilding
         }
     }
 
-    void Start()
+    private void Start()
     {
         GetCollider();
         StartupActions();

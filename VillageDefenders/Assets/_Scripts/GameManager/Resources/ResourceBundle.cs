@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class ResourceBundle
 {
-    #region Fields
+    #region FIELDS
 
     private double gold;
     private double wood;
@@ -15,7 +15,7 @@ public class ResourceBundle
 
     #endregion
 
-    #region Properties
+    #region PROPERTIES
 
     public double Gold
     {
@@ -44,7 +44,7 @@ public class ResourceBundle
 
     #endregion
 
-    #region Constructors
+    #region CONSTRUCTORS
 
     public ResourceBundle()
     {
@@ -66,7 +66,7 @@ public class ResourceBundle
 
     #endregion
 
-    #region HelperMethods
+    #region HELPER METHODS
 
 
     public bool CheckIfThereAreEnoughResources(ResourceBundle bundle)

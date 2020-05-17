@@ -6,29 +6,38 @@ using UnityEngine;
 
 public class SelectionManager : MonoBehaviour
 {
-    private LayerMask combinedMask;
+    #region FIELDS
+
     private Building currentlySelectedBuilding;
     private List<Unit> currentlySelectedUnits;
 
-    private bool isSelecting;
     private Vector3 currentMousePoint;
     private Vector3? startPosition;
     private Vector3? endPosition;
+    private bool isSelecting;
+
+    #endregion
+
+    #region PROPERTIES
+
     public GUIStyle MouseDragSkin;
     public float DistanceBetweenUnits = 0.5f;
 
-    void Start()
+    #endregion
+
+    #region UNITY METHODS
+
+    private void Start()
     {
-        combinedMask = (1 << LayerMask.NameToLayer("Building")) | (1 << LayerMask.NameToLayer("Unit"));
         currentlySelectedUnits = new List<Unit>();
     }
 
-    void Update()
+    private void Update()
     {
         MakeSelection();
     }
 
-    void OnGUI()
+    private void OnGUI()
     {
         if (isSelecting)
         {
@@ -44,6 +53,10 @@ public class SelectionManager : MonoBehaviour
             GUI.Box(rect, "", MouseDragSkin);
         }
     }
+
+    #endregion
+
+    #region Methods
 
     private void MakeSelection()
     {
@@ -67,12 +80,16 @@ public class SelectionManager : MonoBehaviour
                         {
                             currentlySelectedBuilding.Select();
                         }
+                        else
+                        {
+                            ClearSelections();
+                        }
                     }
                     startPosition = hitInfo.point;
                 }
             }
 
-            if (Input.GetMouseButton(0))
+            if (Input.GetMouseButton(0) && currentlySelectedBuilding == null)
             {
                 isSelecting = true;
                 var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -85,7 +102,7 @@ public class SelectionManager : MonoBehaviour
 
             if (Input.GetMouseButtonUp(0))
             {
-                if (startPosition != null)
+                if (startPosition != null && currentlySelectedBuilding == null)
                 {
                     var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                     RaycastHit hitInfo;
@@ -100,6 +117,7 @@ public class SelectionManager : MonoBehaviour
         }
         else
         {
+            isSelecting = false;
             ClearSelections();
             startPosition = new Vector3();
             endPosition = new Vector3();
@@ -188,4 +206,5 @@ public class SelectionManager : MonoBehaviour
         return Quaternion.Euler(0, 0, angle) * vector;
     }
 
+    #endregion
 }

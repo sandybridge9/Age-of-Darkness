@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Barracks : Building
 {
-    private Transform unitSpawnPoint;
+    #region CONSTUCTOR
 
     public Barracks()
     {
@@ -19,4 +19,6 @@ public class Barracks : Building
         Cost = cost;
         BuildingType = type;
     }
+
+    #endregion
 }

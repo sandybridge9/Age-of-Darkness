@@ -4,7 +4,13 @@ using UnityEngine;
 
 public class Warehouse : Building
 {
+    #region PROPERTIES
+
     public ResourceBundle ResourceCapacity;
+
+    #endregion
+
+    #region CONSTRUCTORS
 
     public Warehouse()
     {
@@ -21,4 +27,6 @@ public class Warehouse : Building
         ResourceCapacity = resourceCapacity;
         BuildingType = type;
     }
+
+    #endregion
 }

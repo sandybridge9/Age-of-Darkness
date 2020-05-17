@@ -20,17 +20,10 @@ public class UnitManager : MonoBehaviour
 
     #endregion
 
-    #region START AND UPDATE
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    #region UNITY METHODS
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (!isWorkerSpawnLocationSet)
         {

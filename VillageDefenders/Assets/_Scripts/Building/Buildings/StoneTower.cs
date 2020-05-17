@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class StoneTower : Building
 {
+    #region CONSTRUCTORS
+
     public StoneTower()
     {
         Health = 100f;
@@ -17,4 +19,6 @@ public class StoneTower : Building
         Cost = cost;
         BuildingType = type;
     }
+
+    #endregion
 }

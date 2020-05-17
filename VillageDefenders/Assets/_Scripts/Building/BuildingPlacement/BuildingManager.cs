@@ -10,16 +10,20 @@ using Vector3 = UnityEngine.Vector3;
 
 public class BuildingManager : MonoBehaviour
 {
-    #region Fields
+    #region FIELDS
 
-    //Current building selection fields
-    private BuildingCollisionManager currentBuildingCollisionManager; //Used to detect if there is already a building in place
-    private Building currentBuilding; //Current building that needs to be placed -> for instantiating
-    private Building currentBuildingSelection; //Current building for checking placement position, changing color etc.
-    private HeightChecking currentBuildingHeightChecking; //Responsible for checking height of currently selected building
+    //------------Current building selection fields-----------------------------------------
+    //Used to detect if there is already a building in place
+    private BuildingCollisionManager currentBuildingCollisionManager;
+    //Current building that needs to be placed -> for instantiating
+    private Building currentBuilding;
+    //Current building for checking placement position, changing color etc.
+    private Building currentBuildingSelection;
+    //Responsible for checking height of currently selected building
+    private HeightChecking currentBuildingHeightChecking;
     private List<Renderer> currentlySelectedBuildingRenderers;
 
-    //Private settings used in internal logic
+    //-------------Private settings used in internal logic----------------------------------
     private List<Building> allBuildings; 
     private List<Building> allWalls;
     private const float tileSize = 0.25f; // Grid snapping step size
@@ -30,30 +34,23 @@ public class BuildingManager : MonoBehaviour
     private Material materialCanBuild;
     private Material materialCantBuild;
 
-    //Fields used in wall placement
+    //-------------Fields used in wall placement---------------------------------------------
     private Vector3? startingLocation;
     private Vector3? endLocation;
     private List<Building> tempWalls;
     private bool isBuildingWalls;
 
-    //2 separate step sizes in case wall isn't square shaped    
+    //--------------2 separate step sizes in case wall isn't square shaped-------------------  
     private float wallStepSizeX;
     private float wallStepSizeZ;
     private BoxCollider wallBoxCollider;
 
     #endregion
 
-    #region Properties
+    #region UNITY METHODS
 
-    private List<Building> placeableBuildings;
-
-    #endregion
-
-    #region Overriden Methods
-
-    void Start()
+    private void Start()
     {
-        placeableBuildings = SettingsManager.Instance.PlaceableBuildings;
         materialCanBuild = SettingsManager.Instance.MaterialCanBuild;
         materialCantBuild = SettingsManager.Instance.MaterialCantBuild;
         currentlySelectedBuildingRenderers = new List<Renderer>();
@@ -62,7 +59,7 @@ public class BuildingManager : MonoBehaviour
         tempWalls = new List<Building>();
     }
 
-    void Update()
+    private void Update()
     {
         if (currentBuilding != null)
         {
@@ -74,24 +71,12 @@ public class BuildingManager : MonoBehaviour
         CancelSelection();
     }
 
-    //void OnGUI()
-    //{
-    //    for (int i = 0; i < placeableBuildings.Count; i++)
-    //    {
-    //        if (GUI.Button(new Rect(Screen.width / 20, Screen.height / 15 + Screen.height / 12 * i, 100, 30),
-    //            placeableBuildings[i].name))
-    //        {
-    //            SetItem(placeableBuildings[i]);
-    //        }
-    //    }
-    //}
-
     #endregion
 
-    #region HelperMethods
+    #region METHODS
 
     //Checks if current building position contains any other buildings and if building is on terrain that is even enough for placement
-    bool IsPositionViable()
+    private bool IsPositionViable()
     {
         if (!currentBuildingCollisionManager.IsColliding() && currentBuildingHeightChecking.CanPlace)
         {
@@ -392,7 +377,7 @@ public class BuildingManager : MonoBehaviour
 
     #endregion
 
-    public void PlaceBuildingThatCanOverlapWithWalls()
+    private void PlaceBuildingThatCanOverlapWithWalls()
     {
         if (Input.GetKey(KeyCode.Mouse0) && IsPositionViable() && placementDelay >= 40f)
         {
@@ -406,7 +391,7 @@ public class BuildingManager : MonoBehaviour
     }
 
     //Clear location from walls for buildings like towers, gatehouses and etc.
-    public void ClearLocationForBuilding()
+    private void ClearLocationForBuilding()
     {
         Collider c = currentBuildingSelection.Collider;
         Vector3 topLeft = new Vector3(c.bounds.center.x - c.bounds.extents.x,
@@ -515,7 +500,7 @@ public class BuildingManager : MonoBehaviour
     }
 
     //Performs a clean up, resets all fields and properties
-    public void CleanUp()
+    private void CleanUp()
     {
         currentBuildingHeightChecking = null;
         currentBuildingCollisionManager = null;

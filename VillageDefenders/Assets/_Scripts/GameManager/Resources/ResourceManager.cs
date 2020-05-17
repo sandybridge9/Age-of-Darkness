@@ -5,29 +5,29 @@ using UnityEngine.Windows.WebCam;
 
 public class ResourceManager : MonoBehaviour
 {
+    #region FIELDS
+
+    private bool isTownhallBuilt = false;
+    private bool isInitialSetupDone = false;
+
+    #endregion
+
+    #region PROPERTIES
+
     //Current resources
     [HideInInspector]
     public ResourceBundle CurrentResources;
     [HideInInspector]
     public ResourceBundle MaximumCapacity;
-    [HideInInspector]
-    private bool isTownhallBuilt = false;
-    private bool isInitialSetupDone = false;
+
+    #endregion
+
+    #region METHODS
 
     // Start is called before the first frame update
-    void Awake()
+    private void Awake()
     {
         SetStartingMaximumCapacity();
-    }
-
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
     }
 
     public void SetStartingResources(ResourceBundle resources)
@@ -144,5 +144,5 @@ public class ResourceManager : MonoBehaviour
         return maximumResourceCount;
     }
 
-    
+    #endregion
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraMovement : MonoBehaviour
 {
-    #region Fields
+    #region FIELDS
 
     private float horizontalInput;
     private float verticalInput;
@@ -15,18 +15,18 @@ public class CameraMovement : MonoBehaviour
 
     #endregion
 
-    #region Properties
+    #region PROPERTIES
 
     public float MoveSpeed = 40f;
     public float ScrollSpeed = 10f;
     public float RotationSpeed = 1f;
-    public float MinimumZoomY = 20f;
+    public float MinimumZoomY = 50f;
 
     #endregion
 
-    #region Overriden Methods
+    #region UNITY METHODS
 
-    void Update()
+    private void Update()
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
@@ -34,7 +34,7 @@ public class CameraMovement : MonoBehaviour
     }
 
     //Doesn't depend on the framerate
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         //TODO: Add user control customization -> Global settings?
         Movement();
@@ -45,9 +45,9 @@ public class CameraMovement : MonoBehaviour
 
     #endregion
 
-    #region Actions
+    #region ACTIONS
 
-    public void Movement()
+    private void Movement()
     {
         //Manages vertical movement of camera
         if (verticalInput != 0)
@@ -96,7 +96,7 @@ public class CameraMovement : MonoBehaviour
         }
     }
 
-    public void Zooming()
+    private void Zooming()
     {
         if (wheelInput != 0)
         {
@@ -120,7 +120,7 @@ public class CameraMovement : MonoBehaviour
     }
 
     //Manages Rotation of the camera (Rotates only around Y axis)
-    public void Rotation()
+    private void Rotation()
     {
         var currentRotation = transform.rotation.eulerAngles;
         if (Input.GetKey(KeyCode.E))
@@ -156,7 +156,7 @@ public class CameraMovement : MonoBehaviour
         rotationDelay++;
     }
 
-    public void GroundView()
+    private void GroundView()
     {
         if (Input.GetKey(KeyCode.Space))
         {

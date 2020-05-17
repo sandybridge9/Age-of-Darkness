@@ -7,24 +7,15 @@ using UnityEngine.UI;
 
 public class SettingsManager : MonoBehaviour
 {
-    #region Singleton
+    #region SINGLETON
 
     public static SettingsManager Instance { get; set; }
 
-    void Awake()
-    {
-        Instance = this;
-        SetupOnAwake();
-    }
-
     #endregion
 
-    #region Properties
+    #region PROPERTIES
 
     //Editor properties
-    [Header("GUI")]
-    public Canvas MainUICanvas;
-
     [Header("Layer masks for raycasting")]
     public LayerMask GroundLayerMask;
     public LayerMask ResourceLayerMask;
@@ -66,8 +57,20 @@ public class SettingsManager : MonoBehaviour
     public UnitManager UnitManager;
 
     public UIManager UIManager;
-    
+
     #endregion
+
+    #region UNITY METHODS
+
+    void Awake()
+    {
+        Instance = this;
+        SetupOnAwake();
+    }
+
+    #endregion
+
+    #region METHODS
 
     private void SetupOnAwake()
     {
@@ -77,13 +80,5 @@ public class SettingsManager : MonoBehaviour
         UnitManager = GetComponent<UnitManager>();
     }
 
-    void Start()
-    {
-
-    }
-
-    void Update()
-    {
-        
-    }
+    #endregion
 }

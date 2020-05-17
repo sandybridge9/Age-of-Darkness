@@ -2,33 +2,38 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MainMenuManager : MonoBehaviour
 {
+    #region FIELDS
+
     private GameObject mainMenu;
     private GameObject settingsMenu;
     private GameObject aboutMenu;
 
-    void Awake()
+    #endregion
+
+    #region PROPERTIES
+
+    public AudioMixer mixer;
+
+    #endregion
+
+    #region UNITY METHODS
+
+    private void Awake()
     {
         mainMenu = transform.Find("MainMenu").gameObject;
         settingsMenu = transform.Find("SettingsMenu").gameObject;
         aboutMenu = transform.Find("AboutMenu").gameObject;
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
+    #endregion
 
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
+    #region Methods
 
     public void OnPlayButtonClick()
     {
@@ -85,4 +90,10 @@ public class MainMenuManager : MonoBehaviour
         Screen.SetResolution(2560, 1440, true);
     }
 
+    public void SetVolume(float volume)
+    {
+        mixer.SetFloat("Volume", volume);
+    }
+
+    #endregion
 }

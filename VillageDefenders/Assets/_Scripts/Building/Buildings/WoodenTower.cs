@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class WoodenTower : Building
 {
+    #region CONSTRUCTORS
+
     public WoodenTower()
     {
         Health = 100f;
@@ -17,4 +19,6 @@ public class WoodenTower : Building
         Cost = cost;
         BuildingType = type;
     }
+
+    #endregion
 }

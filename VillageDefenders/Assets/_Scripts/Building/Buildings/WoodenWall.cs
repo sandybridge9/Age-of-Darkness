@@ -21,5 +21,4 @@ public class WoodenWall : Building
     }
 
     #endregion
-
 }

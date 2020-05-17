@@ -8,18 +8,19 @@ using UnityEngine;
 /// </summary>
 public class BuildingCollisionManager : MonoBehaviour
 {
-    #region Properties
+    #region PROPERTIES
 
     [HideInInspector]
     //List used to keep track of all other colliders this building collides with
     public List<Collider> CurrentColliders = new List<Collider>();
+    //List used to keep track of building exceptions when collision checking
     public List<BuildingType> ExceptionList = new List<BuildingType>();
 
     #endregion
 
-    #region Overriden Methods
+    #region UNITY METHODS
 
-    void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if(other.tag == "Building")
         {
@@ -35,7 +36,7 @@ public class BuildingCollisionManager : MonoBehaviour
         }
     }
 
-    void OnTriggerExit(Collider other)
+    private void OnTriggerExit(Collider other)
     {
         if (other.tag == "Building")
         {
@@ -47,16 +48,31 @@ public class BuildingCollisionManager : MonoBehaviour
         }
     }
 
+    #endregion
+
+    #region METHODS
+
+    /// <summary>
+    /// Checks if this Building is currently colliding with another Building, Resource or Unit
+    /// </summary>
+    /// <returns></returns>
     public bool IsColliding()
     {
         return CurrentColliders.Any();
     }
     
+    /// <summary>
+    /// Resets CurrentColliders list
+    /// </summary>
     public void ResetCollision()
     {
         CurrentColliders = new List<Collider>();
     }
 
+    /// <summary>
+    /// Method used to exclude certain buildings from collision checking
+    /// </summary>
+    /// <param name="type">Building type to exclude from collision checking</param>
     public void AddException(BuildingType type)
     {
         ExceptionList.Add(type);

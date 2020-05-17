@@ -273,7 +273,7 @@ public class ArmedPeasant : Unit
 
     #endregion
 
-    #region CombatModes
+    #region COMBAT MODES
 
     //Aggressive
     private void SearchForEnemy()

@@ -8,7 +8,7 @@ using Debug = UnityEngine.Debug;
 
 public class HeightChecking : MonoBehaviour
 {
-    #region Fields
+    #region FIELDS
 
     private float tallestHeight;
     private float shortestHeight;
@@ -16,28 +16,30 @@ public class HeightChecking : MonoBehaviour
 
     private LayerMask groundLayerMask;
     private GameObject heightCheckers;
-    private float BuildingHeightCheckerSensitivity;
+    private float buildingHeightCheckerSensitivity;
 
     #endregion
 
-    #region Properties
+    #region PROPERTIES
 
     public float MaximumHeightDifference = 1f;
-    [HideInInspector] public bool CanPlace = false;
-    [HideInInspector] public float OptimalHeight;
+    [HideInInspector]
+    public bool CanPlace = false;
+    [HideInInspector]
+    public float OptimalHeight;
 
     #endregion
 
-    #region Overriden Methods
+    #region UNITY METHODS
 
-    void Start()
+    private void Start()
     {
         heightCheckers = transform.Find("HeightCheckers").gameObject ?? null;
-        BuildingHeightCheckerSensitivity = SettingsManager.Instance.BuildingHeightCheckerSensitivity;
+        buildingHeightCheckerSensitivity = SettingsManager.Instance.BuildingHeightCheckerSensitivity;
         transform.position = new Vector3(transform.position.x, 40f, transform.position.z);
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         if (groundLayerMask == 0)
         {
@@ -57,7 +59,7 @@ public class HeightChecking : MonoBehaviour
 
     #endregion
 
-    #region Height Checking
+    #region HEIGHT CHECKING METHODS
 
     public void CheckHeights()
     {
@@ -93,7 +95,7 @@ public class HeightChecking : MonoBehaviour
         if (successCount < heightCheckers.transform.childCount)
         {
             //Try to correct the height of currently selected building
-            transform.position += new Vector3(0, BuildingHeightCheckerSensitivity, 0);
+            transform.position += new Vector3(0, buildingHeightCheckerSensitivity, 0);
         }
         //If ground was hit by all height checkers, find optimal height for building placement
         //And set the correct height for currently selected building (to avoid floating).

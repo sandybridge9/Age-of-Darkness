@@ -70,7 +70,7 @@ public class Unit : MonoBehaviour
 
     #region Update
 
-    void Update()
+    private void Update()
     {
         //Unit's health reached 0, it is now dead
         if (HasDied())
@@ -137,7 +137,19 @@ public class Unit : MonoBehaviour
         //TODO Add some death actions
         CurrentUnitState = UnitState.Idle;
         animator.SetBool("DeathTrigger", true);
+        DeactivateComponents();
         Delete(10f);
+    }
+
+    private void DeactivateComponents()
+    {
+        agent.enabled = false;
+        character.enabled = false;
+        selectionMarker.SetActive(false);
+        //agent.
+        //agent.gameObject.SetActive(false);
+        //character.gameObject.SetActive(false);
+        //selectionMarker.SetActive(false);
     }
 
     private void DeleteOrder()

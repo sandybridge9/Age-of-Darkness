@@ -9,4 +9,5 @@
     WizardTower = 7, 
     StoneGatehouse = 8,
     StoneTower = 9,
+    Farm = 10,
 }

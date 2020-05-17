@@ -96,7 +96,6 @@ public class EnemySkeleton : Unit
             agent.ResetPath();
             lastKnownEnemyLocation = enemyToAttack.transform.position;
             isCurrentlyInCombat = true;
-            UnsheatheWeapon();
             CurrentUnitState = UnitState.MovingToAttack;
             var correctedPosition =
                 SettingsManager.Instance.SelectionManager.GetPositionForUnit(this, enemyToAttack.transform.position);
@@ -164,7 +163,6 @@ public class EnemySkeleton : Unit
         {
             //TODO find closest enemy to attack if aggresive, else idle
             CurrentUnitState = UnitState.Idle;
-            SheatheWeapon();
             ResetAttackAnimations();
         }
         attackDelay++;
@@ -218,19 +216,9 @@ public class EnemySkeleton : Unit
         animator.SetBool("Attacking", false);
     }
 
-    private void UnsheatheWeapon()
-    {
-        //sword.SetActive(true);
-    }
-
-    private void SheatheWeapon()
-    {
-        //sword.SetActive(true);
-    }
-
     #endregion
 
-    #region CombatModes
+    #region COMBAT MODES
 
     //Aggressive
     private void SearchForEnemy()

@@ -55,7 +55,7 @@ public class Worker : Unit
 
     #endregion
 
-    #region OVERRIDEN METHODS
+    #region STARTUP
 
     protected override void UnitSpecificStartup()
     {

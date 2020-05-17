@@ -4,20 +4,30 @@ using UnityEngine;
 
 public class EnemyCamp : MonoBehaviour
 {
+    #region FIELDS
+
+    private float currentTime = 0f;
+
+    #endregion
+
+    #region PROPERTIES
+
     public Transform SpawnPoint;
     public Unit TroopToSpawn;
     public float TimeBetweenWaves = 6000f;
     public int CurrentWave = 0;
     public int EnemyCountToSpawn = 2;
 
-    private float currentTime = 0f;
+    #endregion
 
-    void FixedUpdate()
+    #region UNITY METHODS
+
+    private void FixedUpdate()
     {
         currentTime++;
     }
 
-    void Update()
+    private void Update()
     {
         if (currentTime >= TimeBetweenWaves)
         {
@@ -25,6 +35,10 @@ public class EnemyCamp : MonoBehaviour
             SpawnWave();
         }
     }
+
+    #endregion
+
+    #region METHODS
 
     private void SpawnWave()
     {
@@ -46,12 +60,13 @@ public class EnemyCamp : MonoBehaviour
 
     private void OrderEnemyWarriorToAttack(EnemyWarrior warrior)
     {
-       // warrior.
-       warrior.AttackEnemy();
+        warrior.AttackEnemy();
     }
 
     private void OrderEnemySkeletonToAttack(EnemySkeleton skeleton)
     {
         skeleton.AttackEnemy();
     }
+
+    #endregion
 }

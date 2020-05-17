@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class StoneGatehouse : Building
 {
+    #region CONSTRUCTORS
+
     public StoneGatehouse()
     {
         Health = 100f;
@@ -17,4 +19,6 @@ public class StoneGatehouse : Building
         Cost = cost;
         BuildingType = global::BuildingType.StoneGatehouse;
     }
+
+    #endregion
 }
