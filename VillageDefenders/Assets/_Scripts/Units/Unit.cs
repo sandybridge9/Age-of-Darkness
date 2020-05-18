@@ -228,12 +228,17 @@ public class Unit : MonoBehaviour
             SettingsManager.Instance.SelectionManager.RemoveUnitFromSelection(this);
             SettingsManager.Instance.UnitManager.RemoveUnitFromLists(this);
             removedOnDeath = true;
+            if (IsEnemy)
+            {
+                SettingsManager.Instance.ResourceManager.AddToCurrentResources(new ResourceBundle(10, 0, 0, 0, 0));
+            }
         }
         Destroy(deathTimer);
     }
 
     private void Destroy(float deathTimer = 0f)
     {
+
         DeSelect();
         Object.Destroy(this.gameObject, deathTimer);
     }

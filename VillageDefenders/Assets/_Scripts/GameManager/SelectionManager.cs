@@ -65,8 +65,8 @@ public class SelectionManager : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                startPosition = new Vector3();
-                endPosition = new Vector3();
+                startPosition = null;
+                endPosition = null;
                 currentMousePoint = new Vector3();
                 ClearSelections();
                 var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -119,8 +119,8 @@ public class SelectionManager : MonoBehaviour
         {
             isSelecting = false;
             ClearSelections();
-            startPosition = new Vector3();
-            endPosition = new Vector3();
+            startPosition = null;
+            endPosition = null;
             currentMousePoint = new Vector3();
         }
     }

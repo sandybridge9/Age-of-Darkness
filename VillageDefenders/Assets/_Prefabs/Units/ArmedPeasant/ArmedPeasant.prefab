@@ -2555,6 +2555,7 @@ MonoBehaviour:
   IsSelected: 0
   IsEnemy: 0
   IsDead: 0
+  IsObjective: 0
   CurrentUnitState: 1
   CombatMode: 91
   AttackRange: 1.5

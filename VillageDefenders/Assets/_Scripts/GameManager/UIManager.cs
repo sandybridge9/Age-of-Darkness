@@ -29,6 +29,8 @@ public class UIManager : MonoBehaviour
     
     private TextMeshProUGUI objective1Progress;
     private TextMeshProUGUI objective2Progress;
+    private TextMeshProUGUI neededResourceCountText;
+    private TextMeshProUGUI commonErrorText;
     private int objective1 = 10;
     private int progress1 = 0;
     private int objective2 = 1;
@@ -40,6 +42,13 @@ public class UIManager : MonoBehaviour
     private GameObject tutorialMenu;
     private GameObject objectivesCompletedMenu;
     private GameObject objectivesFailedMenu;
+    private GameObject errorMenu;
+    private GameObject errorMenu2;
+
+    private bool errorNeedsDisplaying = false;
+    private bool commonErrorNeedsDisplaying = false;
+    private float errorTimer = 0f;
+    private float errorTimer2 = 0f;
 
     #endregion
 
@@ -68,6 +77,8 @@ public class UIManager : MonoBehaviour
 
         objective1Progress = GameObject.Find("Objective1Progress").GetComponent<TextMeshProUGUI>();
         objective2Progress = GameObject.Find("Objective2Progress").GetComponent<TextMeshProUGUI>();
+        neededResourceCountText = GameObject.Find("NeededResourceCountText").GetComponent<TextMeshProUGUI>();
+        commonErrorText = GameObject.Find("CommonErrorText").GetComponent<TextMeshProUGUI>();
 
         buildingMenu = transform.Find("BuildingMenu").gameObject;
         unitMenu = transform.Find("UnitMenu").gameObject;
@@ -75,6 +86,8 @@ public class UIManager : MonoBehaviour
         tutorialMenu = transform.Find("TutorialMenu").gameObject;
         objectivesCompletedMenu = transform.Find("ObjectivesCompletedMenu").gameObject;
         objectivesFailedMenu = transform.Find("ObjectivesFailedMenu").gameObject;
+        errorMenu = transform.Find("ErrorMenu").gameObject;
+        errorMenu2 = transform.Find("ErrorMenu2").gameObject;
 
         settingsMenu.SetActive(false);
         unitMenu.SetActive(false);
@@ -82,6 +95,8 @@ public class UIManager : MonoBehaviour
         tutorialMenu.SetActive(true);
         objectivesCompletedMenu.SetActive(false);
         objectivesFailedMenu.SetActive(false);
+        errorMenu.SetActive(false);
+        errorMenu2.SetActive(false);
     }
 
     private void Update()
@@ -90,6 +105,25 @@ public class UIManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.T))
         {
             tutorialMenu.SetActive(!tutorialMenu.activeSelf);
+        }
+
+        if (errorNeedsDisplaying)
+        {
+            errorMenu.SetActive(true);
+            errorTimer++;
+        }
+
+        if (commonErrorNeedsDisplaying)
+        {
+            errorMenu2.SetActive(true);
+            errorTimer2++;
+        }
+
+        if (errorTimer2 > 300f)
+        {
+            errorTimer2 = 0f;
+            commonErrorNeedsDisplaying = false;
+            errorMenu2.SetActive(false);
         }
     }
 
@@ -207,7 +241,7 @@ public class UIManager : MonoBehaviour
 
     public void OnArmedPeasantButtonClick()
     {
-        ArmedPeasant ap = (ArmedPeasant)SettingsManager.Instance.BarracksTrainableUnits.Find(x => x.name == "Armed Peasant");
+        ArmedPeasant ap = (ArmedPeasant)SettingsManager.Instance.BarracksTrainableUnits.Find(x => x.name == "ArmedPeasant");
         SettingsManager.Instance.UnitManager.SetUnit(ap);
     }
 
@@ -315,6 +349,22 @@ public class UIManager : MonoBehaviour
         buildingMenu.SetActive(false);
         tutorialMenu.SetActive(false);
         objectivesFailedMenu.SetActive(true);
+    }
+
+    #endregion
+
+    #region ERROR DISPLAY
+
+    public void DisplayNotEnoughResources(ResourceBundle needed)
+    {
+        neededResourceCountText.text = $"Gold: {needed.Gold} Stone: {needed.Stone} Iron: {needed.Iron} Food: {needed.Food} Wood: {needed.Wood}";
+        errorNeedsDisplaying = true;
+    }
+
+    public void DisplayError(string message)
+    {
+        commonErrorText.text = message;
+        commonErrorNeedsDisplaying = true;
     }
 
     #endregion

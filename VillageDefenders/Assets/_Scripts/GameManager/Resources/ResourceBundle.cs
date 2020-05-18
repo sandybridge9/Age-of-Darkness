@@ -139,6 +139,7 @@ public class ResourceBundle
         }
         else
         {
+            SettingsManager.Instance.UIManager.DisplayNotEnoughResources(cost);
             return false;
         }
     }

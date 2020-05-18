@@ -58,17 +58,29 @@ public class UnitManager : MonoBehaviour
                 {
                     TrainWorker(w);
                 }
+                else
+                {
+                    SettingsManager.Instance.UIManager.DisplayError("Townhall needs to be built to train workers.");
+                }
                 break;
             case Warrior w:
                 if (isWarriorSpawnLocationSet)
                 {
                     TrainWarrior(w);
                 }
+                else
+                {
+                    SettingsManager.Instance.UIManager.DisplayError("Barracks need to be built to train warriors.");
+                }
                 break;
             case ArmedPeasant ap:
                 if (isWarriorSpawnLocationSet)
                 {
                     TrainWarrior(ap);
+                }
+                else
+                {
+                    SettingsManager.Instance.UIManager.DisplayError("Barracks need to be built to train armed peasants.");
                 }
                 break;
         }
