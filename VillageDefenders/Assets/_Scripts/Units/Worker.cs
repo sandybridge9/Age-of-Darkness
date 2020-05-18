@@ -303,7 +303,7 @@ public class Worker : Unit
                 case "Mining":
                     pickaxe.SetActive(true);
                     break;
-                case "Plow":
+                case "Farming":
                     plow.SetActive(true);
                     break;
             }

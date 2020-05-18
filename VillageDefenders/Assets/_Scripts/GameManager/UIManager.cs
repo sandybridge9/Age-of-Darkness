@@ -39,6 +39,7 @@ public class UIManager : MonoBehaviour
     private GameObject settingsMenu;
     private GameObject tutorialMenu;
     private GameObject objectivesCompletedMenu;
+    private GameObject objectivesFailedMenu;
 
     #endregion
 
@@ -73,12 +74,14 @@ public class UIManager : MonoBehaviour
         settingsMenu = transform.Find("SettingsMenu").gameObject;
         tutorialMenu = transform.Find("TutorialMenu").gameObject;
         objectivesCompletedMenu = transform.Find("ObjectivesCompletedMenu").gameObject;
+        objectivesFailedMenu = transform.Find("ObjectivesFailedMenu").gameObject;
 
         settingsMenu.SetActive(false);
         unitMenu.SetActive(false);
         buildingMenu.SetActive(false);
         tutorialMenu.SetActive(true);
         objectivesCompletedMenu.SetActive(false);
+        objectivesFailedMenu.SetActive(false);
     }
 
     private void Update()
@@ -113,7 +116,7 @@ public class UIManager : MonoBehaviour
 
     public void OnQuitButtonClick()
     {
-        Application.Quit();
+        SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
     }
 
     public void OnSettingsButtonClick()
@@ -245,6 +248,25 @@ public class UIManager : MonoBehaviour
 
     #endregion
 
+    #region TESTING BUTTON CLICKS
+
+    public void OnWinButtonClick()
+    {
+        ShowObjectivesCompleted();
+    }
+
+    public void OnAddResourcesButtonClick()
+    {
+        SettingsManager.Instance.ResourceManager.AddToCurrentResources(new ResourceBundle(500,500,500,500,500));
+    }
+
+    public void OnLoseButtonClick()
+    {
+        Lose();
+    }
+
+    #endregion
+
     #region OBJECTIVE
 
     public void RenewObjectiveProgress(string objective, int progress)
@@ -284,6 +306,15 @@ public class UIManager : MonoBehaviour
     public void OnObjectivesCompletedDoneButtonClick()
     {
         SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
+    }
+
+    public void Lose()
+    {
+        settingsMenu.SetActive(false);
+        unitMenu.SetActive(false);
+        buildingMenu.SetActive(false);
+        tutorialMenu.SetActive(false);
+        objectivesFailedMenu.SetActive(true);
     }
 
     #endregion
